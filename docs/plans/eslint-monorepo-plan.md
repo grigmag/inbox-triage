@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Complete.
 
 ## Objective
 
@@ -51,6 +51,11 @@ that a separate configuration package would add manifests, exports, and dependen
 ownership without improving reuse. The flat config can be extracted into
 `packages/eslint-config` later if the repository gains several independently
 linted workspaces or another repository needs the same policy.
+
+**Extraction threshold:** extract only when multiple workspaces require
+independently consumable presets or the policy must be shared across
+repositories. Until then, keep workspace-specific exceptions as named,
+path-scoped objects in the root config rather than adding nested configs.
 
 Central ownership does not mean applying every rule everywhere. Configuration
 objects will be scoped by file patterns:
@@ -239,15 +244,15 @@ dashboard after the root configuration owns them.
 
 ## Completion checklist
 
-- [ ] One root ESLint flat configuration covers applications and packages.
-- [ ] General TypeScript rules apply to dashboard and UI source.
-- [ ] React Hooks and accessibility rules apply to React source.
-- [ ] Next.js Core Web Vitals rules apply only to the dashboard.
-- [ ] Prettier compatibility is configured last.
-- [ ] ESLint dependencies are owned at the root.
-- [ ] Root linting runs once across `apps` and `packages`.
-- [ ] Lint and typecheck remain separate checks.
-- [ ] Nested redundant ESLint configuration is removed.
-- [ ] Representative failure checks prove the intended rule coverage.
-- [ ] Lint, typecheck, and formatting validation pass.
-- [ ] `PROGRESS.md` records completion only after validation.
+- [x] One root ESLint flat configuration covers applications and packages.
+- [x] General TypeScript rules apply to dashboard and UI source.
+- [x] React Hooks and accessibility rules apply to React source.
+- [x] Next.js Core Web Vitals rules apply only to the dashboard.
+- [x] Prettier compatibility is configured last.
+- [x] ESLint dependencies are owned at the root.
+- [x] Root linting runs once across `apps` and `packages`.
+- [x] Lint and typecheck remain separate checks.
+- [x] Nested redundant ESLint configuration is removed.
+- [x] Representative failure checks prove the intended rule coverage.
+- [x] Lint, typecheck, and formatting validation pass.
+- [x] `PROGRESS.md` records completion only after validation.
