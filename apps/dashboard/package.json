@@ -10,9 +10,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@inbox-triage/ui": "workspace:*",
     "next": "16.3.0",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -23,6 +24,5 @@
     "eslint-config-next": "16.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "packageManager": "pnpm@11.15.1"
+  }
 }

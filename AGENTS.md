@@ -16,3 +16,12 @@
 - PROGRESS.md records completed implementation work. Consult it to determine what has already been delivered, and update it when completing a planned slice of work.
 - docs/plans contains the detailed implementation plans for each feature (*-plan.md files).
 - When creating a plan in `docs/plans/`, update `PROGRESS.md` in the same change. Record it as planned, not completed.
+
+## shadcn component workflow
+
+- Run shadcn CLI commands from `apps/dashboard`, using an explicit registry.
+- Preview component updates with `--dry-run` and `--diff` before applying them.
+- Review all generated source; do not accept CLI output blindly.
+- For public UI components, update named exports in `packages/ui/src/index.ts`.
+- After changes, run `pnpm typecheck`, `pnpm lint`, and `pnpm build` from the repository root.
+- Confirm dependency changes affect only the root `pnpm-lock.yaml` and do not introduce duplicate or mismatched React versions.

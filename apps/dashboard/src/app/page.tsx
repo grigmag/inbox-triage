@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { Button } from '@inbox-triage/ui';
 
 export default function Home() {
   return (
@@ -63,6 +64,8 @@ export default function Home() {
             Documentation
           </a>
         </div>
+
+        <Button>Test Button</Button>
       </main>
     </div>
   );
