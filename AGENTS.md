@@ -25,3 +25,16 @@
 - For public UI components, update named exports in `packages/ui/src/index.ts`.
 - After changes, run `pnpm typecheck`, `pnpm lint`, and `pnpm build` from the repository root.
 - Confirm dependency changes affect only the root `pnpm-lock.yaml` and do not introduce duplicate or mismatched React versions.
+
+## Git workflow
+
+- Never commit or push directly to `main` branch.
+- Never use gh command directly to interact with github, use the available tooling you have.
+- When asked to create a new branch, use the following format: `<type>/<kebab-case-description>`, e.g. `feat/new-feature`, `fix/bug-fix`, etc.
+- When asked to open a pull request:
+  - open a draft PR by default, unless instructed otherwise.
+  - PR title should follow the Conventional Commits format: `<type>(<optional-scope>): <summary>`.
+  - add concise description.
+- Never merge PRs yourself.
+- Never modify GitHub branch protection, repository settings, secrets, CI
+  permissions, or production credentials.
