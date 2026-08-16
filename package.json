@@ -14,8 +14,8 @@
   "scripts": {
     "dev": "pnpm --filter @inbox-triage/dashboard dev",
     "build": "pnpm -r --if-present build",
-    "lint": "eslint apps packages *.config.mjs",
-    "lint:fix": "eslint apps packages *.config.mjs --fix",
+    "lint": "eslint apps packages *.config.mjs --max-warnings=0",
+    "lint:fix": "eslint apps packages *.config.mjs --fix --max-warnings=0",
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
     "format": "prettier --write .",
