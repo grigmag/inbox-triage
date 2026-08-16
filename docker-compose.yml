@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: inbox-triage-postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: inbox-triage
+      POSTGRES_PASSWORD: inbox-triage
+      POSTGRES_DB: inbox-triage
+    volumes:
+      - inbox_triage_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  inbox_triage_postgres_data:
