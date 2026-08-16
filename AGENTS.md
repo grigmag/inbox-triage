@@ -28,6 +28,7 @@
 
 ## Git workflow
 
+- Never skip Git hooks (e.g. with `--no-verify` or `HUSKY=0`) unless the user explicitly asks. If a hook fails, fix the cause and create a new commit.
 - Never commit or push directly to `main` branch.
 - Never use gh command directly to interact with github, use the available tooling you have.
 - When asked to create a new branch, use the following format: `<type>/<kebab-case-description>`, e.g. `feat/new-feature`, `fix/bug-fix`, etc.
