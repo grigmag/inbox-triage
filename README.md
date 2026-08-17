@@ -2,11 +2,21 @@
 
 ## Local development
 
-Create the dashboard environment file and start Postgres:
+Install dependencies and create the dashboard environment file:
 
 ```bash
+pnpm install
 cp apps/dashboard/.env.example apps/dashboard/.env
+```
+
+Ask the team for the remaining env vars and add them to `apps/dashboard/.env`.
+
+Start Postgres, apply the committed migrations, and run the dashboard:
+
+```bash
 docker compose -p inbox-triage up -d
+pnpm db:migrate
+pnpm dev
 ```
 
 ## Database

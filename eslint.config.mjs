@@ -53,5 +53,36 @@ export default defineConfig([
       },
     },
   },
+  {
+    name: 'dashboard/no-direct-clerk',
+    files: dashboardFiles,
+    ignores: ['apps/dashboard/src/proxy.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@clerk/nextjs',
+              message:
+                'Import auth UI from @inbox-triage/auth/client instead of @clerk/nextjs.',
+            },
+            {
+              name: '@clerk/nextjs/server',
+              message:
+                'Use requireUser() from the dashboard auth module instead of importing @clerk/nextjs/server.',
+            },
+          ],
+          patterns: [
+            {
+              regex: '^@clerk/',
+              message:
+                'Import authentication through @inbox-triage/auth or the dashboard auth module.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   eslintConfigPrettier,
 ]);

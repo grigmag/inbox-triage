@@ -1,5 +1,24 @@
 # Future Work
 
+## Configure Clerk production and Vercel environments
+
+Local Clerk authentication is complete. When production exists:
+
+- [ ] Create and configure a Clerk production instance with email/password only
+      and Restricted mode.
+- [ ] Add production keys to Vercel's Production environment.
+- [ ] Configure Preview environment behavior and authorized domains.
+- [ ] Deploy a preview, test the full flow, then verify production independently.
+- [ ] Record the production Clerk/Vercel checklist in the project README.
+- [ ] Inspect the production client bundle for the absence of the Clerk secret.
+
+### Acceptance criteria
+
+- Public signup is unavailable in the Clerk production instance.
+- Only invited or manually created accounts can sign in.
+- Preview and Production use the intended Clerk instance and URLs.
+- Secrets remain absent from source, logs, and client bundles.
+
 ## Add interactive theme switching with `next-themes`
 
 - [ ] Add `next-themes` to `apps/dashboard` as a dashboard-level dependency.

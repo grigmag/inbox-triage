@@ -10,6 +10,8 @@
 - Use kebab-case for file and directory names, including React component files; use PascalCase for component and export identifiers. Preserve Next.js reserved filenames such as `page.tsx` and `layout.tsx`.
 - Prefer named exports over default exports.
 - Avoid changing product APIs only to make tests easier. Prefer mocks and fake timers in tests.
+- Include `createdAt` and `updatedAt` lifecycle timestamps on application-owned database tables by default. Document intentional exceptions.
+- When adding a required environment variable, also add a placeholder for it on the CI Build step in `.github/workflows/ci.yml`. `next build` evaluates server modules and needs those values; CI should not use real secrets or a live database.
 
 ## Project documents
 

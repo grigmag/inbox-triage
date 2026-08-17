@@ -1,0 +1,35 @@
+{
+  "name": "@inbox-triage/auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "exports": {
+    "./client": "./src/client.ts",
+    "./routes": "./src/routes.ts",
+    "./server": "./src/server.ts"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "7.7.6",
+    "@inbox-triage/db": "workspace:*",
+    "server-only": "^0.0.1"
+  },
+  "peerDependencies": {
+    "next": "16.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "next": "16.3.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "^5",
+    "vitest": "^4.1.10"
+  }
+}

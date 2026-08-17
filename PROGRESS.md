@@ -1,8 +1,8 @@
 # Progress
 
-## Planned
-
 ## Completed
+
+- [x] [Add Clerk authentication with a local user boundary](docs/plans/clerk-auth-plan.md)
 
 - [x] [Set up ESLint for the monorepo](docs/plans/eslint-monorepo-plan.md)
 
