@@ -1,6 +1,10 @@
 # Progress
 
+## Planned
+
 ## Completed
+
+- [x] [Add the authenticated InboxTriage application shell](docs/plans/authenticated-app-shell-plan.md)
 
 - [x] [Add Clerk authentication with a local user boundary](docs/plans/clerk-auth-plan.md)
 

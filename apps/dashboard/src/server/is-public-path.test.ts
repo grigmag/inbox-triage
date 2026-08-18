@@ -12,9 +12,15 @@ describe('isPublicPath', () => {
     expect(isPublicPath('/__clerk/handshake')).toBe(true);
   });
 
-  it('rejects protected application routes', () => {
-    expect(isPublicPath('/')).toBe(false);
-    expect(isPublicPath('/account')).toBe(false);
-    expect(isPublicPath('/sign-in-elsewhere')).toBe(false);
+  it.each([
+    '/',
+    '/clients',
+    '/inquiries/new',
+    '/timeline',
+    '/agreements',
+    '/account',
+    '/sign-in-elsewhere',
+  ])('treats %s as private', (pathname) => {
+    expect(isPublicPath(pathname)).toBe(false);
   });
 });
