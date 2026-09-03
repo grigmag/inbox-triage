@@ -1,5 +1,62 @@
 # Future Work
 
+## Add disposable PostgreSQL integration testing
+
+Introduce a repository-level integration-test harness that proves committed
+Drizzle migrations, database constraints, transactions, and operational seeds
+against PostgreSQL without risking a developer or production database.
+
+- [ ] Choose and document a dedicated `TEST_DATABASE_URL` or admin-connection
+      contract that cannot resolve to an application database accidentally.
+- [ ] Provision PostgreSQL 17 in CI and create an isolated temporary database or
+      schema for each test run.
+- [ ] Add teardown that closes clients and removes only the uniquely named test
+      target, including after failures.
+- [ ] Apply the complete committed migration history to an empty target before
+      each schema suite.
+- [ ] Prove singleton, check, unique-expression, ordering, timestamp, and
+      transaction behavior using the real Postgres.js/Drizzle path.
+- [ ] Exercise settings initialization on fresh, repeated, edited, appended,
+      same-name-conflict, and unexpected-failure scenarios.
+- [ ] Integrate the suite into intentional root and CI commands without making
+      ordinary unit tests connect to PostgreSQL.
+- [ ] Document safe local setup and a guard that refuses broad, production, or
+      unresolved database targets.
+
+### Acceptance criteria
+
+- Integration tests run against PostgreSQL 17 in CI and an explicitly isolated
+  local target.
+- Tests cannot drop, truncate, reset, or seed the configured application
+  database.
+- Every committed migration is applied from scratch before database assertions.
+- Constraint, concurrency, rollback, timestamp, deterministic-order, and seed
+  idempotency behavior is verified through actual database operations.
+- Connections and temporary targets are cleaned up after success and failure.
+
+## Harden production database migration execution
+
+Evaluate how production migrations should be coordinated with Vercel
+deployments. Alternatives include running migrations during the Vercel
+production build, moving them to a dedicated serialized release or CI job, and
+guarding the migration runner with a PostgreSQL advisory lock. The evaluation
+should account for concurrent deployments, migrations that remain applied when
+a subsequent build fails, and backward-compatible expand/contract changes.
+
+- [ ] Choose and document a production migration execution strategy.
+- [ ] Define how concurrent migration attempts are prevented or handled.
+- [ ] Document failure and rollback behavior when a migration succeeds but the
+      application build or deployment fails.
+- [ ] Establish conventions for backward-compatible schema changes across
+      deployments.
+
+### Acceptance criteria
+
+- Production migrations have one documented execution path.
+- Concurrent deployments cannot apply the same migration unsafely.
+- Application deployment and rollback behavior is compatible with the database
+  schema visible to both old and new application versions.
+
 ## Add full UI testing infrastructure
 
 Introduce one intentional browser-capable testing strategy for reusable React

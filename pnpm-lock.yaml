@@ -318,9 +318,15 @@ importers:
       '@inbox-triage/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@inbox-triage/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@inbox-triage/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(postgres@3.4.9)
       lucide-react:
         specifier: ^0.511.0
         version: 0.511.0(react@19.2.8)
@@ -336,6 +342,9 @@ importers:
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
@@ -398,8 +407,11 @@ importers:
 
   packages/db:
     dependencies:
+      '@inbox-triage/domain':
+        specifier: workspace:*
+        version: link:../domain
       drizzle-orm:
-        specifier: 0.45.2
+        specifier: 'catalog:'
         version: 0.45.2(postgres@3.4.9)
       postgres:
         specifier: ^3.4.9
@@ -414,6 +426,12 @@ importers:
       drizzle-kit:
         specifier: 0.31.10
         version: 0.31.10
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/domain:
+    devDependencies:
       typescript:
         specifier: ^5
         version: 5.9.3

@@ -15,7 +15,8 @@
     "./schema": "./src/schema/index.ts"
   },
   "dependencies": {
-    "drizzle-orm": "0.45.2",
+    "@inbox-triage/domain": "workspace:*",
+    "drizzle-orm": "catalog:",
     "postgres": "^3.4.9"
   },
   "devDependencies": {

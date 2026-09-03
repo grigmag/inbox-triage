@@ -50,6 +50,53 @@ pnpm db:check
 pnpm db:migrate
 ```
 
+### Manually reverting a local migration
+
+Drizzle does not provide automatic down migrations. Use this procedure only for
+local development recovery when losing the affected data is acceptable. For a
+migration applied to a shared environment, keep the existing migration and
+create a new forward migration that restores the desired schema instead.
+
+First, inspect the migration ledger and identify the exact migration to revert:
+
+```bash
+docker exec -it inbox-triage-postgres psql -U inbox-triage -d inbox-triage
+```
+
+```sql
+SELECT id, hash, created_at
+FROM drizzle.__drizzle_migrations
+ORDER BY created_at;
+```
+
+The hash can also be calculated from the exact migration file contents:
+
+```bash
+sha256sum packages/db/migrations/0001_example.sql
+```
+
+Reverse the migration's SQL in a transaction, then remove its matching ledger
+entry. This generic example assumes the migration created `example_table`:
+
+```sql
+BEGIN;
+
+DROP TABLE example_table;
+
+DELETE FROM drizzle.__drizzle_migrations
+WHERE created_at = 1234567890123
+  AND hash = 'replace-with-the-migration-file-sha256';
+
+COMMIT;
+```
+
+Replace the example table, timestamp, and hash with values from the migration
+being reverted. Run the statements interactively, reverse every statement in
+dependency-safe order, and execute the shown `COMMIT` only after the delete
+reports `DELETE 1`; otherwise run `ROLLBACK` instead.
+Deleting only the ledger entry does not revert the schema and can cause Drizzle
+to rerun SQL against objects that still exist.
+
 ### Other commands
 
 Open Drizzle Studio with:

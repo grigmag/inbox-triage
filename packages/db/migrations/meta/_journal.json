@@ -8,6 +8,13 @@
       "when": 1786961632518,
       "tag": "0000_create-users",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1787160438720,
+      "tag": "0001_create-company-profile-and-rates",
+      "breakpoints": true
     }
   ]
 }

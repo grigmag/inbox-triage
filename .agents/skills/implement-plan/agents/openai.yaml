@@ -1,0 +1,7 @@
+interface:
+  display_name: "Implement Plan"
+  short_description: "Implement a plan slice by slice"
+  default_prompt: "Use $implement-plan to implement this plan one slice at a time with a subagent and commit each completed slice."
+
+policy:
+  allow_implicit_invocation: false

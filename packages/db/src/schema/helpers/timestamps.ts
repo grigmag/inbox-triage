@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { timestamp } from 'drizzle-orm/pg-core';
 
 export function timestamps() {
@@ -8,6 +9,6 @@ export function timestamps() {
     updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
       .notNull()
       .defaultNow()
-      .$onUpdate(() => new Date()),
+      .$onUpdate(() => sql`now()`),
   };
 }

@@ -6,9 +6,8 @@
 
 ## Stack
 
-- pnpm workspace monorepo targeting Node 24 and pnpm 11. Use pnpm for dependencies, the lockfile, and package scripts.
-- Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, and shadcn/ui.
-- Clerk for authentication; PostgreSQL 17 and Drizzle ORM for data.
+- This is a pnpm workspace monorepo. Use pnpm for dependency management, lockfile changes, and package scripts. Read the root and workspace package manifests for exact supported versions.
+- The application uses the Next.js App Router, React, TypeScript, Tailwind CSS, shadcn/ui, Clerk, PostgreSQL, and Drizzle ORM.
 
 ## Guidelines
 
@@ -18,6 +17,7 @@
 - Prefer named exports over default exports.
 - Write TODO line comments as `// TODO ...`, without a colon after `TODO`.
 - Avoid changing product APIs only to make tests easier. Prefer mocks and fake timers in tests.
+- Test complex or load-bearing behavior whose regression would be costly. Do not add component or UI-copy tests merely to restate rendered markup; human review owns visual presentation and wording unless a feature has a stronger reason for automation.
 - Include `createdAt` and `updatedAt` lifecycle timestamps on application-owned database tables by default. Document intentional exceptions.
 - When adding a required environment variable, also add a placeholder for it on the CI Build step in `.github/workflows/ci.yml`. `next build` evaluates server modules and needs those values; CI should not use real secrets or a live database.
 - Keep `packages/ui/src/components` limited to reusable shadcn registry components so the `ui` package can be reused by other projects with different design systems. Put product-specific component compositions, styling, and behavior in `apps/dashboard` or an appropriate feature package. Avoid modifying generated shadcn components except for required compatibility fixes, and document any such deviations.
@@ -30,11 +30,17 @@
 - `docs/rewrite-specs` contains specifications that define and describe the intended product behavior, based on the legacy application. Use them as input when creating or refining plans, but do not treat them as immutable. During implementation, the relevant plan is the primary execution guide.
 - `docs/application-conventions.md` records durable, cross-cutting application behavior that future features should follow.
 
+## Database workflow
+
+- After schema changes, run `pnpm db:generate` and `pnpm db:check` as needed. Review generated SQL before committing.
+- Never run `pnpm db:migrate` unless the user explicitly asks. Applying migrations mutates a database and is a manual step.
+- Database rollback and migration-ledger repair are operator-only procedures. Agents may prepare or review instructions, but must never execute rollback SQL, drop database objects, reset database volumes, or modify `drizzle.__drizzle_migrations`; hand execution to the user.
+
 ## shadcn component workflow
 
 - Run shadcn CLI commands from `apps/dashboard`, using an explicit registry.
 - Preview component updates with `--dry-run` and `--diff` before applying them.
-- Review all generated source; do not accept CLI output blindly.
+- Inspect the generated diff before keeping it. Reconcile package imports and aliases, preserve documented monorepo compatibility deviations, update public exports, and confirm that only intended dependencies and files changed.
 - For public UI components, update named exports in `packages/ui/src/index.ts`.
 - After changes, run `pnpm typecheck`, `pnpm lint`, and `pnpm build` from the repository root.
 - Confirm dependency changes affect only the root `pnpm-lock.yaml` and do not introduce duplicate or mismatched React versions.
@@ -42,7 +48,7 @@
 ## Git workflow
 
 - Never skip Git hooks (e.g. with `--no-verify` or `HUSKY=0`) unless the user explicitly asks. If a hook fails, fix the cause and create a new commit.
-- Never commit or push directly to `main` branch.
+- Before committing or pushing, verify the current branch. Never commit or push directly to `main`.
 - Never use gh command directly to interact with github, use the available tooling you have.
 - When asked to create a new branch, use the following format: `<type>/<kebab-case-description>`, e.g. `feat/new-feature`, `fix/bug-fix`, etc.
 - When asked to open a pull request:
