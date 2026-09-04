@@ -8,7 +8,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:check": "drizzle-kit check",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:seed:settings": "tsx scripts/seed-default-settings.ts"
   },
   "exports": {
     "./client": "./src/client.ts",
@@ -23,6 +24,7 @@
     "@next/env": "16.3.0",
     "@types/node": "^20",
     "drizzle-kit": "0.31.10",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }

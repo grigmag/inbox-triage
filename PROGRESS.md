@@ -2,7 +2,7 @@
 
 ## Planned
 
-- [ ] [Add the company profile and rates foundation](docs/plans/company-profile-and-rates-foundation-plan.md) (slices 1–2 complete)
+- [ ] [Add the company profile and rates foundation](docs/plans/company-profile-and-rates-foundation-plan.md) (slices 1–3 complete)
 
 ## Completed
 

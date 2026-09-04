@@ -16,6 +16,7 @@ Start Postgres, apply the committed migrations, and run the dashboard:
 ```bash
 docker compose -p inbox-triage up -d
 pnpm db:migrate
+pnpm db:seed:settings
 pnpm dev
 ```
 
@@ -49,6 +50,17 @@ pnpm db:check
 ```bash
 pnpm db:migrate
 ```
+
+### Settings defaults
+
+After applying migrations, provision any missing company rate defaults with:
+
+```bash
+pnpm db:seed:settings
+```
+
+Run this operator command manually, one instance at a time. It preserves
+existing settings and appends only missing defaults.
 
 ### Manually reverting a local migration
 

@@ -21,6 +21,7 @@
     "db:generate": "pnpm --filter @inbox-triage/db db:generate",
     "db:migrate": "pnpm --filter @inbox-triage/db db:migrate",
     "db:check": "pnpm --filter @inbox-triage/db db:check",
+    "db:seed:settings": "pnpm --filter @inbox-triage/db db:seed:settings",
     "db:studio": "pnpm --filter @inbox-triage/db db:studio",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
