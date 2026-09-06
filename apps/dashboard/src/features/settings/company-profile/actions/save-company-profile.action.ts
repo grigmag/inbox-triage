@@ -2,7 +2,9 @@
 
 import type { ActionResult } from '@/lib/actions/action-result';
 import { requireUser } from '@/server/auth';
-import { fieldErrorsFromZod } from '@/server/actions/field-errors-from-zod';
+import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
+import { revalidatePath } from 'next/cache';
+import { routes } from '@/config/routes';
 import type { CompanyProfileDto } from '../dto/company-profile.dto';
 import { companyProfileRepository } from '../repositories/company-profile.repository';
 import {
@@ -25,8 +27,12 @@ export async function saveCompanyProfileAction(
 
   try {
     const data = await companyProfileRepository.save(parsed.data);
+    revalidatePath(routes.settingsCompany);
     return { status: 'success', data, announcement: 'Αποθηκεύτηκε.' };
   } catch {
-    return { status: 'failure', message: 'Could not save business details.' };
+    return {
+      status: 'failure',
+      message: 'Δεν ήταν δυνατή η αποθήκευση. Δοκιμάστε ξανά.',
+    };
   }
 }

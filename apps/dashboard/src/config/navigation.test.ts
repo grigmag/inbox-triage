@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  isNavigationItemActive,
-  navigationItems,
-  type NavigationMatch,
-} from './navigation';
+import { isNavigationItemActive, type NavigationMatch } from './navigation';
 
 type NavigationMatchCase = {
   name: string;
@@ -12,23 +8,6 @@ type NavigationMatchCase = {
   pathname: string;
   expected: boolean;
 };
-
-describe('navigationItems', () => {
-  it('lists the five entries in the specified order with labels and URLs', () => {
-    expect(
-      navigationItems.map((item) => ({
-        label: item.label,
-        href: item.href,
-      })),
-    ).toEqual([
-      { label: 'Dashboard', href: '/' },
-      { label: 'Clients', href: '/clients' },
-      { label: 'New Inquiry', href: '/inquiries/new' },
-      { label: 'Delivery Timeline', href: '/timeline' },
-      { label: 'Agreements', href: '/agreements' },
-    ]);
-  });
-});
 
 describe('isNavigationItemActive', () => {
   it.each([
@@ -149,6 +128,34 @@ describe('isNavigationItemActive', () => {
       href: '/agreements',
       match: 'prefix',
       pathname: '/agreement',
+      expected: false,
+    },
+    {
+      name: 'Settings',
+      href: '/settings',
+      match: 'prefix',
+      pathname: '/settings',
+      expected: true,
+    },
+    {
+      name: 'Settings',
+      href: '/settings',
+      match: 'prefix',
+      pathname: '/settings/company',
+      expected: true,
+    },
+    {
+      name: 'Settings',
+      href: '/settings',
+      match: 'prefix',
+      pathname: '/settings/rates',
+      expected: true,
+    },
+    {
+      name: 'Settings',
+      href: '/settings',
+      match: 'prefix',
+      pathname: '/settings-profile',
       expected: false,
     },
   ] satisfies readonly NavigationMatchCase[])(

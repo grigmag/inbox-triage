@@ -1,6 +1,6 @@
-import { SIGN_IN_PATH } from '@inbox-triage/auth/routes';
+import { routes } from '../config/routes';
 
-const PUBLIC_PATH_PREFIXES = [SIGN_IN_PATH, '/__clerk'] as const;
+const PUBLIC_PATH_PREFIXES = [routes.signIn, '/__clerk'] as const;
 
 export function isPublicPath(pathname: string) {
   return PUBLIC_PATH_PREFIXES.some(

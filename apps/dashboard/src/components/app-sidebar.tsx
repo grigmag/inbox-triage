@@ -1,7 +1,6 @@
 'use client';
 
 import { UserButton } from '@inbox-triage/auth/client';
-import { HOME_PATH } from '@inbox-triage/auth/routes';
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +15,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { isNavigationItemActive, navigationItems } from '@/config/navigation';
+import { routes } from '@/config/routes';
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -25,7 +25,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <Link
-          href={HOME_PATH}
+          href={routes.home}
           className="flex items-center px-2 py-1.5 text-sm font-semibold text-sidebar-foreground"
           onClick={() => {
             setOpenMobile(false);
@@ -40,7 +40,7 @@ export function AppSidebar() {
             {navigationItems.map((item) => {
               const isActive = isNavigationItemActive(
                 pathname,
-                item.href,
+                item.activePath ?? item.href,
                 item.match,
               );
               const Icon = item.icon;

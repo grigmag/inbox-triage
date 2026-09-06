@@ -2,7 +2,7 @@
 
 import { UserProfile as ClerkUserProfile } from '@clerk/nextjs';
 import type { ComponentProps } from 'react';
-import { ACCOUNT_PATH } from '../routes';
+import { useAuthRoutes } from './auth-routes-context';
 
 type UserProfileProps = Omit<
   ComponentProps<typeof ClerkUserProfile>,
@@ -10,5 +10,7 @@ type UserProfileProps = Omit<
 >;
 
 export function UserProfile(props: UserProfileProps) {
-  return <ClerkUserProfile {...props} routing="path" path={ACCOUNT_PATH} />;
+  const { accountPath } = useAuthRoutes();
+
+  return <ClerkUserProfile {...props} routing="path" path={accountPath} />;
 }

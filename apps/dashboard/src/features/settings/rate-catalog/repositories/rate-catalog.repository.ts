@@ -8,7 +8,7 @@ import {
 } from '@inbox-triage/db/schema';
 import { asc, eq } from 'drizzle-orm';
 import { db } from '@/server/db';
-import { hasPostgresErrorCode } from '@/server/postgres-error';
+import { getPostgresErrorWithCode } from '@/server/postgres-error';
 import type { AddonRateItemDto } from '../dto/addon-rate-item.dto';
 import { toAddonRateItemDto } from '../dto/addon-rate-item.dto';
 import type { CrewRateItemDto } from '../dto/crew-rate-item.dto';
@@ -74,13 +74,13 @@ const addonSelection = {
  * in a rate catalog, while leaving unrelated uniqueness errors untouched.
  */
 function isCatalogNameConflict(error: unknown): boolean {
+  const postgresError = getPostgresErrorWithCode(error, '23505');
+
   return (
-    hasPostgresErrorCode(error, '23505') &&
-    typeof error === 'object' &&
-    error !== null &&
-    'constraint_name' in error &&
-    typeof error.constraint_name === 'string' &&
-    NAME_CONSTRAINTS.has(error.constraint_name)
+    postgresError !== undefined &&
+    'constraint_name' in postgresError &&
+    typeof postgresError.constraint_name === 'string' &&
+    NAME_CONSTRAINTS.has(postgresError.constraint_name)
   );
 }
 

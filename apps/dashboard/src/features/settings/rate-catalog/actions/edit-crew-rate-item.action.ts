@@ -2,8 +2,8 @@
 
 import type { ActionResult } from '@/lib/actions/action-result';
 import { requireUser } from '@/server/auth';
-import { fieldErrorsFromZod } from '@/server/actions/field-errors-from-zod';
-import type { RateItemDto } from '../dto/rate-item.dto';
+import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
+import type { CrewRateItemDto } from '../dto/crew-rate-item.dto';
 import {
   CATALOG_SAVE_FAILURE,
   catalogWriteErrorResult,
@@ -18,7 +18,7 @@ import {
 export async function editCrewRateItemAction(
   id: unknown,
   input: unknown,
-): Promise<ActionResult<RateItemDto, 'id' | CrewRateItemField>> {
+): Promise<ActionResult<CrewRateItemDto, 'id' | CrewRateItemField>> {
   await requireUser();
 
   const parsedId = catalogItemIdSchema.safeParse(id);

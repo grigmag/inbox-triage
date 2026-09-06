@@ -1,5 +1,5 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
-import { SIGN_IN_PATH } from '@inbox-triage/auth/routes';
+import { routes } from './config/routes';
 import { isPublicPath } from './server/is-public-path';
 
 // Next.js requires this convention file at the app boundary. Importing Clerk
@@ -12,8 +12,8 @@ export default clerkMiddleware(
     }
   },
   {
-    signInUrl: SIGN_IN_PATH,
-    signUpUrl: SIGN_IN_PATH,
+    signInUrl: routes.signIn,
+    signUpUrl: routes.signIn,
   },
 );
 

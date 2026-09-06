@@ -2,7 +2,7 @@
 
 import type { ActionResult } from '@/lib/actions/action-result';
 import { requireUser } from '@/server/auth';
-import { fieldErrorsFromZod } from '@/server/actions/field-errors-from-zod';
+import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import type { RateItemDto } from '../dto/rate-item.dto';
 import {
   CatalogReorderConflictError,

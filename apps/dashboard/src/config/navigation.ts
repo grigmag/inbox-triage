@@ -4,8 +4,10 @@ import {
   CirclePlus,
   FileText,
   LayoutDashboard,
+  Settings,
   Users,
 } from 'lucide-react';
+import { routes } from './routes';
 
 export type NavigationMatch = 'exact' | 'prefix';
 
@@ -14,38 +16,46 @@ export type NavigationItem = {
   href: string;
   icon: LucideIcon;
   match: NavigationMatch;
+  activePath?: string;
 };
 
 export const navigationItems: readonly NavigationItem[] = [
   {
     label: 'Dashboard',
-    href: '/',
+    href: routes.home,
     icon: LayoutDashboard,
     match: 'exact',
   },
   {
     label: 'Clients',
-    href: '/clients',
+    href: routes.clients,
     icon: Users,
     match: 'prefix',
   },
   {
     label: 'New Inquiry',
-    href: '/inquiries/new',
+    href: routes.newInquiry,
     icon: CirclePlus,
     match: 'prefix',
   },
   {
     label: 'Delivery Timeline',
-    href: '/timeline',
+    href: routes.deliveryTimeline,
     icon: CalendarClock,
     match: 'prefix',
   },
   {
     label: 'Agreements',
-    href: '/agreements',
+    href: routes.agreements,
     icon: FileText,
     match: 'prefix',
+  },
+  {
+    label: 'Settings',
+    href: routes.settingsCompany,
+    icon: Settings,
+    match: 'prefix',
+    activePath: routes.settings,
   },
 ];
 

@@ -2,9 +2,9 @@
 
 ## Planned
 
-- [ ] [Add the company profile and rates foundation](docs/plans/company-profile-and-rates-foundation-plan.md) (slices 1–3 complete)
-
 ## Completed
+
+- [x] [Add the company profile and rates foundation](docs/plans/company-profile-and-rates-foundation-plan.md)
 
 - [x] [Add the authenticated InboxTriage application shell](docs/plans/authenticated-app-shell-plan.md)
 

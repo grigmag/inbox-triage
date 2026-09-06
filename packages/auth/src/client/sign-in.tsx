@@ -2,7 +2,7 @@
 
 import { SignIn as ClerkSignIn } from '@clerk/nextjs';
 import type { ComponentProps } from 'react';
-import { HOME_PATH, SIGN_IN_PATH } from '../routes';
+import { useAuthRoutes } from './auth-routes-context';
 
 type SignInProps = Omit<
   ComponentProps<typeof ClerkSignIn>,
@@ -10,15 +10,17 @@ type SignInProps = Omit<
 >;
 
 export function SignIn(props: SignInProps) {
+  const { defaultRedirectPath, signInPath } = useAuthRoutes();
+
   return (
     <ClerkSignIn
       {...props}
       routing="path"
-      path={SIGN_IN_PATH}
-      fallbackRedirectUrl={HOME_PATH}
+      path={signInPath}
+      fallbackRedirectUrl={defaultRedirectPath}
       // Clerk defaults this to /sign-up, which we do not have. Send those
       // navigations to /sign-in instead of a missing page.
-      signUpUrl={SIGN_IN_PATH}
+      signUpUrl={signInPath}
       withSignUp={false}
     />
   );

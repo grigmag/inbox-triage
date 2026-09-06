@@ -38,6 +38,12 @@ decisions belong in the relevant implementation plan.
 - Authentication checks remain server-side. The application shell and
   client-side redirects are not authorization boundaries.
 
+## Routes
+
+- Dashboard code imports paths from `apps/dashboard/src/config/routes.ts`
+  instead of hardcoding them in links, redirects, cache invalidation, or
+  navigation configuration.
+
 ## User feedback
 
 - Completed mutations use specific, action-led success messages.

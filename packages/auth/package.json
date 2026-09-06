@@ -9,7 +9,6 @@
   },
   "exports": {
     "./client": "./src/client.ts",
-    "./routes": "./src/routes.ts",
     "./server": "./src/server.ts"
   },
   "dependencies": {

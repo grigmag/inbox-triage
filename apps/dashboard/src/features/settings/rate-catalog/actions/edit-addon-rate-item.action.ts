@@ -2,8 +2,8 @@
 
 import type { ActionResult } from '@/lib/actions/action-result';
 import { requireUser } from '@/server/auth';
-import { fieldErrorsFromZod } from '@/server/actions/field-errors-from-zod';
-import type { RateItemDto } from '../dto/rate-item.dto';
+import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
+import type { AddonRateItemDto } from '../dto/addon-rate-item.dto';
 import {
   CATALOG_SAVE_FAILURE,
   catalogWriteErrorResult,
@@ -18,7 +18,7 @@ import { catalogItemIdSchema } from '../validation/catalog.schema';
 export async function editAddonRateItemAction(
   id: unknown,
   input: unknown,
-): Promise<ActionResult<RateItemDto, 'id' | AddonRateItemField>> {
+): Promise<ActionResult<AddonRateItemDto, 'id' | AddonRateItemField>> {
   await requireUser();
 
   const parsedId = catalogItemIdSchema.safeParse(id);

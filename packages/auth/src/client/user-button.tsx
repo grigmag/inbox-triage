@@ -2,7 +2,7 @@
 
 import { UserButton as ClerkUserButton } from '@clerk/nextjs';
 import type { ComponentProps } from 'react';
-import { ACCOUNT_PATH } from '../routes';
+import { useAuthRoutes } from './auth-routes-context';
 
 type UserButtonProps = Omit<
   ComponentProps<typeof ClerkUserButton>,
@@ -10,11 +10,13 @@ type UserButtonProps = Omit<
 >;
 
 export function UserButton(props: UserButtonProps) {
+  const { accountPath } = useAuthRoutes();
+
   return (
     <ClerkUserButton
       {...props}
       userProfileMode="navigation"
-      userProfileUrl={ACCOUNT_PATH}
+      userProfileUrl={accountPath}
     />
   );
 }
