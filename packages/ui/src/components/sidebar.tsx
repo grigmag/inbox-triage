@@ -199,8 +199,10 @@ function Sidebar({
         >
           <SheetHeader className="sr-only">
             <SheetTitle>Sidebar</SheetTitle>
+
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
+
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>
       </Sheet>
@@ -228,6 +230,7 @@ function Sidebar({
             : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
         )}
       />
+
       <div
         data-slot="sidebar-container"
         data-side={side}
@@ -274,6 +277,7 @@ function SidebarTrigger({
       {...props}
     >
       <PanelLeftIcon />
+
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -542,6 +546,7 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       {comp}
+
       <TooltipContent
         side="right"
         align="center"
@@ -624,6 +629,7 @@ function SidebarMenuSkeleton({
           data-sidebar="menu-skeleton-icon"
         />
       )}
+
       <Skeleton
         className="h-4 max-w-(--skeleton-width) flex-1"
         data-sidebar="menu-skeleton-text"

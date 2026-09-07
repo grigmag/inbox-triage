@@ -126,6 +126,7 @@ export function DeliverableRateItemDialog({
     >
       <Field data-invalid={!!fieldErrors.name || undefined}>
         <FieldLabel htmlFor="rate-dialog-name">Name</FieldLabel>
+
         <Input
           id="rate-dialog-name"
           value={values.name}
@@ -136,14 +137,17 @@ export function DeliverableRateItemDialog({
           }
           onChange={(event) => change('name', event.target.value)}
         />
+
         {fieldErrors.name ? (
           <FieldError id="rate-dialog-name-error">
             {fieldErrors.name}
           </FieldError>
         ) : null}
       </Field>
+
       <Field data-invalid={!!fieldErrors.pricingMode || undefined}>
         <FieldLabel htmlFor="rate-dialog-pricingMode">Pricing mode</FieldLabel>
+
         <Select
           value={values.pricingMode}
           disabled={pending}
@@ -161,21 +165,27 @@ export function DeliverableRateItemDialog({
               {values.pricingMode === 'per_unit' ? 'Per unit' : 'Per 30'}
             </SelectValue>
           </SelectTrigger>
+
           <SelectContent>
             <SelectGroup>
               <SelectItem value="per_unit">Per unit</SelectItem>
+
               <SelectItem value="per_30">Per 30</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
+
         {fieldErrors.pricingMode ? (
           <FieldError>{fieldErrors.pricingMode}</FieldError>
         ) : null}
       </Field>
+
       <Field data-invalid={!!fieldErrors.unitPrice || undefined}>
         <FieldLabel htmlFor="rate-dialog-unitPrice">Unit price</FieldLabel>
+
         <InputGroup>
           <InputGroupAddon>€</InputGroupAddon>
+
           <InputGroupInput
             id="rate-dialog-unitPrice"
             value={values.unitPrice}
@@ -188,12 +198,14 @@ export function DeliverableRateItemDialog({
             onChange={(event) => change('unitPrice', event.target.value)}
           />
         </InputGroup>
+
         {fieldErrors.unitPrice ? (
           <FieldError id="rate-dialog-unitPrice-error">
             {fieldErrors.unitPrice}
           </FieldError>
         ) : null}
       </Field>
+
       <ActiveField
         checked={values.isActive}
         disabled={pending}

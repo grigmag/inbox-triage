@@ -23,6 +23,7 @@ export default function AppError({
         title="Something went wrong"
         description="This page could not be loaded. You can try again."
       />
+
       <InlineError
         title="Unable to load this page"
         description="Please try again. If the problem continues, return to the previous page or sign in again."

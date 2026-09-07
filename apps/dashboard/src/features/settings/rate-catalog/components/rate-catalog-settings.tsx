@@ -22,10 +22,13 @@ export function RateCatalogSettings({
       <p className="sr-only" aria-live="polite">
         {editor.announcement}
       </p>
+
       <Tabs defaultValue="crew">
         <TabsList aria-label="Rate catalogs">
           <TabsTrigger value="crew">Crew</TabsTrigger>
+
           <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
+
           <TabsTrigger value="addons">Add-ons</TabsTrigger>
         </TabsList>
 

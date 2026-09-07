@@ -14,6 +14,7 @@ export default async function AgreementsPage() {
   return (
     <PageShell>
       <PageHeader title="Agreements" breadcrumbs={[{ label: 'Agreements' }]} />
+
       <RoutePlaceholder route="agreements" />
     </PageShell>
   );

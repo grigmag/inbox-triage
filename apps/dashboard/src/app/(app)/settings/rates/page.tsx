@@ -17,7 +17,9 @@ export default async function RatesSettingsPage() {
   return (
     <PageShell>
       <PageHeader title="Settings" />
+
       <SettingsNavigation activeDestination="rates" />
+
       {/* Key is used to remount when refreshed server data changes so local catalog state is reconciled. */}
       <RateCatalogSettings
         key={JSON.stringify(catalogs)}

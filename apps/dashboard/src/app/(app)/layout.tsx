@@ -22,7 +22,9 @@ export default async function AppLayout({ children }: LayoutProps<'/'>) {
         >
           Skip to main content
         </a>
+
         <AppSidebar />
+
         <SidebarInset
           id="main-content"
           tabIndex={-1}
@@ -31,6 +33,7 @@ export default async function AppLayout({ children }: LayoutProps<'/'>) {
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4 md:hidden">
             <SidebarTrigger />
           </header>
+
           <div className="min-w-0 flex-1 overflow-x-hidden">{children}</div>
         </SidebarInset>
       </SidebarProvider>

@@ -14,6 +14,7 @@ export default async function DashboardPage() {
   return (
     <PageShell>
       <PageHeader title="Dashboard" />
+
       <RoutePlaceholder route="dashboard" />
     </PageShell>
   );

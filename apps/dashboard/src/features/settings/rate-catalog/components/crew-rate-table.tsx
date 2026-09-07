@@ -31,12 +31,17 @@ export function CrewRateTable({
       <TableHeader>
         <TableRow>
           <TableHead>Active</TableHead>
+
           <TableHead>Role</TableHead>
+
           <TableHead>Day Rate (€)</TableHead>
+
           <TableHead>Order</TableHead>
+
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
+
       <TableBody>
         {items.map((item, index) => (
           <TableRow key={item.id} aria-busy={pending || undefined}>
@@ -47,8 +52,11 @@ export function CrewRateTable({
                 onChange={(active) => onActivation(item, active)}
               />
             </TableCell>
+
             <TableCell className="font-medium">{item.name}</TableCell>
+
             <TableCell>€{formatCentsAsEuro(item.dayRateCents)}</TableCell>
+
             <TableCell>
               <CatalogOrderingControls
                 name={item.name}
@@ -58,6 +66,7 @@ export function CrewRateTable({
                 onMove={(direction) => onMove(index, direction)}
               />
             </TableCell>
+
             <TableCell>
               <CatalogEditButton
                 disabled={pending}

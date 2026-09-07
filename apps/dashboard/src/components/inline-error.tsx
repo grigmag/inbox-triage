@@ -20,7 +20,9 @@ export function InlineError({
   return (
     <Alert variant="destructive">
       <AlertTitle>{title}</AlertTitle>
+
       <AlertDescription>{description}</AlertDescription>
+
       {retryAction ? <AlertAction>{retryAction}</AlertAction> : null}
     </Alert>
   );

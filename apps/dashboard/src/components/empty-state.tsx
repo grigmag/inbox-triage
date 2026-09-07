@@ -29,12 +29,16 @@ export function EmptyState({
     <Empty>
       <EmptyHeader>
         {icon ? <EmptyMedia variant="icon">{icon}</EmptyMedia> : null}
+
         <EmptyTitle>{title}</EmptyTitle>
+
         <EmptyDescription>{description}</EmptyDescription>
       </EmptyHeader>
+
       {hasActions ? (
         <EmptyContent>
           {primaryAction}
+
           {secondaryAction}
         </EmptyContent>
       ) : null}

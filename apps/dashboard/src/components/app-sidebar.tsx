@@ -34,6 +34,7 @@ export function AppSidebar() {
           InboxTriage
         </Link>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
@@ -60,6 +61,7 @@ export function AppSidebar() {
                     }
                   >
                     <Icon aria-hidden />
+
                     <span>{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -68,6 +70,7 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <UserButton />
       </SidebarFooter>

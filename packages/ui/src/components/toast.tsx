@@ -181,11 +181,15 @@ function ToastList() {
     <Toast key={toastItem.id} toast={toastItem}>
       <ToastContent>
         <ToastIcon type={toastItem.type} />
+
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <ToastTitle />
+
           <ToastDescription />
         </div>
+
         <ToastAction />
+
         <ToastClose />
       </ToastContent>
     </Toast>
@@ -200,6 +204,7 @@ function Toaster({
   return (
     <ToastProvider toastManager={toastManager} {...props}>
       {children}
+
       <ToastPortal>
         <ToastViewport>
           <ToastList />

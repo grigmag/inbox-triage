@@ -31,13 +31,19 @@ export function DeliverableRateTable({
       <TableHeader>
         <TableRow>
           <TableHead>Active</TableHead>
+
           <TableHead>Name</TableHead>
+
           <TableHead>Mode</TableHead>
+
           <TableHead>Unit Price (€)</TableHead>
+
           <TableHead>Order</TableHead>
+
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
+
       <TableBody>
         {items.map((item, index) => (
           <TableRow key={item.id} aria-busy={pending || undefined}>
@@ -48,11 +54,15 @@ export function DeliverableRateTable({
                 onChange={(active) => onActivation(item, active)}
               />
             </TableCell>
+
             <TableCell className="font-medium">{item.name}</TableCell>
+
             <TableCell>
               {item.pricingMode === 'per_unit' ? 'Per unit' : 'Per 30'}
             </TableCell>
+
             <TableCell>€{formatCentsAsEuro(item.unitPriceCents)}</TableCell>
+
             <TableCell>
               <CatalogOrderingControls
                 name={item.name}
@@ -62,6 +72,7 @@ export function DeliverableRateTable({
                 onMove={(direction) => onMove(index, direction)}
               />
             </TableCell>
+
             <TableCell>
               <CatalogEditButton
                 disabled={pending}

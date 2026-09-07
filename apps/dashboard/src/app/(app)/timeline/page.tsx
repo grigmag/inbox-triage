@@ -17,6 +17,7 @@ export default async function DeliveryTimelinePage() {
         title="Delivery Timeline"
         breadcrumbs={[{ label: 'Delivery Timeline' }]}
       />
+
       <RoutePlaceholder route="delivery-timeline" />
     </PageShell>
   );

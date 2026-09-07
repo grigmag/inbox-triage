@@ -93,6 +93,7 @@ function CompanyField({
       data-invalid={!!error || undefined}
     >
       <FieldLabel htmlFor={field}>{label}</FieldLabel>
+
       <Input
         id={field}
         name={field}
@@ -103,6 +104,7 @@ function CompanyField({
         aria-describedby={error ? errorId : undefined}
         onChange={(event) => onChange(field, event.target.value)}
       />
+
       {error ? <FieldError id={errorId}>{error}</FieldError> : null}
     </Field>
   );
@@ -179,6 +181,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
 
         <FieldSet>
           <FieldLegend>Στοιχεία επιχείρησης</FieldLegend>
+
           <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-3">
             <CompanyField
               field="legalName"
@@ -188,6 +191,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
+
             <CompanyField
               field="taxId"
               label="ΑΦΜ"
@@ -196,6 +200,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
+
             <CompanyField
               field="taxOffice"
               label="ΔΟΥ"
@@ -211,6 +216,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
 
         <FieldSet>
           <FieldLegend>Διεύθυνση και επικοινωνία</FieldLegend>
+
           <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             <CompanyField
               field="address"
@@ -220,6 +226,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
+
             <CompanyField
               field="postalCode"
               label="ΤΚ"
@@ -228,6 +235,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
+
             <CompanyField
               field="city"
               label="Πόλη"
@@ -236,6 +244,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
+
             <CompanyField
               field="phone"
               label="Τηλέφωνο"
@@ -245,6 +254,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
+
             <CompanyField
               field="email"
               label="Email"
@@ -261,6 +271,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
 
         <FieldSet>
           <FieldLegend>Τραπεζικά στοιχεία</FieldLegend>
+
           <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <CompanyField
               field="iban"
@@ -270,6 +281,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
+
             <CompanyField
               field="bankName"
               label="Τράπεζα"

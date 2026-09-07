@@ -42,14 +42,18 @@ export function RateCatalogPanel({
     <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
+
         <CardDescription>{description}</CardDescription>
+
         <CardAction>
           <Button size="sm" disabled={disabled} onClick={onAdd}>
             <PlusIcon data-icon="inline-start" />
+
             {addLabel}
           </Button>
         </CardAction>
       </CardHeader>
+
       <CardContent>
         {items.length === 0 ? (
           <EmptyState title={emptyTitle} description={emptyDescription} />
@@ -60,6 +64,7 @@ export function RateCatalogPanel({
                 <AlertDescription>{zeroActiveMessage}</AlertDescription>
               </Alert>
             ) : null}
+
             {children}
           </>
         )}

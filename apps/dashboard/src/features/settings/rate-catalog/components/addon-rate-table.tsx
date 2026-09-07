@@ -37,13 +37,19 @@ export function AddonRateTable({
       <TableHeader>
         <TableRow>
           <TableHead>Active</TableHead>
+
           <TableHead>Name</TableHead>
+
           <TableHead>Mode</TableHead>
+
           <TableHead>Price</TableHead>
+
           <TableHead>Order</TableHead>
+
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
+
       <TableBody>
         {items.map((item, index) => (
           <TableRow key={item.id} aria-busy={pending || undefined}>
@@ -54,13 +60,17 @@ export function AddonRateTable({
                 onChange={(active) => onActivation(item, active)}
               />
             </TableCell>
+
             <TableCell className="font-medium">{item.name}</TableCell>
+
             <TableCell>{MODE_LABELS[item.pricingMode]}</TableCell>
+
             <TableCell>
               {item.pricingMode === 'percentage'
                 ? `${item.percentage}%`
                 : `€${formatCentsAsEuro(item.priceCents)}`}
             </TableCell>
+
             <TableCell>
               <CatalogOrderingControls
                 name={item.name}
@@ -70,6 +80,7 @@ export function AddonRateTable({
                 onMove={(direction) => onMove(index, direction)}
               />
             </TableCell>
+
             <TableCell>
               <CatalogEditButton
                 disabled={pending}

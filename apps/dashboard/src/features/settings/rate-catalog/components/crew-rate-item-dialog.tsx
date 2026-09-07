@@ -119,6 +119,7 @@ export function CrewRateItemDialog({
     >
       <Field data-invalid={!!fieldErrors.name || undefined}>
         <FieldLabel htmlFor="rate-dialog-name">Role</FieldLabel>
+
         <Input
           id="rate-dialog-name"
           value={values.name}
@@ -129,16 +130,20 @@ export function CrewRateItemDialog({
           }
           onChange={(event) => change('name', event.target.value)}
         />
+
         {fieldErrors.name ? (
           <FieldError id="rate-dialog-name-error">
             {fieldErrors.name}
           </FieldError>
         ) : null}
       </Field>
+
       <Field data-invalid={!!fieldErrors.dayRate || undefined}>
         <FieldLabel htmlFor="rate-dialog-dayRate">Day rate</FieldLabel>
+
         <InputGroup>
           <InputGroupAddon>€</InputGroupAddon>
+
           <InputGroupInput
             id="rate-dialog-dayRate"
             value={values.dayRate}
@@ -151,12 +156,14 @@ export function CrewRateItemDialog({
             onChange={(event) => change('dayRate', event.target.value)}
           />
         </InputGroup>
+
         {fieldErrors.dayRate ? (
           <FieldError id="rate-dialog-dayRate-error">
             {fieldErrors.dayRate}
           </FieldError>
         ) : null}
       </Field>
+
       <ActiveField
         checked={values.isActive}
         disabled={pending}

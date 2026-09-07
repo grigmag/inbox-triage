@@ -53,6 +53,7 @@ export function CatalogOrderingControls({
       >
         <ArrowUpIcon />
       </Button>
+
       <Button
         type="button"
         variant="outline"

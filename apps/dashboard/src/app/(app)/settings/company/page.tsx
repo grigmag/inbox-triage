@@ -17,7 +17,9 @@ export default async function CompanySettingsPage() {
   return (
     <PageShell>
       <PageHeader title="Settings" />
+
       <SettingsNavigation activeDestination="company" />
+
       <CompanyProfileForm profile={profile} />
     </PageShell>
   );

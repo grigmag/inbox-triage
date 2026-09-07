@@ -17,6 +17,7 @@ export default async function NewInquiryPage() {
         title="New Inquiry"
         breadcrumbs={[{ label: 'New Inquiry' }]}
       />
+
       <RoutePlaceholder route="new-inquiry" />
     </PageShell>
   );

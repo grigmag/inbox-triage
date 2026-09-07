@@ -168,6 +168,7 @@ export function AddonRateItemDialog({
     >
       <Field data-invalid={!!fieldErrors.name || undefined}>
         <FieldLabel htmlFor="rate-dialog-name">Name</FieldLabel>
+
         <Input
           id="rate-dialog-name"
           value={values.name}
@@ -178,14 +179,17 @@ export function AddonRateItemDialog({
           }
           onChange={(event) => change('name', event.target.value)}
         />
+
         {fieldErrors.name ? (
           <FieldError id="rate-dialog-name-error">
             {fieldErrors.name}
           </FieldError>
         ) : null}
       </Field>
+
       <Field data-invalid={!!fieldErrors.pricingMode || undefined}>
         <FieldLabel htmlFor="rate-dialog-pricingMode">Pricing mode</FieldLabel>
+
         <Select
           value={values.pricingMode}
           disabled={pending}
@@ -211,27 +215,34 @@ export function AddonRateItemDialog({
                   : 'Percentage'}
             </SelectValue>
           </SelectTrigger>
+
           <SelectContent>
             <SelectGroup>
               <SelectItem value="flat">Flat</SelectItem>
+
               <SelectItem value="per_day">Per day</SelectItem>
+
               <SelectItem value="percentage">Percentage</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
+
         {fieldErrors.pricingMode ? (
           <FieldError>{fieldErrors.pricingMode}</FieldError>
         ) : null}
       </Field>
+
       {unitFamilyChanged ? (
         <FieldDescription>
           Changing between a monetary amount and a percentage clears the current
           value. Enter a new value.
         </FieldDescription>
       ) : null}
+
       {isPercentage ? (
         <Field data-invalid={!!fieldErrors.percentage || undefined}>
           <FieldLabel htmlFor="rate-dialog-percentage">Percentage</FieldLabel>
+
           <InputGroup>
             <InputGroupInput
               id="rate-dialog-percentage"
@@ -246,8 +257,10 @@ export function AddonRateItemDialog({
               }
               onChange={(event) => change('percentage', event.target.value)}
             />
+
             <InputGroupAddon align="inline-end">%</InputGroupAddon>
           </InputGroup>
+
           {fieldErrors.percentage ? (
             <FieldError id="rate-dialog-percentage-error">
               {fieldErrors.percentage}
@@ -257,8 +270,10 @@ export function AddonRateItemDialog({
       ) : (
         <Field data-invalid={!!fieldErrors.price || undefined}>
           <FieldLabel htmlFor="rate-dialog-price">Price</FieldLabel>
+
           <InputGroup>
             <InputGroupAddon>€</InputGroupAddon>
+
             <InputGroupInput
               id="rate-dialog-price"
               value={values.price}
@@ -271,6 +286,7 @@ export function AddonRateItemDialog({
               onChange={(event) => change('price', event.target.value)}
             />
           </InputGroup>
+
           {fieldErrors.price ? (
             <FieldError id="rate-dialog-price-error">
               {fieldErrors.price}
@@ -278,6 +294,7 @@ export function AddonRateItemDialog({
           ) : null}
         </Field>
       )}
+
       <ActiveField
         checked={values.isActive}
         disabled={pending}

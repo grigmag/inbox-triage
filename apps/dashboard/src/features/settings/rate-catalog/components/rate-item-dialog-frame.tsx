@@ -55,8 +55,10 @@ export function RateItemDialogFrame({
       <DialogContent showCloseButton={!pending}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+
         <form ref={formRef} noValidate autoComplete="off" onSubmit={onSubmit}>
           <FieldGroup>
             {failure ? (
@@ -64,7 +66,9 @@ export function RateItemDialogFrame({
                 <AlertDescription>{failure}</AlertDescription>
               </Alert>
             ) : null}
+
             {children}
+
             <DialogFooter>
               <DialogClose
                 render={
@@ -73,8 +77,10 @@ export function RateItemDialogFrame({
               >
                 Cancel
               </DialogClose>
+
               <Button type="submit" disabled={pending}>
                 {pending ? <Spinner data-icon="inline-start" /> : null}
+
                 {submitLabel}
               </Button>
             </DialogFooter>
@@ -97,6 +103,7 @@ export function ActiveField({
   return (
     <Field orientation="horizontal" data-disabled={disabled || undefined}>
       <FieldLabel htmlFor="rate-dialog-isActive">Active</FieldLabel>
+
       <Switch
         id="rate-dialog-isActive"
         checked={checked}

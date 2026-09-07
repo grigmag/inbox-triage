@@ -96,15 +96,19 @@ export function ConfirmActionDialog({
           <AlertDialogTrigger>{trigger}</AlertDialogTrigger>
         )
       ) : null}
+
       <AlertDialogContent initialFocus={cancelRef}>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
+
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
+
         <AlertDialogFooter>
           <AlertDialogCancel ref={cancelRef} disabled={pending}>
             {cancelLabel}
           </AlertDialogCancel>
+
           <AlertDialogAction
             type="button"
             variant="destructive"

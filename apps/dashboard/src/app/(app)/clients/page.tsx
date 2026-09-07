@@ -14,6 +14,7 @@ export default async function ClientsPage() {
   return (
     <PageShell>
       <PageHeader title="Clients" breadcrumbs={[{ label: 'Clients' }]} />
+
       <RoutePlaceholder route="clients" />
     </PageShell>
   );

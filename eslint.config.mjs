@@ -4,6 +4,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
+import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
@@ -85,4 +86,14 @@ export default defineConfig([
     },
   },
   eslintConfigPrettier,
+  {
+    name: 'react/jsx-newline',
+    files: reactFiles,
+    plugins: {
+      react,
+    },
+    rules: {
+      'react/jsx-newline': ['error', { prevent: false }],
+    },
+  },
 ]);
