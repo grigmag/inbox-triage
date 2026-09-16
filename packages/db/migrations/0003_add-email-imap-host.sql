@@ -1,0 +1,3 @@
+ALTER TABLE "email_connections" ADD COLUMN "imap_host" text DEFAULT 'imap.zoho.com' NOT NULL;--> statement-breakpoint
+ALTER TABLE "email_connections" ADD CONSTRAINT "email_connections_imap_host_trimmed" CHECK (btrim("email_connections"."imap_host") = "email_connections"."imap_host");--> statement-breakpoint
+ALTER TABLE "email_connections" ADD CONSTRAINT "email_connections_imap_host_not_empty" CHECK ("email_connections"."imap_host" <> '');

@@ -24,7 +24,7 @@
 
 ## Project documents
 
-- `PROGRESS.md` records completed implementation work. Consult it to determine what has already been delivered, and update it when completing a planned slice of work.
+- `PROGRESS.md` tracks features under Planned, In progress, and Completed. Consult it before implementation and update it as work advances. Keep one entry per feature: move it to In progress when implementation starts and include a brief note on what is implemented. Move it to Completed and check it off only when the whole feature is complete. Record individual slice completion in the feature plan, never as separate completed entries in `PROGRESS.md`.
 - `docs/plans` contains the detailed implementation plans for each feature (`*-plan.md` files). Follow the relevant plan when implementing a feature.
 - When creating a plan in `docs/plans/`, update `PROGRESS.md` in the same change. Record it as planned, not completed.
 - `docs/rewrite-specs` contains specifications that define and describe the intended product behavior, based on the legacy application. Use them as input when creating or refining plans, but do not treat them as immutable. During implementation, the relevant plan is the primary execution guide.
@@ -42,11 +42,12 @@
 - Preview component updates with `--dry-run` and `--diff` before applying them.
 - Inspect the generated diff before keeping it. Reconcile package imports and aliases, preserve documented monorepo compatibility deviations, update public exports, and confirm that only intended dependencies and files changed.
 - For public UI components, update named exports in `packages/ui/src/index.ts`.
-- After changes, run `pnpm typecheck`, `pnpm lint`, and `pnpm build` from the repository root.
+- After changes, run `pnpm typecheck` and `pnpm lint` from the repository root. Do not run `pnpm build` unless explicitly instructed.
 - Confirm dependency changes affect only the root `pnpm-lock.yaml` and do not introduce duplicate or mismatched React versions.
 
 ## Git workflow
 
+- Leave changes unstaged. Stage files only when the user explicitly asks.
 - Never skip Git hooks (e.g. with `--no-verify` or `HUSKY=0`) unless the user explicitly asks. If a hook fails, fix the cause and create a new commit.
 - Before committing or pushing, verify the current branch. Never commit or push directly to `main`.
 - Never use gh command directly to interact with github, use the available tooling you have.

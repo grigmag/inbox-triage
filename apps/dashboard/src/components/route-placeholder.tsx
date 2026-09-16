@@ -3,13 +3,19 @@ import {
   CirclePlus,
   FileText,
   LayoutDashboard,
+  Mail,
   Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { EmptyState } from '@/components/empty-state';
 
 export type RoutePlaceholderRoute =
-  'dashboard' | 'clients' | 'new-inquiry' | 'delivery-timeline' | 'agreements';
+  | 'dashboard'
+  | 'clients'
+  | 'new-inquiry'
+  | 'delivery-timeline'
+  | 'agreements'
+  | 'emails';
 
 type RoutePlaceholderCopy = {
   title: string;
@@ -43,6 +49,11 @@ const routePlaceholders = {
     title: 'No agreements yet',
     description: 'Production agreements will be created and managed here.',
     icon: FileText,
+  },
+  emails: {
+    title: 'Email browsing is coming next',
+    description: 'Your connected inbox and email contents will appear here.',
+    icon: Mail,
   },
 } as const satisfies Record<RoutePlaceholderRoute, RoutePlaceholderCopy>;
 

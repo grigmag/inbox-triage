@@ -1,4 +1,5 @@
 export { users, type User } from './users';
+export { emailConnections, type EmailConnection } from './email-connections';
 export { companyProfile, type CompanyProfile } from './company-profile';
 export { crewRateItems, type CrewRateItem } from './crew-rate-items';
 export {

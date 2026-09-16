@@ -158,6 +158,13 @@ describe('isNavigationItemActive', () => {
       pathname: '/settings-profile',
       expected: false,
     },
+    {
+      name: 'Settings',
+      href: '/settings',
+      match: 'prefix',
+      pathname: '/settings/email',
+      expected: true,
+    },
   ] satisfies readonly NavigationMatchCase[])(
     '$name ($match, $href) is $expected for $pathname',
     ({ href, match, pathname, expected }) => {

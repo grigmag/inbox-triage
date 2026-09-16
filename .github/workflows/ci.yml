@@ -52,4 +52,7 @@ jobs:
           # does not connect until a query; these are not used to talk to Clerk.
           DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
           CLERK_SECRET_KEY: sk_test_placeholder
+          # Dummy 32-byte hex keys for build evaluation only.
+          APP_ENCRYPTION_KEY: '0000000000000000000000000000000000000000000000000000000000000000'
+          APP_HASHING_KEY: '1111111111111111111111111111111111111111111111111111111111111111'
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_placeholder

@@ -1,0 +1,17 @@
+From: Client <client@example.com>
+To: Studio <studio@example.com>
+Date: Wed, 09 Sep 2026 09:00:00 +0300
+Message-ID: <html-1@example.com>
+Subject: Campaign details
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="boundary-value"
+
+--boundary-value
+Content-Type: text/plain; charset=utf-8
+
+The campaign starts next month.
+--boundary-value
+Content-Type: text/html; charset=utf-8
+
+<p>The campaign starts <strong>next month</strong>.</p>
+--boundary-value--

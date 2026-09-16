@@ -14,6 +14,7 @@
     "@inbox-triage/auth": "workspace:*",
     "@inbox-triage/db": "workspace:*",
     "@inbox-triage/domain": "workspace:*",
+    "@inbox-triage/email": "workspace:*",
     "@inbox-triage/ui": "workspace:*",
     "drizzle-orm": "catalog:",
     "lucide-react": "^0.511.0",

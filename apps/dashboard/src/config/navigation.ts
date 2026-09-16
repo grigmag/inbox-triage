@@ -4,6 +4,7 @@ import {
   CirclePlus,
   FileText,
   LayoutDashboard,
+  Mail,
   Settings,
   Users,
 } from 'lucide-react';
@@ -48,6 +49,12 @@ export const navigationItems: readonly NavigationItem[] = [
     label: 'Agreements',
     href: routes.agreements,
     icon: FileText,
+    match: 'prefix',
+  },
+  {
+    label: 'Offer emails',
+    href: routes.emails,
+    icon: Mail,
     match: 'prefix',
   },
   {

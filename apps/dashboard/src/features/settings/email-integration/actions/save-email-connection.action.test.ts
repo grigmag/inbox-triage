@@ -1,0 +1,145 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { saveEmailConnectionAction } from './save-email-connection.action';
+
+const mocks = vi.hoisted(() => ({
+  requireUser: vi.fn(),
+  saveEmailConnectionUseCase: vi.fn(),
+  revalidatePath: vi.fn(),
+}));
+
+vi.mock('@/server/auth', () => ({ requireUser: mocks.requireUser }));
+vi.mock('../use-cases/save-email-connection.use-case', () => ({
+  saveEmailConnectionUseCase: mocks.saveEmailConnectionUseCase,
+}));
+vi.mock('next/cache', () => ({ revalidatePath: mocks.revalidatePath }));
+
+describe('saveEmailConnectionAction', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.requireUser.mockResolvedValue({ id: 'authenticated-user-id' });
+  });
+
+  it('authenticates and scopes saving to the local user', async () => {
+    mocks.saveEmailConnectionUseCase.mockResolvedValue('saved');
+
+    await expect(
+      saveEmailConnectionAction({
+        imapHost: '  IMAP.zoho.eu  ',
+        email: ' USER@Example.COM ',
+        password: '  exact password\n',
+      }),
+    ).resolves.toMatchObject({
+      status: 'success',
+      data: null,
+    });
+
+    expect(mocks.saveEmailConnectionUseCase).toHaveBeenCalledExactlyOnceWith({
+      userId: 'authenticated-user-id',
+      provider: 'zoho',
+      username: 'user@example.com',
+      imapHost: 'IMAP.zoho.eu',
+      password: '  exact password\n',
+    });
+    expect(mocks.revalidatePath).toHaveBeenCalledExactlyOnceWith(
+      '/settings/email',
+    );
+  });
+
+  it('returns server validation errors without saving', async () => {
+    const result = await saveEmailConnectionAction({
+      imapHost: 'imap.zoho.com',
+      email: 'invalid',
+      password: 'secret',
+    });
+
+    expect(result).toEqual({
+      status: 'validation_error',
+      fieldErrors: { email: 'Enter a valid email address.' },
+    });
+    expect(mocks.saveEmailConnectionUseCase).not.toHaveBeenCalled();
+  });
+
+  it('turns a missing password into a password field error', async () => {
+    mocks.saveEmailConnectionUseCase.mockResolvedValue('password_required');
+
+    await expect(
+      saveEmailConnectionAction({
+        imapHost: 'imap.zoho.com',
+        email: 'user@example.com',
+        password: '',
+      }),
+    ).resolves.toEqual({
+      status: 'validation_error',
+      fieldErrors: { password: 'Enter your Zoho IMAP password.' },
+    });
+    expect(mocks.revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it('returns a safe result for an unchanged connection', async () => {
+    mocks.saveEmailConnectionUseCase.mockResolvedValue('unchanged');
+
+    const result = await saveEmailConnectionAction({
+      imapHost: 'imap.zoho.com',
+      email: 'user@example.com',
+      password: '',
+    });
+
+    expect(result).toEqual({
+      status: 'success',
+      data: null,
+      announcement: 'Email connection is already up to date.',
+    });
+    expect(mocks.revalidatePath).toHaveBeenCalledExactlyOnceWith(
+      '/settings/email',
+    );
+  });
+
+  it('translates persistence failures into a generic safe message', async () => {
+    mocks.saveEmailConnectionUseCase.mockRejectedValue(
+      new Error('database secret details'),
+    );
+
+    await expect(
+      saveEmailConnectionAction({
+        imapHost: 'imap.zoho.com',
+        email: 'user@example.com',
+        password: 'secret',
+      }),
+    ).resolves.toEqual({
+      status: 'failure',
+      message: 'Unable to save the email connection. Please try again.',
+    });
+    expect(mocks.revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it('propagates authentication rejection', async () => {
+    const authError = new Error('authentication required');
+    mocks.requireUser.mockRejectedValue(authError);
+
+    await expect(
+      saveEmailConnectionAction({
+        imapHost: 'imap.zoho.com',
+        email: 'user@example.com',
+        password: 'secret',
+      }),
+    ).rejects.toBe(authError);
+    expect(mocks.saveEmailConnectionUseCase).not.toHaveBeenCalled();
+  });
+});
+
+it('returns a host field error without saving or revalidating', async () => {
+  vi.clearAllMocks();
+  mocks.requireUser.mockResolvedValue({ id: 'authenticated-user-id' });
+  expect(
+    await saveEmailConnectionAction({
+      email: 'user@example.com',
+      password: 'secret',
+      imapHost: '   ',
+    }),
+  ).toEqual({
+    status: 'validation_error',
+    fieldErrors: { imapHost: 'Enter an IMAP host.' },
+  });
+  expect(mocks.saveEmailConnectionUseCase).not.toHaveBeenCalled();
+  expect(mocks.revalidatePath).not.toHaveBeenCalled();
+});

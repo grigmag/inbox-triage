@@ -2,7 +2,7 @@ import { buttonVariants } from '@inbox-triage/ui';
 import Link from 'next/link';
 import { routes } from '@/config/routes';
 
-export type SettingsDestination = 'company' | 'rates';
+export type SettingsDestination = 'company' | 'rates' | 'email';
 
 export type SettingsNavigationProps = {
   activeDestination: SettingsDestination;
@@ -18,6 +18,11 @@ const settingsDestinations = [
     id: 'rates',
     label: 'Rates',
     href: routes.settingsRates,
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    href: routes.settingsEmail,
   },
 ] as const satisfies readonly {
   id: SettingsDestination;

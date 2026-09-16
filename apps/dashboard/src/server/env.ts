@@ -12,7 +12,19 @@ function readRequiredEnv(name: string): string {
   return value;
 }
 
+function readRequiredHexKey(name: string): string {
+  const value = readRequiredEnv(name);
+
+  if (!/^[0-9a-fA-F]{64}$/.test(value)) {
+    throw new Error(`${name} must be exactly 64 hexadecimal characters.`);
+  }
+
+  return value;
+}
+
 export const env = {
+  APP_ENCRYPTION_KEY: readRequiredHexKey('APP_ENCRYPTION_KEY'),
+  APP_HASHING_KEY: readRequiredHexKey('APP_HASHING_KEY'),
   DATABASE_URL: readRequiredEnv('DATABASE_URL'),
   CLERK_SECRET_KEY: readRequiredEnv('CLERK_SECRET_KEY'),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: readRequiredEnv(
