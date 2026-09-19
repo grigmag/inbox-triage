@@ -8,6 +8,8 @@ const validEnvironment = {
   DATABASE_URL: 'postgresql://ci:ci@127.0.0.1:5432/ci',
   CLERK_SECRET_KEY: 'sk_test_placeholder',
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_placeholder',
+  OPENROUTER_API_KEY: 'openrouter_test_placeholder',
+  OPENROUTER_MODEL: 'openrouter/test-model',
 };
 
 async function loadEnv(overrides: Partial<typeof validEnvironment> = {}) {
@@ -45,4 +47,13 @@ describe('env', () => {
       `${name} must be exactly 64 hexadecimal characters.`,
     );
   });
+
+  it.each(['OPENROUTER_API_KEY', 'OPENROUTER_MODEL'] as const)(
+    'rejects an empty %s',
+    async (name) => {
+      await expect(loadEnv({ [name]: '' })).rejects.toThrow(
+        `${name} is missing or empty. Set it in .env or .env.local (see .env.example).`,
+      );
+    },
+  );
 });

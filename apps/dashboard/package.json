@@ -5,17 +5,21 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "smoke:openrouter": "tsx --conditions=react-server scripts/openrouter-smoke.ts",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "@clerk/nextjs": "7.7.6",
+    "@next/env": "16.3.0",
+    "@openrouter/ai-sdk-provider": "^3.0.0",
     "@inbox-triage/auth": "workspace:*",
     "@inbox-triage/db": "workspace:*",
     "@inbox-triage/domain": "workspace:*",
     "@inbox-triage/email": "workspace:*",
     "@inbox-triage/ui": "workspace:*",
+    "ai": "^7.0.102",
     "drizzle-orm": "catalog:",
     "lucide-react": "^0.511.0",
     "next": "16.3.0",
@@ -31,6 +35,7 @@
     "@types/react-dom": "^19",
     "jsdom": "^30.0.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

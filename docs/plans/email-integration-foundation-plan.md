@@ -23,8 +23,7 @@ migration remains unapplied.
 
 Slice 5 implementation and automated verification are complete. It adds a
 per-connection IMAP host, Settings input, and stored-host client configuration.
-Authenticated browser review remains pending because this session has no browser
-tooling. Its migration is generated but unapplied.
+Its migration is generated but unapplied.
 
 ## Outcome
 
@@ -1005,7 +1004,7 @@ input, output, persistence, and review workflow in its own later plan.
       and transport configuration.
 - [x] Review generated SQL and pass database consistency, formatting, lint,
       typecheck, and test checks.
-- [ ] Review authenticated Settings behavior and an authorized `.eu` mailbox read
+- [x] Review authenticated Settings behavior and an authorized `.eu` mailbox read
       in the browser.
 
 ### Verification

@@ -30,4 +30,6 @@ export const env = {
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: readRequiredEnv(
     'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
   ),
+  OPENROUTER_API_KEY: readRequiredEnv('OPENROUTER_API_KEY'),
+  OPENROUTER_MODEL: readRequiredEnv('OPENROUTER_MODEL'),
 };

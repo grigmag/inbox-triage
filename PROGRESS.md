@@ -1,10 +1,10 @@
 # Progress
 
-## In progress
-
-- [ ] [Configurable IMAP hosts](docs/plans/email-integration-foundation-plan.md#slice-5-configurable-imap-hosts). Persistence, Settings, and client configuration are implemented; automated checks pass. Authenticated browser review remains pending.
+## Planned
 
 ## Completed
+
+- [x] [Add dashboard OpenRouter integration](docs/plans/openrouter-dashboard-integration-plan.md)
 
 - [x] [Add the email integration foundation](docs/plans/email-integration-foundation-plan.md)
 

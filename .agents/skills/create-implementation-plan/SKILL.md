@@ -1,90 +1,112 @@
 ---
 name: create-implementation-plan
-description: Create or revise an approval-ready implementation plan grounded in repository evidence.
+description: Create or revise a readable implementation plan grounded in repository evidence.
 disable-model-invocation: true
 ---
 
 # Create Implementation Plan
 
-Produce the plan artifact and any repository-required planning tracker update. Implementation begins only on a separate request.
+Create an implementation plan for the requested change. Implementation begins only on a separate request.
 
-## 1. Establish authority and targets
+Update repository-required planning trackers, such as `PROGRESS.md`, in the same change. Record new work as planned unless the repository already supports another status.
 
-1. Read applicable repository instructions, planning conventions, progress records, and supplied requests, specifications, prototypes, issues, or existing plans.
-2. Identify the plan path, whether the work creates or revises a plan, and every required companion update. Record new work as planned, not completed.
-3. Establish precedence among the request, active repository instructions, the plan, durable conventions, and source material. Treat the finished plan as the primary execution guide.
+Ground the plan in the existing codebase and follow existing patterns where appropriate.
 
-This stage is complete when the artifact targets, governing inputs, and conflict precedence are explicit.
+The plan will be reviewed and refined by an engineer, then may be handed to a fresh agent for implementation. It should therefore be easy to scan while retaining enough context, technical design, and rationale to implement without relying on the planning conversation.
 
-## 2. Build an evidence base
+Prefer architectural intent, boundaries, meaningful implementation decisions, and observable outcomes over low-level coding instructions. Be concrete without prescribing routine implementation details.
 
-Inspect the relevant code, configuration, tests, dependencies, scripts, documentation, and prior plans. Trace the current ownership boundaries and conventions far enough to:
+Use this structure:
 
-- ground every proposed path, symbol, interface, command, dependency, and migration workflow;
-- expose conflicts, missing prerequisites, and behavior the plan must preserve;
-- separate confirmed repository facts from open decisions, recommended choices, and discoveries deferred to implementation.
+# <Short action-oriented title>
 
-For each open decision, develop a defensible recommendation and the material tradeoffs or constraints behind it.
+## Status
 
-This stage is complete when each implementation-driving claim is confirmed by repository evidence or clearly marked as a decision or discovery.
+State the plan's current status in one or two sentences. For partial implementation, name the completed slices and the remaining work briefly. Mark the plan complete only when the whole feature is complete.
 
-## 3. Resolve open decisions with the user
+## Goal
 
-Ask the user every currently knowable question whose answer would change the outcome, scope, contract, architecture, or acceptance boundary. Present the questions in one batch, with concise context, a recommended choice, and the material tradeoffs for each.
+Describe what the change should accomplish and the important resulting behavior.
 
-Use another batch only when the user's answers expose a new material decision that could not reasonably have been identified in the first batch. Continue until every material decision is answered. When no material decisions remain open, proceed without asking questions.
+Keep this concise.
 
-This stage is complete when the plan can state every material decision as a user-approved choice rather than an executor assumption.
+## Context
 
-## 4. Write the two-layer plan
+Summarize the existing behavior, architecture, constraints, or conventions that materially affect the change.
 
-Keep both layers concise. Layer 1 defines the commitment being approved; Layer 2 gives an implementation agent an executable route to it. Record decisions and implementation-driving evidence, not the investigation transcript.
+Include only context needed to understand the plan. Do not document the repository generally.
 
-### Layer 1: Product brief
+## Technical Design
 
-Include only the sections the feature needs:
+Describe the important technical shape of the solution.
 
-1. **Status and outcome** — the current plan state, observable end state, and why it matters.
-2. **Scope** — precise in-scope and out-of-scope boundaries.
-3. **Product and technical contracts** — behavior, data rules, ownership, security, failure behavior, compatibility, and constraints implementation must preserve.
-4. **Decisions and adaptations** — material choices, departures from source material, and production-versus-reusability tradeoffs. Omit when there are none.
-5. **Architecture at a glance** — a compact boundary or data-flow view when it materially clarifies ownership or dependencies.
+Capture the contracts, boundaries, structure, behaviors, and technical choices that should be understood or agreed on before implementation. Focus on decisions that materially constrain the implementation rather than documenting every technical detail.
 
-Keep private implementation structure out of the brief. Name files, helpers, component splits, or test layouts only when they define ownership or prevent a plausible mistake. Contracts are fixed; private structure left unspecified remains executor discretion.
+Use whichever of the following subsections are useful. Omit those that do not add meaningful information.
 
-### Layer 2: Execution outline
+### Data & Contracts
 
-Write dependency-ordered product slices. Each slice contains:
+Describe important changes to persistent data, entities, domain models, API payloads, events, configuration, or other data contracts.
 
-1. an outcome describing the coherent capability completed by the slice;
-2. concrete, ordered steps describing what the agent will build;
-3. focused verification that proves the slice outcome when an incremental check has regression value.
+Capture significant fields, relationships, constraints, and ownership. Show complete contract shapes when they are useful for reviewing or unambiguously defining the design; otherwise summarize them.
 
-Each slice should leave the repository in a reviewable state. Keep behavior that only gains value together in one slice, and place shared foundations before their consumers.
+Avoid reproducing incidental or unchanged schema details.
 
-Use exact paths, commands, interfaces, migrations, and dependencies when investigation confirms them and the detail guides implementation. Leave private structure to the executor. Mark necessary discoveries instead of inventing details. Add local guardrails only where they prevent a non-obvious mistake.
+### Interfaces
 
-End with compact **Common traps** and **Quality gates** sections when applicable. Common traps capture mistakes not already clear from contracts or slices. Quality gates contain repository-required checks and feature-specific review without duplicating slice verification.
+Describe important public or architectural interfaces such as service boundaries, classes, functions, protocols, or extension points.
 
-### Specifications and source material
+When an interface is central to the design, show its complete proposed shape so the reader can review exactly what implementation will expose. This may include method signatures, parameters, return types, important properties, and relevant type relationships.
 
-Delegate dense contracts to a linked repository specification when that is safer than copying them. State exactly what the source owns, such as schema details, field limits, or UI copy, and restate only what must remain visible for safe sequencing. The plan's explicit decisions prevail on conflict.
+Use exact interface definitions where they clarify the design, not merely abbreviated examples. Avoid method bodies, private helpers, and APIs that do not materially affect the architecture.
 
-### Testing boundary
+### Structure
 
-Plan automation where it has specific regression value: transformations, state transitions, authorization, persistence invariants, migrations, integration failures, and recovery. Prefer focused unit or integration tests at the behavior's natural boundary.
+Give a quick picture of relevant code organization after the change.
 
-Assign rendered screens and wording to human review unless automation protects behavior beyond restating markup. Include component, UI-copy, source-inspection, or browser tests only when the feature gives them a concrete advantage.
+Use a compact directory or file tree when helpful. Show only structurally meaningful files and directories rather than an exhaustive list of touched files.
 
-This stage is complete when every in-scope contract is owned by a slice and has an appropriate automated or human verification path.
+### Behaviors & Flows
 
-## 5. Audit and write
+Describe important routes, actions, state transitions, data flows, or control flows introduced or changed by the implementation.
 
-Before finishing:
+Focus on externally visible behavior and interactions between important components.
 
-1. Check that outcome, scope, contracts, slices, testing, and quality gates agree.
-2. Confirm sequencing is feasible, links resolve, referenced repository details exist, and uncertain details are labeled.
-3. Prune prose that neither changes implementation behavior nor prevents a plausible mistake.
-4. Write the plan and only its repository-mandated planning companions; preserve implementation files.
+### Technical Choices
 
-The artifact is approval-ready when an approver can identify the commitment and material decisions quickly, and an implementation agent can execute every slice without inventing a contract or missing an in-scope requirement.
+Record significant implementation choices such as new libraries, framework features, infrastructure, persistence strategies, or notable decisions to reuse existing mechanisms.
+
+Include brief rationale when the choice is not obvious.
+
+## Implementation Slices
+
+Break the implementation into a small number of coherent slices.
+
+Each slice should represent a meaningful unit of the change that could reasonably be handed to a fresh implementation agent.
+
+For each slice:
+
+* give it a descriptive, outcome-oriented name;
+* briefly state what the slice accomplishes;
+* describe the meaningful implementation steps in logical order;
+* mention relevant modules, components, or code areas where useful;
+* preserve the technical design and boundaries established above;
+* note dependencies on other slices when they are not obvious.
+
+Avoid line-by-line edits, exhaustive file lists, and instructions for routine coding decisions.
+
+Prefer slices organized around coherent behavior or responsibilities rather than generic layers such as "backend", "frontend", and "tests".
+
+## Validation
+
+Briefly describe the important behaviors that should be verified after implementation.
+
+Focus on what needs to be demonstrated rather than exact commands or an exhaustive test plan.
+
+## Open Questions
+
+Include only when unresolved questions or meaningful uncertainties remain.
+
+Omit this section when there are none.
+
+Keep the overall plan proportional to the size and complexity of the change. Optimize for readability and implementation usefulness rather than completeness for its own sake.
