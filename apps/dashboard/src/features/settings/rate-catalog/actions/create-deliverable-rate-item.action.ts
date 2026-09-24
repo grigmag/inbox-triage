@@ -1,6 +1,6 @@
 'use server';
 
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { requireUser } from '@/server/auth';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import { db } from '@/server/db';
@@ -17,7 +17,9 @@ import {
 
 export async function createDeliverableRateItemAction(
   input: unknown,
-): Promise<ActionResult<DeliverableRateItemDto, DeliverableRateItemField>> {
+): Promise<
+  MutationActionResult<DeliverableRateItemDto, DeliverableRateItemField>
+> {
   await requireUser();
 
   const parsed = deliverableRateItemInputSchema.safeParse(input);

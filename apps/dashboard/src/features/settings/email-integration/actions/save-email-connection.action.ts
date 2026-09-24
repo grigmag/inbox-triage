@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { routes } from '@/config/routes';
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import { requireUser } from '@/server/auth';
 import {
@@ -18,7 +18,7 @@ import {
 const SAVE_FAILURE_MESSAGE =
   'Unable to save the email connection. Please try again.';
 
-export type SaveEmailConnectionActionResult = ActionResult<
+export type SaveEmailConnectionActionResult = MutationActionResult<
   null,
   keyof EmailConnectionInput
 >;

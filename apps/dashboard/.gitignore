@@ -20,6 +20,9 @@
 # production
 /build
 
+# AI prompt evaluation reports
+/.evals/
+
 # misc
 .DS_Store
 *.pem

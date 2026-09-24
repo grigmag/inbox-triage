@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@inbox-triage/ui';
 import { useState } from 'react';
-import type { FieldErrors } from '@/lib/actions/action-result';
+import type { FieldErrors } from '@/lib/actions/mutation-action-result';
 import { createAddonRateItemAction } from '../actions/create-addon-rate-item.action';
 import { editAddonRateItemAction } from '../actions/edit-addon-rate-item.action';
 import type { AddonRateItemDto } from '../dto/addon-rate-item.dto';

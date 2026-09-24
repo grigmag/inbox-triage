@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { FieldErrors } from '@/lib/actions/action-result';
+import type { FieldErrors } from '@/lib/actions/mutation-action-result';
 
 /**
  * Keeps the first Zod message per top-level string field, optionally filtering

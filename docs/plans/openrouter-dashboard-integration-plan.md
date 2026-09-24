@@ -142,7 +142,7 @@ pnpm --filter @inbox-triage/dashboard smoke:openrouter
 
 The script must:
 
-1. refuse to run unless `OPENROUTER_ALLOW_BILLABLE_SMOKE_TEST=true`;
+1. refuse to run unless `OPENROUTER_ALLOW_BILLABLE_REQUESTS=true`;
 2. load the configured model through `apps/dashboard/src/server/ai.ts`;
 3. announce before generation that the command makes one billable request;
 4. call AI SDK `generateText` with one short, non-sensitive prompt;

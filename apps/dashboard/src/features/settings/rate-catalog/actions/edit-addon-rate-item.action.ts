@@ -1,6 +1,6 @@
 'use server';
 
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { requireUser } from '@/server/auth';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import type { AddonRateItemDto } from '../dto/addon-rate-item.dto';
@@ -18,7 +18,7 @@ import { catalogItemIdSchema } from '../validation/catalog.schema';
 export async function editAddonRateItemAction(
   id: unknown,
   input: unknown,
-): Promise<ActionResult<AddonRateItemDto, 'id' | AddonRateItemField>> {
+): Promise<MutationActionResult<AddonRateItemDto, 'id' | AddonRateItemField>> {
   await requireUser();
 
   const parsedId = catalogItemIdSchema.safeParse(id);

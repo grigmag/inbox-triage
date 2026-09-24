@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '@inbox-triage/ui';
 import { useState } from 'react';
-import type { FieldErrors } from '@/lib/actions/action-result';
+import type { FieldErrors } from '@/lib/actions/mutation-action-result';
 import { createDeliverableRateItemAction } from '../actions/create-deliverable-rate-item.action';
 import { editDeliverableRateItemAction } from '../actions/edit-deliverable-rate-item.action';
 import type { DeliverableRateItemDto } from '../dto/deliverable-rate-item.dto';

@@ -138,7 +138,9 @@ export function EmailsInbox() {
           aria-label="Email contents"
           className="min-h-0 min-w-0 overflow-y-auto p-6 [overflow-anchor:none]"
         >
+          {/* Remounts per loaded message, which also discards its review state. */}
           <EmailDetail
+            key={state.messageRequestId}
             message={state.message}
             loading={state.detail.loading}
             error={state.detail.error}

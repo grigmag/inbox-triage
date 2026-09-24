@@ -10,7 +10,7 @@ import {
   InputGroupInput,
 } from '@inbox-triage/ui';
 import { useState } from 'react';
-import type { FieldErrors } from '@/lib/actions/action-result';
+import type { FieldErrors } from '@/lib/actions/mutation-action-result';
 import { createCrewRateItemAction } from '../actions/create-crew-rate-item.action';
 import { editCrewRateItemAction } from '../actions/edit-crew-rate-item.action';
 import type { CrewRateItemDto } from '../dto/crew-rate-item.dto';

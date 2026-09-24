@@ -2,14 +2,14 @@
 
 import { revalidatePath } from 'next/cache';
 import { routes } from '@/config/routes';
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { requireUser } from '@/server/auth';
 import { emailConnectionRepository } from '../repositories/email-connection.repository';
 
 const DISCONNECT_FAILURE_MESSAGE =
   'Unable to disconnect the email connection. Please try again.';
 
-export type DisconnectEmailConnectionActionResult = ActionResult<null>;
+export type DisconnectEmailConnectionActionResult = MutationActionResult<null>;
 
 export async function disconnectEmailConnectionAction(): Promise<DisconnectEmailConnectionActionResult> {
   const user = await requireUser();

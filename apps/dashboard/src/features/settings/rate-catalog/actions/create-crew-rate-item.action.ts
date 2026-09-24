@@ -1,6 +1,6 @@
 'use server';
 
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { requireUser } from '@/server/auth';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import { db } from '@/server/db';
@@ -17,7 +17,7 @@ import {
 
 export async function createCrewRateItemAction(
   input: unknown,
-): Promise<ActionResult<CrewRateItemDto, CrewRateItemField>> {
+): Promise<MutationActionResult<CrewRateItemDto, CrewRateItemField>> {
   await requireUser();
 
   const parsed = crewRateItemInputSchema.safeParse(input);

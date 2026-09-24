@@ -1,6 +1,6 @@
 'use server';
 
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { requireUser } from '@/server/auth';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import type { RateItemDto } from '../dto/rate-item.dto';
@@ -14,7 +14,7 @@ import {
 
 export async function setCatalogItemActiveAction(
   input: unknown,
-): Promise<ActionResult<RateItemDto, keyof SetCatalogItemActiveInput>> {
+): Promise<MutationActionResult<RateItemDto, keyof SetCatalogItemActiveInput>> {
   await requireUser();
 
   const parsed = setCatalogItemActiveInputSchema.safeParse(input);

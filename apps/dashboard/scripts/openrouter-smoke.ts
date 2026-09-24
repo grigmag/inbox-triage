@@ -3,7 +3,7 @@ import { generateText } from 'ai';
 
 import {
   BILLING_GUARD,
-  allowsBillableSmokeTest,
+  allowsBillableRequests,
 } from './openrouter-billing-guard';
 
 const TIMEOUT_MS = 30_000;
@@ -30,7 +30,7 @@ async function runSmokeTest() {
 }
 
 async function main() {
-  if (!allowsBillableSmokeTest(process.env[BILLING_GUARD])) {
+  if (!allowsBillableRequests(process.env[BILLING_GUARD])) {
     console.error(
       `Refusing to make a billable request. Set ${BILLING_GUARD}=true to confirm this smoke test.`,
     );

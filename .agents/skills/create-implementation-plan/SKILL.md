@@ -88,7 +88,7 @@ For each slice:
 
 * give it a descriptive, outcome-oriented name;
 * briefly state what the slice accomplishes;
-* describe the meaningful implementation steps in logical order;
+* describe the meaningful implementation steps in logical order, using a numbered list (`1.`, `2.`, etc.);
 * mention relevant modules, components, or code areas where useful;
 * preserve the technical design and boundaries established above;
 * note dependencies on other slices when they are not obvious.

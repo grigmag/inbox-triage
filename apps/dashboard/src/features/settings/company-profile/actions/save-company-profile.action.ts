@@ -1,6 +1,6 @@
 'use server';
 
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { requireUser } from '@/server/auth';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import { revalidatePath } from 'next/cache';
@@ -14,7 +14,7 @@ import {
 
 export async function saveCompanyProfileAction(
   input: unknown,
-): Promise<ActionResult<CompanyProfileDto, keyof CompanyProfileInput>> {
+): Promise<MutationActionResult<CompanyProfileDto, keyof CompanyProfileInput>> {
   await requireUser();
 
   const parsed = companyProfileInputSchema.safeParse(input);

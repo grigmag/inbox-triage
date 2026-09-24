@@ -1,6 +1,14 @@
 export type FieldErrors<Field extends string> = Partial<Record<Field, string>>;
 
-export type ActionResult<
+/**
+ * Result of a validated mutation server action: field-level validation errors,
+ * not-found and conflict outcomes, and a success announcement.
+ *
+ * This is not a general action result. Actions with a different contract, such
+ * as mailbox reads, define their own status union with the same `status`
+ * names instead of extending this type.
+ */
+export type MutationActionResult<
   Data,
   Field extends string = string,
   Announcement = string,

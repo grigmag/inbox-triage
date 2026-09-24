@@ -52,12 +52,18 @@ decisions belong in the relevant implementation plan.
   presentation of blocking validation and recoverable errors.
 - Destructive actions require an explicit confirmation surface before the
   mutation begins.
+- Status colors use theme tokens. `destructive` marks errors and blocking
+  states. `warning` marks states that need attention but do not block, such as
+  missing or ambiguous information. The `warning` token is a project addition
+  to the shadcn theme in `packages/ui/src/styles/globals.css`.
 
 ## Validated server actions
 
 - Shared serializable action-result types live in `apps/dashboard/src/lib/actions`.
   Feature modules define their own field unions and result aliases from those
   shared types.
+- Validated mutations return `MutationActionResult`. Other actions define their
+  own result union beside the action.
 - Validated mutations use explicit procedural control flow: authenticate and
   authorize, parse untrusted input with the feature's Zod schema, return field
   errors, perform the mutation, and translate expected or generic failures.

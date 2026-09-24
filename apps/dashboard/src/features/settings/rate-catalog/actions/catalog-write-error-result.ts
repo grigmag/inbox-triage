@@ -1,4 +1,4 @@
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import {
   CatalogItemNotFoundError,
   CatalogNameConflictError,
@@ -6,7 +6,7 @@ import {
 import { RATE_CATALOG_VALIDATION_MESSAGES } from '../validation/validation-messages';
 
 type CatalogWriteErrorResult = Extract<
-  ActionResult<never, 'name'>,
+  MutationActionResult<never, 'name'>,
   { status: 'conflict' | 'not_found' }
 >;
 

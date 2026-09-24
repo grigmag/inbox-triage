@@ -1,6 +1,6 @@
 'use server';
 
-import type { ActionResult } from '@/lib/actions/action-result';
+import type { MutationActionResult } from '@/lib/actions/mutation-action-result';
 import { requireUser } from '@/server/auth';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import type { RateItemDto } from '../dto/rate-item.dto';
@@ -15,7 +15,9 @@ import {
 
 export async function reorderCatalogAction(
   input: unknown,
-): Promise<ActionResult<readonly RateItemDto[], keyof ReorderCatalogInput>> {
+): Promise<
+  MutationActionResult<readonly RateItemDto[], keyof ReorderCatalogInput>
+> {
   await requireUser();
 
   const parsed = reorderCatalogInputSchema.safeParse(input);
