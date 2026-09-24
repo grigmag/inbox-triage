@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createEmailClient } from './create-email-client';
+import { createMailboxReader } from './create-mailbox-reader';
 
 const mocks = vi.hoisted(() => ({ transport: vi.fn() }));
 vi.mock('./imap/imapflow-transport', () => ({
@@ -10,7 +10,7 @@ vi.mock('./imap/imapflow-transport', () => ({
   },
 }));
 
-describe('createEmailClient endpoint configuration', () => {
+describe('createMailboxReader endpoint configuration', () => {
   beforeEach(() => vi.clearAllMocks());
   it.each([
     'imap.zoho.com',
@@ -18,7 +18,7 @@ describe('createEmailClient endpoint configuration', () => {
     'IMAP.arbitrary.example',
     'host with spaces',
   ])('passes %s to the transport with fixed TLS and port', (imapHost) => {
-    createEmailClient({
+    createMailboxReader({
       provider: 'zoho',
       imapHost,
       credentials: {

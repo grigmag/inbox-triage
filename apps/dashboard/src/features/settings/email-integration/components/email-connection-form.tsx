@@ -35,6 +35,7 @@ import { emailConnectionInputSchema } from '../validation/email-connection-input
 type EmailConnectionFormValues = {
   email: string;
   imapHost: string;
+  smtpHost: string;
   password: string;
 };
 
@@ -45,7 +46,12 @@ type EmailConnectionFormProps = {
   connection: EmailConnectionSettingsDto | null;
 };
 
-const EMAIL_CONNECTION_FIELDS = ['email', 'imapHost', 'password'] as const;
+const EMAIL_CONNECTION_FIELDS = [
+  'email',
+  'imapHost',
+  'smtpHost',
+  'password',
+] as const;
 const SAVE_FAILURE_MESSAGE =
   'Unable to save the email connection. Please try again.';
 
@@ -55,6 +61,7 @@ function initialValues(
   return {
     email: connection?.username ?? '',
     imapHost: connection?.imapHost ?? 'imap.zoho.com',
+    smtpHost: connection?.smtpHost ?? 'smtp.zoho.com',
     password: '',
   };
 }
@@ -66,6 +73,9 @@ export function EmailConnectionForm({ connection }: EmailConnectionFormProps) {
   );
   const [savedImapHost, setSavedImapHost] = useState(
     connection?.imapHost ?? null,
+  );
+  const [savedSmtpHost, setSavedSmtpHost] = useState(
+    connection?.smtpHost ?? null,
   );
   const [hasConnection, setHasConnection] = useState(connection !== null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -82,6 +92,7 @@ export function EmailConnectionForm({ connection }: EmailConnectionFormProps) {
   const hasChanges = hasConnection
     ? normalizedEmail !== savedEmail ||
       (parsed.success ? parsed.data.imapHost : null) !== savedImapHost ||
+      (parsed.success ? parsed.data.smtpHost : null) !== savedSmtpHost ||
       values.password !== ''
     : parsed.success && values.password !== '';
   const canSave = parsed.success && hasChanges && !isPending;
@@ -126,9 +137,11 @@ export function EmailConnectionForm({ connection }: EmailConnectionFormProps) {
           setValues({
             email: parsed.data.email,
             imapHost: parsed.data.imapHost,
+            smtpHost: parsed.data.smtpHost,
             password: '',
           });
           setSavedImapHost(parsed.data.imapHost);
+          setSavedSmtpHost(parsed.data.smtpHost);
           setSavedEmail(parsed.data.email);
           setHasConnection(true);
           setIsPasswordVisible(false);
@@ -152,6 +165,7 @@ export function EmailConnectionForm({ connection }: EmailConnectionFormProps) {
   function handleDisconnected(announcement: string) {
     setValues(initialValues(null));
     setSavedImapHost(null);
+    setSavedSmtpHost(null);
     setSavedEmail(null);
     setHasConnection(false);
     setIsPasswordVisible(false);
@@ -173,7 +187,7 @@ export function EmailConnectionForm({ connection }: EmailConnectionFormProps) {
           <CardTitle>Email connection</CardTitle>
 
           <CardDescription>
-            Save the Zoho mailbox used for email integration.
+            Save the Zoho mailbox used for incoming and outgoing email.
           </CardDescription>
         </CardHeader>
 
@@ -259,6 +273,55 @@ export function EmailConnectionForm({ connection }: EmailConnectionFormProps) {
 
             <Field
               data-disabled={isPending || undefined}
+              data-invalid={!!fieldErrors.smtpHost || undefined}
+            >
+              <FieldLabel htmlFor="email-connection-smtp-host">
+                SMTP host
+              </FieldLabel>
+
+              <Input
+                id="email-connection-smtp-host"
+                name="smtpHost"
+                type="text"
+                value={values.smtpHost}
+                disabled={isPending}
+                aria-invalid={!!fieldErrors.smtpHost || undefined}
+                aria-describedby={
+                  fieldErrors.smtpHost
+                    ? 'email-connection-smtp-host-help email-connection-smtp-host-error'
+                    : 'email-connection-smtp-host-help'
+                }
+                onChange={(event) =>
+                  handleChange('smtpHost', event.target.value)
+                }
+              />
+
+              {fieldErrors.smtpHost ? (
+                <FieldError id="email-connection-smtp-host-error">
+                  {fieldErrors.smtpHost}
+                </FieldError>
+              ) : null}
+
+              <FieldDescription id="email-connection-smtp-host-help">
+                <span>
+                  Copy the outgoing SMTP server from the same Zoho Server
+                  Configuration Details page. InboxTriage uses port 465 with
+                  TLS.{' '}
+                </span>
+
+                <a
+                  href="https://www.zoho.com/mail/help/zoho-smtp.html"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline"
+                >
+                  Zoho SMTP configuration guide
+                </a>
+              </FieldDescription>
+            </Field>
+
+            <Field
+              data-disabled={isPending || undefined}
               data-invalid={!!fieldErrors.password || undefined}
             >
               <FieldLabel htmlFor="email-connection-password">
@@ -315,7 +378,7 @@ export function EmailConnectionForm({ connection }: EmailConnectionFormProps) {
               <FieldDescription id="email-connection-password-help">
                 {hasConnection
                   ? 'Password saved. Enter a new password to replace it.'
-                  : 'Use the password Zoho accepts for IMAP.'}
+                  : 'Use the password Zoho accepts for IMAP and SMTP.'}
               </FieldDescription>
             </Field>
           </FieldGroup>

@@ -8,6 +8,7 @@ type SaveEmailConnectionInput = {
   provider: 'zoho';
   username: string;
   imapHost: string;
+  smtpHost: string;
   password: string;
 };
 
@@ -20,6 +21,7 @@ export async function saveEmailConnectionUseCase(
 ): Promise<SaveEmailConnectionOutcome> {
   const username = input.username.trim().toLowerCase();
   const imapHost = input.imapHost.trim();
+  const smtpHost = input.smtpHost.trim();
   const existing = await emailConnectionRepository.findForUser(input.userId);
 
   if (!existing && input.password === '') {
@@ -30,7 +32,8 @@ export async function saveEmailConnectionUseCase(
     existing &&
     input.password === '' &&
     existing.username === username &&
-    existing.imapHost === imapHost
+    existing.imapHost === imapHost &&
+    existing.smtpHost === smtpHost
   ) {
     return 'unchanged';
   }
@@ -49,6 +52,7 @@ export async function saveEmailConnectionUseCase(
     provider: input.provider,
     username,
     imapHost,
+    smtpHost,
     encryptedPassword,
   });
 

@@ -3,8 +3,9 @@ import type {
   EmailSummary,
   MessageRef,
 } from './email-message.types';
+import type { EmailCredentials } from './email-credentials.types';
 
-export interface EmailClient {
+export interface MailboxReader {
   listInbox(options?: ListInboxOptions): Promise<EmailPage>;
   /** Returns every newer inbox summary, newest first, from one UID snapshot. */
   listInboxNewerThan(ref: MessageRef): Promise<EmailSummary[]>;
@@ -26,11 +27,8 @@ export interface EmailPage {
   nextPageToken: string | null;
 }
 
-export interface EmailClientConfig {
+export interface MailboxReaderConfig {
   provider: 'zoho';
   imapHost: string;
-  credentials: {
-    username: string;
-    password: string;
-  };
+  credentials: EmailCredentials;
 }

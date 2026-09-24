@@ -1,4 +1,4 @@
-import { EmailClientError } from '../email-client-error';
+import { MailboxReaderError } from '../mailbox-reader-error';
 
 export interface PageTokenValue {
   uidValidity: bigint;
@@ -43,7 +43,7 @@ export function parsePageToken(token: string): PageTokenValue {
       beforeUid: Number(value.beforeUid),
     };
   } catch {
-    throw new EmailClientError('INVALID_PAGE_TOKEN');
+    throw new MailboxReaderError('INVALID_PAGE_TOKEN');
   }
 }
 

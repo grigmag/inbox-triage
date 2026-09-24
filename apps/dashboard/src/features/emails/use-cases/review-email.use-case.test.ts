@@ -11,7 +11,7 @@ import { reviewEmailUseCase } from './review-email.use-case';
 const mocks = vi.hoisted(() => ({
   findForUser: vi.fn(),
   decrypt: vi.fn(),
-  createEmailClient: vi.fn(),
+  createMailboxReader: vi.fn(),
   getMessage: vi.fn(),
   close: vi.fn(),
   evaluateBrief: vi.fn(),
@@ -28,7 +28,7 @@ vi.mock('@/lib/crypto/crypto.service', () => ({
   cryptoService: { decryptSignedString: mocks.decrypt },
 }));
 vi.mock('@inbox-triage/email', () => ({
-  createEmailClient: mocks.createEmailClient,
+  createMailboxReader: mocks.createMailboxReader,
 }));
 vi.mock('../brief-review/evaluate-brief', () => ({
   evaluateBrief: mocks.evaluateBrief,
@@ -38,6 +38,8 @@ const input = { userId: 'local-user-id', messageRef: 'opaque-message-ref' };
 const message = {
   ref: 'opaque-message-ref',
   messageId: 'private-message-id',
+  inReplyTo: [],
+  references: [],
   from: [{ name: 'Sender', address: 'sender@example.com' }],
   to: [{ name: null, address: 'studio@example.com' }],
   cc: [],
@@ -62,7 +64,7 @@ beforeEach(() => {
     encryptedPassword: 'encrypted-password',
   });
   mocks.decrypt.mockReturnValue('plaintext password');
-  mocks.createEmailClient.mockReturnValue({
+  mocks.createMailboxReader.mockReturnValue({
     getMessage: mocks.getMessage,
     close: mocks.close,
   });

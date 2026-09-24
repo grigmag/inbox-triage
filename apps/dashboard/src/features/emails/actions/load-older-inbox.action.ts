@@ -18,8 +18,8 @@ export async function loadOlderInboxAction(
   }
 
   try {
-    return await readMailbox(user.id, async (client) => {
-      const page = await client.listInbox({ limit: 20, pageToken });
+    return await readMailbox(user.id, async (reader) => {
+      const page = await reader.listInbox({ limit: 20, pageToken });
       return {
         messages: page.messages.map(toEmailSummaryDto),
         nextPageToken: page.nextPageToken,

@@ -15,7 +15,11 @@ export default async function EmailSettingsPage() {
   const user = await requireUser();
   const connection = await emailConnectionRepository.findForUser(user.id);
   const connectionDto: EmailConnectionSettingsDto | null = connection
-    ? { username: connection.username, imapHost: connection.imapHost }
+    ? {
+        username: connection.username,
+        imapHost: connection.imapHost,
+        smtpHost: connection.smtpHost,
+      }
     : null;
 
   return (

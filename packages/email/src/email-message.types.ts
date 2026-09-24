@@ -20,6 +20,8 @@ export interface EmailSummary {
 
 export interface EmailMessage extends EmailSummary {
   messageId: string | null;
+  inReplyTo: string[];
+  references: string[];
   to: EmailAddress[];
   cc: EmailAddress[];
   replyTo: EmailAddress[];

@@ -26,6 +26,16 @@ decisions belong in the relevant implementation plan.
 - Avoid barrel files such as re-export-only `index.ts` modules in feature code.
   Import directly from the module that defines the value or type.
 
+## Code style
+
+- Do not write `return await ...` or place `await` inside a returned
+  expression. Assign the awaited value to a named constant, then return it:
+
+  ```ts
+  const data = await runOnce(config, operation);
+  return data;
+  ```
+
 ## Authentication boundaries
 
 - The authenticated route-group layout calls `requireUser()` before rendering

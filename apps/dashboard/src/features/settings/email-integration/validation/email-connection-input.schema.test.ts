@@ -13,10 +13,12 @@ describe('emailConnectionInputSchema', () => {
         email: '  USER@Example.COM  ',
         password,
         imapHost: 'imap.zoho.com',
+        smtpHost: '  SMTP.Zoho.EU  ',
       }),
     ).toEqual({
       email: 'user@example.com',
       imapHost: 'imap.zoho.com',
+      smtpHost: 'SMTP.Zoho.EU',
       password,
     });
   });
@@ -27,6 +29,7 @@ describe('emailConnectionInputSchema', () => {
         email: 'user@example.com',
         password: '',
         imapHost: 'imap.zoho.com',
+        smtpHost: 'smtp.zoho.com',
       }).success,
     ).toBe(true);
   });
@@ -38,6 +41,7 @@ describe('emailConnectionInputSchema', () => {
         emailConnectionInputSchema.safeParse({
           email,
           imapHost: 'imap.zoho.com',
+          smtpHost: 'smtp.zoho.com',
           password: 'secret',
         }).success,
       ).toBe(false);
@@ -53,6 +57,7 @@ describe('emailConnectionInputSchema', () => {
       emailConnectionInputSchema.safeParse({
         email,
         imapHost: 'imap.zoho.com',
+        smtpHost: 'smtp.zoho.com',
         password: 'secret',
       }).success,
     ).toBe(true);
@@ -61,6 +66,7 @@ describe('emailConnectionInputSchema', () => {
         email: `a${email}`,
         password: 'secret',
         imapHost: 'imap.zoho.com',
+        smtpHost: 'smtp.zoho.com',
       }).success,
     ).toBe(false);
   });
@@ -79,6 +85,7 @@ describe('IMAP host validation', () => {
         email: 'user@example.com',
         password: '',
         imapHost: `  ${imapHost}  `,
+        smtpHost: 'smtp.zoho.com',
       }).imapHost,
     ).toBe(imapHost);
   });
@@ -89,6 +96,7 @@ describe('IMAP host validation', () => {
         email: 'user@example.com',
         password: '',
         imapHost,
+        smtpHost: 'smtp.zoho.com',
       });
       expect(result.success).toBe(false);
       if (!result.success)
@@ -96,6 +104,45 @@ describe('IMAP host validation', () => {
           expect.objectContaining({
             path: ['imapHost'],
             message: 'Enter an IMAP host.',
+          }),
+        ]);
+    },
+  );
+});
+
+describe('SMTP host validation', () => {
+  it.each([
+    'smtp.zoho.eu',
+    'SMTP.Example.COM',
+    'https://arbitrary host:123/path',
+    '127.0.0.1',
+    'host with spaces',
+  ])('accepts unrestricted nonempty text: %s', (smtpHost) => {
+    expect(
+      emailConnectionInputSchema.parse({
+        email: 'user@example.com',
+        imapHost: 'imap.zoho.com',
+        password: '',
+        smtpHost: `  ${smtpHost}  `,
+      }).smtpHost,
+    ).toBe(smtpHost);
+  });
+
+  it.each(['', ' \t\n', undefined, null, 465])(
+    'rejects an empty or non-string host: %s',
+    (smtpHost) => {
+      const result = emailConnectionInputSchema.safeParse({
+        email: 'user@example.com',
+        imapHost: 'imap.zoho.com',
+        password: '',
+        smtpHost,
+      });
+      expect(result.success).toBe(false);
+      if (!result.success)
+        expect(result.error.issues).toEqual([
+          expect.objectContaining({
+            path: ['smtpHost'],
+            message: 'Enter an SMTP host.',
           }),
         ]);
     },

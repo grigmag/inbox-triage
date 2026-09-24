@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EmailClientError } from '../email-client-error';
+import { MailboxReaderError } from '../mailbox-reader-error';
 import { createMessageRef, parseMessageRef } from './message-ref';
 
 describe('message references', () => {
@@ -18,7 +18,7 @@ describe('message references', () => {
     ).toString('base64url'),
   ])('rejects an invalid reference without exposing its contents', (ref) => {
     expect(() => parseMessageRef(ref)).toThrowError(
-      expect.objectContaining<Partial<EmailClientError>>({
+      expect.objectContaining<Partial<MailboxReaderError>>({
         code: 'INVALID_MESSAGE_REF',
         message: 'The message reference is invalid.',
       }),

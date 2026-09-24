@@ -26,8 +26,8 @@ export async function reviewEmailUseCase(input: {
   userId: string;
   messageRef: string;
 }): Promise<ReviewEmailResult> {
-  const mailbox = await readMailbox(input.userId, (client) =>
-    client.getMessage(input.messageRef),
+  const mailbox = await readMailbox(input.userId, (reader) =>
+    reader.getMessage(input.messageRef),
   ).catch(() => {
     throw new BriefReviewMailboxError();
   });

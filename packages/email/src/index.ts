@@ -1,14 +1,28 @@
 import 'server-only';
 
-export { createEmailClient } from './create-email-client';
-export { EmailClientError } from './email-client-error';
-export type { EmailClientErrorCode } from './email-client-error';
+export { createMailboxReader } from './create-mailbox-reader';
+export { createEmailSender } from './create-email-sender';
+export { EmailSenderError } from './email-sender-error';
+export type { EmailSenderErrorCode } from './email-sender-error';
+export { MailboxReaderError } from './mailbox-reader-error';
 export type {
-  EmailClient,
-  EmailClientConfig,
+  MailboxReaderErrorCode,
+  MailboxReaderErrorDiagnostic,
+} from './mailbox-reader-error';
+export type { EmailCredentials } from './email-credentials.types';
+export type {
+  EmailSender,
+  EmailSenderConfig,
+  ReplyEmailInput,
+  SendEmailInput,
+  SendEmailResult,
+} from './email-sender.types';
+export type {
+  MailboxReader,
+  MailboxReaderConfig,
   EmailPage,
   ListInboxOptions,
-} from './email-client.types';
+} from './mailbox-reader.types';
 export type {
   EmailAddress,
   EmailMessage,

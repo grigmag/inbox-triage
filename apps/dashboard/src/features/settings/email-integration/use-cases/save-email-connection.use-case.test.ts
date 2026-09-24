@@ -24,6 +24,7 @@ describe('saveEmailConnectionUseCase', () => {
     provider: 'zoho' as const,
     username: ' User@Example.COM ',
     imapHost: 'imap.zoho.com',
+    smtpHost: 'smtp.zoho.com',
     password: '  secret κωδικός\n',
   };
 
@@ -46,6 +47,7 @@ describe('saveEmailConnectionUseCase', () => {
       userId: input.userId,
       provider: 'zoho',
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       username: 'user@example.com',
       encryptedPassword: expect.any(String),
     });
@@ -59,6 +61,7 @@ describe('saveEmailConnectionUseCase', () => {
   it('reuses the saved ciphertext when the password is blank', async () => {
     repository.findForUser.mockResolvedValue({
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       username: 'user@example.com',
       encryptedPassword: 'existing-ciphertext',
     });
@@ -72,6 +75,7 @@ describe('saveEmailConnectionUseCase', () => {
   it('updates the username while retaining the saved ciphertext', async () => {
     repository.findForUser.mockResolvedValue({
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       username: 'old@example.com',
       encryptedPassword: 'existing-ciphertext',
     });
@@ -84,6 +88,7 @@ describe('saveEmailConnectionUseCase', () => {
       userId: input.userId,
       provider: 'zoho',
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       username: 'user@example.com',
       encryptedPassword: 'existing-ciphertext',
     });
@@ -93,6 +98,7 @@ describe('saveEmailConnectionUseCase', () => {
     repository.findForUser.mockResolvedValue({
       username: 'user@example.com',
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       encryptedPassword: 'existing-ciphertext',
     });
     const encrypt = vi.spyOn(cryptoService, 'encryptAndSignString');
@@ -108,6 +114,34 @@ describe('saveEmailConnectionUseCase', () => {
       provider: 'zoho',
       username: 'user@example.com',
       imapHost: 'IMAP.zoho.eu',
+      smtpHost: 'smtp.zoho.com',
+      encryptedPassword: 'existing-ciphertext',
+    });
+    expect(encrypt).not.toHaveBeenCalled();
+  });
+
+  it('saves an SMTP-host-only change and preserves the ciphertext', async () => {
+    repository.findForUser.mockResolvedValue({
+      username: 'user@example.com',
+      imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
+      encryptedPassword: 'existing-ciphertext',
+    });
+    const encrypt = vi.spyOn(cryptoService, 'encryptAndSignString');
+
+    await expect(
+      saveEmailConnectionUseCase({
+        ...input,
+        smtpHost: '  SMTP.zoho.eu  ',
+        password: '',
+      }),
+    ).resolves.toBe('saved');
+    expect(repository.saveForUser).toHaveBeenCalledExactlyOnceWith({
+      userId: input.userId,
+      provider: 'zoho',
+      username: 'user@example.com',
+      imapHost: 'imap.zoho.com',
+      smtpHost: 'SMTP.zoho.eu',
       encryptedPassword: 'existing-ciphertext',
     });
     expect(encrypt).not.toHaveBeenCalled();
@@ -117,12 +151,14 @@ describe('saveEmailConnectionUseCase', () => {
     repository.findForUser.mockResolvedValue({
       username: 'user@example.com',
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       encryptedPassword: 'existing-ciphertext',
     });
     await expect(
       saveEmailConnectionUseCase({
         ...input,
         imapHost: '  imap.zoho.com  ',
+        smtpHost: '  smtp.zoho.com  ',
         password: '',
       }),
     ).resolves.toBe('unchanged');
@@ -132,6 +168,7 @@ describe('saveEmailConnectionUseCase', () => {
   it('replaces the ciphertext for a non-empty password', async () => {
     repository.findForUser.mockResolvedValue({
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       username: 'old@example.com',
       encryptedPassword: 'existing-ciphertext',
     });

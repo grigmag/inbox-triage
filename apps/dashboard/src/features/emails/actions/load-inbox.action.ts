@@ -12,8 +12,8 @@ export async function loadInboxAction(): Promise<MailboxResult<EmailPageDto>> {
   const user = await requireUser();
 
   try {
-    return await readMailbox(user.id, async (client) => {
-      const page = await client.listInbox({ limit: 20 });
+    return await readMailbox(user.id, async (reader) => {
+      const page = await reader.listInbox({ limit: 20 });
       return {
         messages: page.messages.map(toEmailSummaryDto),
         nextPageToken: page.nextPageToken,

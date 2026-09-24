@@ -44,6 +44,7 @@ export async function saveEmailConnectionAction(
       provider: 'zoho',
       username: parsed.data.email,
       imapHost: parsed.data.imapHost,
+      smtpHost: parsed.data.smtpHost,
       password: parsed.data.password,
     });
   } catch {

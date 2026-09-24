@@ -13,6 +13,7 @@ export const emailConnections = pgTable(
     provider: text('provider').$type<'zoho'>().notNull(),
     username: text('username').notNull(),
     imapHost: text('imap_host').notNull().default('imap.zoho.com'),
+    smtpHost: text('smtp_host').notNull().default('smtp.zoho.com'),
     encryptedPassword: text('encrypted_password').notNull(),
     ...timestamps(),
   },
@@ -31,6 +32,14 @@ export const emailConnections = pgTable(
     check(
       'email_connections_imap_host_not_empty',
       sql`${table.imapHost} <> ''`,
+    ),
+    check(
+      'email_connections_smtp_host_trimmed',
+      sql`btrim(${table.smtpHost}) = ${table.smtpHost}`,
+    ),
+    check(
+      'email_connections_smtp_host_not_empty',
+      sql`${table.smtpHost} <> ''`,
     ),
     check(
       'email_connections_encrypted_password_not_empty',

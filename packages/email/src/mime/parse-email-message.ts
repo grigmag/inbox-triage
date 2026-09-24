@@ -4,6 +4,10 @@ import type {
   EmailMessage,
   EmailSummary,
 } from '../email-message.types';
+import {
+  parseMessageIdentifiers,
+  parseSingleMessageIdentifier,
+} from './parse-message-identifiers';
 
 export async function parseEmailMessage(
   source: Uint8Array,
@@ -15,7 +19,9 @@ export async function parseEmailMessage(
 
   return {
     ...summary,
-    messageId: parsed.messageId ?? null,
+    messageId: parseSingleMessageIdentifier(parsed.messageId),
+    inReplyTo: parseMessageIdentifiers(parsed.inReplyTo),
+    references: parseMessageIdentifiers(parsed.references),
     to: normalizeAddresses(parsed.to),
     cc: normalizeAddresses(parsed.cc),
     replyTo: normalizeAddresses(parsed.replyTo),

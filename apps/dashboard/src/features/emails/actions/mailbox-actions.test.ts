@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
   requireUser: vi.fn(),
   findForUser: vi.fn(),
   decrypt: vi.fn(),
-  createEmailClient: vi.fn(),
+  createMailboxReader: vi.fn(),
   listInbox: vi.fn(),
   listInboxNewerThan: vi.fn(),
   getMessage: vi.fn(),
@@ -26,8 +26,9 @@ vi.mock(
 vi.mock('@/lib/crypto/crypto.service', () => ({
   cryptoService: { decryptSignedString: mocks.decrypt },
 }));
-vi.mock('@inbox-triage/email', () => ({
-  createEmailClient: mocks.createEmailClient,
+vi.mock('@inbox-triage/email', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@inbox-triage/email')>()),
+  createMailboxReader: mocks.createMailboxReader,
 }));
 
 const summary = {
@@ -49,6 +50,8 @@ const summaryDto = {
 const message = {
   ...summary,
   messageId: 'private-message-id',
+  inReplyTo: ['private-parent-id'],
+  references: ['private-root-id', 'private-parent-id'],
   to: [{ name: null, address: 'recipient@example.com', unused: 'private' }],
   cc: [],
   replyTo: [{ name: null, address: 'reply@example.com', unused: 'private' }],
@@ -89,6 +92,7 @@ const operations = [
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.spyOn(console, 'error').mockImplementation(() => {});
   mocks.requireUser.mockResolvedValue({ id: 'local-user-id' });
   mocks.findForUser.mockResolvedValue({
     userId: 'local-user-id',
@@ -98,7 +102,7 @@ beforeEach(() => {
     encryptedPassword: 'encrypted-password',
   });
   mocks.decrypt.mockReturnValue(' plaintext password ');
-  mocks.createEmailClient.mockReturnValue({
+  mocks.createMailboxReader.mockReturnValue({
     listInbox: mocks.listInbox,
     listInboxNewerThan: mocks.listInboxNewerThan,
     getMessage: mocks.getMessage,
@@ -119,7 +123,7 @@ describe.each(operations)('$name composition', ({ run, method, args }) => {
     expect(mocks.requireUser).toHaveBeenCalledTimes(1);
     expect(mocks.findForUser).toHaveBeenCalledExactlyOnceWith('local-user-id');
     expect(mocks.decrypt).toHaveBeenCalledExactlyOnceWith('encrypted-password');
-    expect(mocks.createEmailClient).toHaveBeenCalledExactlyOnceWith({
+    expect(mocks.createMailboxReader).toHaveBeenCalledExactlyOnceWith({
       provider: 'zoho',
       imapHost: 'imap.zoho.eu',
       credentials: {
@@ -139,11 +143,11 @@ describe.each(operations)('$name composition', ({ run, method, args }) => {
     );
   });
 
-  it('does not create a client when there is no saved connection', async () => {
+  it('does not create a mailbox reader when there is no saved connection', async () => {
     mocks.findForUser.mockResolvedValue(null);
     await expect(run()).resolves.toEqual({ status: 'noConnection' });
     expect(mocks.decrypt).not.toHaveBeenCalled();
-    expect(mocks.createEmailClient).not.toHaveBeenCalled();
+    expect(mocks.createMailboxReader).not.toHaveBeenCalled();
     expect(method).not.toHaveBeenCalled();
   });
 
@@ -152,10 +156,10 @@ describe.each(operations)('$name composition', ({ run, method, args }) => {
     mocks.requireUser.mockRejectedValue(rejection);
     await expect(run()).rejects.toBe(rejection);
     expect(mocks.findForUser).not.toHaveBeenCalled();
-    expect(mocks.createEmailClient).not.toHaveBeenCalled();
+    expect(mocks.createMailboxReader).not.toHaveBeenCalled();
   });
 
-  it.each(['findForUser', 'decrypt', 'createEmailClient'] as const)(
+  it.each(['findForUser', 'decrypt', 'createMailboxReader'] as const)(
     'hides %s failures without running an operation',
     async (stage) => {
       const error = new Error(
@@ -243,7 +247,7 @@ it('loads fresh credentials for each call using the current authenticated user',
     ['local-user-id'],
     ['other-local-user-id'],
   ]);
-  expect(mocks.createEmailClient).toHaveBeenCalledTimes(2);
+  expect(mocks.createMailboxReader).toHaveBeenCalledTimes(2);
   expect(mocks.close).toHaveBeenCalledTimes(2);
 });
 
@@ -259,7 +263,7 @@ describe.each([
       await expect(run(input as string)).resolves.toEqual(failure);
       expect(mocks.requireUser).toHaveBeenCalledTimes(1);
       expect(mocks.findForUser).not.toHaveBeenCalled();
-      expect(mocks.createEmailClient).not.toHaveBeenCalled();
+      expect(mocks.createMailboxReader).not.toHaveBeenCalled();
     },
   );
 });

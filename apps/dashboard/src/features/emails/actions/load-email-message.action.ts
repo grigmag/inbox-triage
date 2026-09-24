@@ -18,8 +18,8 @@ export async function loadEmailMessageAction(
   }
 
   try {
-    return await readMailbox(user.id, async (client) => {
-      return toEmailMessageDto(await client.getMessage(ref));
+    return await readMailbox(user.id, async (reader) => {
+      return toEmailMessageDto(await reader.getMessage(ref));
     });
   } catch {
     return { status: 'failure', message: LOAD_FAILURE_MESSAGE };

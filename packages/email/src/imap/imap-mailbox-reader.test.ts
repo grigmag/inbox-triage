@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { EmailClientError } from '../email-client-error';
-import { ImapEmailClient } from './imap-email-client';
+import { MailboxReaderError } from '../mailbox-reader-error';
+import { ImapMailboxReader } from './imap-mailbox-reader';
 import type {
   ImapMailboxLock,
   ImapSummaryData,
@@ -9,12 +9,12 @@ import type {
 import { createMessageRef } from './message-ref';
 import { parsePageToken } from './page-token';
 
-describe('ImapEmailClient', () => {
+describe('ImapMailboxReader', () => {
   it('lists newest messages first without downloading message sources', async () => {
     const transport = new FakeTransport([1, 2, 3]);
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
-    const page = await client.listInbox({ limit: 2 });
+    const page = await reader.listInbox({ limit: 2 });
 
     expect(page.messages.map(({ subject }) => subject)).toEqual([
       'Message 3',
@@ -30,11 +30,11 @@ describe('ImapEmailClient', () => {
 
   it('keeps pagination stable when newer mail arrives', async () => {
     const transport = new FakeTransport([1, 2, 3, 4]);
-    const client = new ImapEmailClient(transport);
-    const firstPage = await client.listInbox({ limit: 2 });
+    const reader = new ImapMailboxReader(transport);
+    const firstPage = await reader.listInbox({ limit: 2 });
 
     transport.uids.push(5);
-    const secondPage = await client.listInbox({
+    const secondPage = await reader.listInbox({
       limit: 2,
       pageToken: firstPage.nextPageToken!,
     });
@@ -52,12 +52,12 @@ describe('ImapEmailClient', () => {
 
   it('rejects a stale page token', async () => {
     const transport = new FakeTransport([1, 2, 3]);
-    const client = new ImapEmailClient(transport);
-    const firstPage = await client.listInbox({ limit: 1 });
+    const reader = new ImapMailboxReader(transport);
+    const firstPage = await reader.listInbox({ limit: 1 });
     transport.uidValidity = BigInt(8);
 
     await expect(
-      client.listInbox({ pageToken: firstPage.nextPageToken! }),
+      reader.listInbox({ pageToken: firstPage.nextPageToken! }),
     ).rejects.toMatchObject({ code: 'INVALID_PAGE_TOKEN' });
     expect(transport.releaseCalls).toBe(2);
   });
@@ -74,12 +74,12 @@ describe('ImapEmailClient', () => {
         return (await new FakeTransport(uids).fetchSummaries(uids)).reverse();
       });
     const metadata = vi.spyOn(transport, 'fetchMessageMetadata');
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
-    const messages = await client.listInboxNewerThan(
+    const messages = await reader.listInboxNewerThan(
       createMessageRef({ uidValidity: BigInt(7), uid: 20 }),
     );
-    await client.close();
+    await reader.close();
 
     expect(messages.map(({ subject }) => subject)).toEqual(
       Array.from({ length: 230 }, (_, i) => `Message ${250 - i}`),
@@ -106,9 +106,9 @@ describe('ImapEmailClient', () => {
     vi.spyOn(transport, 'fetchSummaries').mockResolvedValue([
       ...(await new FakeTransport([3]).fetchSummaries([3])),
     ]);
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
-    const messages = await client.listInboxNewerThan(
+    const messages = await reader.listInboxNewerThan(
       createMessageRef({ uidValidity: BigInt(7), uid: 2 }),
     );
 
@@ -118,10 +118,10 @@ describe('ImapEmailClient', () => {
   it('returns an empty refresh without fetching summaries', async () => {
     const transport = new FakeTransport([1]);
     const fetch = vi.spyOn(transport, 'fetchSummaries');
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
     await expect(
-      client.listInboxNewerThan(
+      reader.listInboxNewerThan(
         createMessageRef({ uidValidity: BigInt(7), uid: 1 }),
       ),
     ).resolves.toEqual([]);
@@ -132,14 +132,14 @@ describe('ImapEmailClient', () => {
   it('rejects malformed and stale refresh references', async () => {
     const transport = new FakeTransport([1]);
     const search = vi.spyOn(transport, 'searchUidsNewerThan');
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
-    await expect(client.listInboxNewerThan('invalid')).rejects.toMatchObject({
+    await expect(reader.listInboxNewerThan('invalid')).rejects.toMatchObject({
       code: 'INVALID_MESSAGE_REF',
     });
     expect(transport.connectCalls).toBe(0);
     await expect(
-      client.listInboxNewerThan(
+      reader.listInboxNewerThan(
         createMessageRef({ uidValidity: BigInt(8), uid: 1 }),
       ),
     ).rejects.toMatchObject({ code: 'MESSAGE_NOT_FOUND' });
@@ -155,28 +155,28 @@ describe('ImapEmailClient', () => {
         transport,
         operation === 'search' ? 'searchUidsNewerThan' : 'fetchSummaries',
       ).mockRejectedValue(new Error('sensitive provider response'));
-      const client = new ImapEmailClient(transport);
+      const reader = new ImapMailboxReader(transport);
 
       await expect(
-        client.listInboxNewerThan(
+        reader.listInboxNewerThan(
           createMessageRef({ uidValidity: BigInt(7), uid: 1 }),
         ),
-      ).rejects.toEqual(new EmailClientError('UNKNOWN'));
-      await client.close();
+      ).rejects.toEqual(new MailboxReaderError('UNKNOWN'));
+      await reader.close();
       expect(transport.releaseCalls).toBe(1);
       expect(transport.logoutCalls).toBe(1);
-      await expect(client.listInboxNewerThan('invalid')).rejects.toThrow(
-        'Email client is closed.',
+      await expect(reader.listInboxNewerThan('invalid')).rejects.toThrow(
+        'Mailbox reader is closed.',
       );
     },
   );
 
   it('downloads and parses a message without changing its read state', async () => {
     const transport = new FakeTransport([10]);
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
     const ref = createMessageRef({ uidValidity: BigInt(7), uid: 10 });
 
-    const message = await client.getMessage(ref);
+    const message = await reader.getMessage(ref);
 
     expect(message).toMatchObject({
       subject: 'Message 10',
@@ -191,10 +191,10 @@ describe('ImapEmailClient', () => {
   it('rejects an oversized message before download', async () => {
     const transport = new FakeTransport([10]);
     transport.messageSize = 10 * 1024 * 1024 + 1;
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
     await expect(
-      client.getMessage(createMessageRef({ uidValidity: BigInt(7), uid: 10 })),
+      reader.getMessage(createMessageRef({ uidValidity: BigInt(7), uid: 10 })),
     ).rejects.toMatchObject({ code: 'MESSAGE_TOO_LARGE' });
     expect(transport.downloadCalls).toBe(0);
     expect(transport.releaseCalls).toBe(1);
@@ -206,10 +206,10 @@ describe('ImapEmailClient', () => {
       yield Buffer.alloc(5 * 1024 * 1024);
       yield Buffer.alloc(5 * 1024 * 1024 + 1);
     };
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
     await expect(
-      client.getMessage(createMessageRef({ uidValidity: BigInt(7), uid: 10 })),
+      reader.getMessage(createMessageRef({ uidValidity: BigInt(7), uid: 10 })),
     ).rejects.toMatchObject({ code: 'MESSAGE_TOO_LARGE' });
     expect(transport.releaseCalls).toBe(1);
   });
@@ -217,10 +217,10 @@ describe('ImapEmailClient', () => {
   it('releases the mailbox lock after an operation failure', async () => {
     const transport = new FakeTransport([1]);
     transport.searchError = new Error('sensitive provider response');
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
-    await expect(client.listInbox()).rejects.toEqual(
-      new EmailClientError('UNKNOWN'),
+    await expect(reader.listInbox()).rejects.toEqual(
+      new MailboxReaderError('UNKNOWN'),
     );
     expect(transport.releaseCalls).toBe(1);
   });
@@ -228,22 +228,24 @@ describe('ImapEmailClient', () => {
   it('closes once and force-closes when logout fails', async () => {
     const transport = new FakeTransport([1]);
     transport.logoutError = new Error('disconnect failed');
-    const client = new ImapEmailClient(transport);
-    await client.listInbox();
+    const reader = new ImapMailboxReader(transport);
+    await reader.listInbox();
 
-    await client.close();
-    await client.close();
+    await reader.close();
+    await reader.close();
 
     expect(transport.logoutCalls).toBe(1);
     expect(transport.forceCloseCalls).toBe(1);
-    await expect(client.listInbox()).rejects.toThrow('Email client is closed.');
+    await expect(reader.listInbox()).rejects.toThrow(
+      'Mailbox reader is closed.',
+    );
   });
 
   it('can close before connecting', async () => {
     const transport = new FakeTransport([]);
-    const client = new ImapEmailClient(transport);
+    const reader = new ImapMailboxReader(transport);
 
-    await client.close();
+    await reader.close();
 
     expect(transport.connectCalls).toBe(0);
     expect(transport.forceCloseCalls).toBe(1);

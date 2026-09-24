@@ -1,3 +1,5 @@
+import type { MailboxReaderErrorDiagnostic } from '../mailbox-reader-error';
+
 export interface ImapMailboxLock {
   uidValidity: bigint;
   release(): void;
@@ -37,10 +39,15 @@ export type ImapTransportErrorKind =
 
 export class ImapTransportError extends Error {
   readonly kind: ImapTransportErrorKind;
+  readonly diagnostic: MailboxReaderErrorDiagnostic;
 
-  constructor(kind: ImapTransportErrorKind) {
+  constructor(
+    kind: ImapTransportErrorKind,
+    diagnostic: MailboxReaderErrorDiagnostic = {},
+  ) {
     super('IMAP transport request failed.');
     this.name = 'ImapTransportError';
     this.kind = kind;
+    this.diagnostic = diagnostic;
   }
 }

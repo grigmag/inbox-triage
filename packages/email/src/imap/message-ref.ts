@@ -1,4 +1,4 @@
-import { EmailClientError } from '../email-client-error';
+import { MailboxReaderError } from '../mailbox-reader-error';
 
 interface MessageRefValue {
   uidValidity: bigint;
@@ -34,7 +34,7 @@ export function parseMessageRef(ref: string): MessageRefValue {
       uid: value.uid,
     };
   } catch {
-    throw new EmailClientError('INVALID_MESSAGE_REF');
+    throw new MailboxReaderError('INVALID_MESSAGE_REF');
   }
 }
 

@@ -1,18 +1,19 @@
-import { EmailClientError } from '../email-client-error';
+import { MailboxReaderError } from '../mailbox-reader-error';
 import { ImapTransportError } from './imap-transport.types';
 
-export function translateImapError(error: unknown): EmailClientError {
-  if (error instanceof EmailClientError) {
+export function translateImapError(error: unknown): MailboxReaderError {
+  if (error instanceof MailboxReaderError) {
     return error;
   }
   if (error instanceof ImapTransportError) {
     if (error.kind === 'authentication') {
-      return new EmailClientError('AUTHENTICATION_FAILED');
+      return new MailboxReaderError('AUTHENTICATION_FAILED', error.diagnostic);
     }
     if (error.kind === 'connection') {
-      return new EmailClientError('CONNECTION_FAILED');
+      return new MailboxReaderError('CONNECTION_FAILED', error.diagnostic);
     }
+    return new MailboxReaderError('UNKNOWN', error.diagnostic);
   }
 
-  return new EmailClientError('UNKNOWN');
+  return new MailboxReaderError('UNKNOWN');
 }

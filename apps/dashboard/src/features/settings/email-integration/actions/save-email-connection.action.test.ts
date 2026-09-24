@@ -25,6 +25,7 @@ describe('saveEmailConnectionAction', () => {
     await expect(
       saveEmailConnectionAction({
         imapHost: '  IMAP.zoho.eu  ',
+        smtpHost: '  SMTP.zoho.eu  ',
         email: ' USER@Example.COM ',
         password: '  exact password\n',
       }),
@@ -38,6 +39,7 @@ describe('saveEmailConnectionAction', () => {
       provider: 'zoho',
       username: 'user@example.com',
       imapHost: 'IMAP.zoho.eu',
+      smtpHost: 'SMTP.zoho.eu',
       password: '  exact password\n',
     });
     expect(mocks.revalidatePath).toHaveBeenCalledExactlyOnceWith(
@@ -48,6 +50,7 @@ describe('saveEmailConnectionAction', () => {
   it('returns server validation errors without saving', async () => {
     const result = await saveEmailConnectionAction({
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       email: 'invalid',
       password: 'secret',
     });
@@ -65,12 +68,13 @@ describe('saveEmailConnectionAction', () => {
     await expect(
       saveEmailConnectionAction({
         imapHost: 'imap.zoho.com',
+        smtpHost: 'smtp.zoho.com',
         email: 'user@example.com',
         password: '',
       }),
     ).resolves.toEqual({
       status: 'validation_error',
-      fieldErrors: { password: 'Enter your Zoho IMAP password.' },
+      fieldErrors: { password: 'Enter your Zoho Mail password.' },
     });
     expect(mocks.revalidatePath).not.toHaveBeenCalled();
   });
@@ -80,6 +84,7 @@ describe('saveEmailConnectionAction', () => {
 
     const result = await saveEmailConnectionAction({
       imapHost: 'imap.zoho.com',
+      smtpHost: 'smtp.zoho.com',
       email: 'user@example.com',
       password: '',
     });
@@ -102,6 +107,7 @@ describe('saveEmailConnectionAction', () => {
     await expect(
       saveEmailConnectionAction({
         imapHost: 'imap.zoho.com',
+        smtpHost: 'smtp.zoho.com',
         email: 'user@example.com',
         password: 'secret',
       }),
@@ -119,6 +125,7 @@ describe('saveEmailConnectionAction', () => {
     await expect(
       saveEmailConnectionAction({
         imapHost: 'imap.zoho.com',
+        smtpHost: 'smtp.zoho.com',
         email: 'user@example.com',
         password: 'secret',
       }),
@@ -135,10 +142,29 @@ it('returns a host field error without saving or revalidating', async () => {
       email: 'user@example.com',
       password: 'secret',
       imapHost: '   ',
+      smtpHost: 'smtp.zoho.com',
     }),
   ).toEqual({
     status: 'validation_error',
     fieldErrors: { imapHost: 'Enter an IMAP host.' },
+  });
+  expect(mocks.saveEmailConnectionUseCase).not.toHaveBeenCalled();
+  expect(mocks.revalidatePath).not.toHaveBeenCalled();
+});
+
+it('returns an SMTP host field error without saving or revalidating', async () => {
+  vi.clearAllMocks();
+  mocks.requireUser.mockResolvedValue({ id: 'authenticated-user-id' });
+  expect(
+    await saveEmailConnectionAction({
+      email: 'user@example.com',
+      password: 'secret',
+      imapHost: 'imap.zoho.com',
+      smtpHost: '   ',
+    }),
+  ).toEqual({
+    status: 'validation_error',
+    fieldErrors: { smtpHost: 'Enter an SMTP host.' },
   });
   expect(mocks.saveEmailConnectionUseCase).not.toHaveBeenCalled();
   expect(mocks.revalidatePath).not.toHaveBeenCalled();

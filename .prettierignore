@@ -2,3 +2,4 @@
 **/next-env.d.ts
 pnpm-lock.yaml
 .agents/skills/
+apps/dashboard/.evals/

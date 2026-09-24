@@ -19,7 +19,7 @@ describe('translateImapStreamErrors', () => {
 
     await expect(iterator.next()).resolves.toMatchObject({ done: false });
     await expect(iterator.next()).rejects.toEqual(
-      new ImapTransportError('connection'),
+      new ImapTransportError('connection', { providerErrorCode: 'ECONNRESET' }),
     );
   });
 });
@@ -68,7 +68,57 @@ describe('ImapFlowTransport newer-than search', () => {
       Object.assign(new Error('secret'), { code: 'ECONNRESET' }),
     );
     await expect(transport.searchUidsNewerThan(10)).rejects.toEqual(
-      new ImapTransportError('connection'),
+      new ImapTransportError('connection', { providerErrorCode: 'ECONNRESET' }),
     );
+  });
+
+  it.each([
+    'ETIMEOUT',
+    'GREETING_TIMEOUT',
+    'NoConnection',
+    'EConnectionClosed',
+    'EPIPE',
+    'ETHROTTLE',
+  ])('classifies %s as a connection failure', async (code) => {
+    imapMocks.search.mockRejectedValueOnce(
+      Object.assign(new Error('secret'), { code }),
+    );
+    await expect(transport.searchUidsNewerThan(10)).rejects.toMatchObject({
+      kind: 'connection',
+      diagnostic: { providerErrorCode: code },
+    });
+  });
+
+  it('treats temporary server unavailability as a connection failure', async () => {
+    imapMocks.search.mockRejectedValueOnce(
+      Object.assign(new Error('Command failed'), {
+        authenticationFailed: true,
+        responseStatus: 'NO',
+        serverResponseCode: 'UNAVAILABLE',
+      }),
+    );
+    await expect(transport.searchUidsNewerThan(10)).rejects.toMatchObject({
+      kind: 'connection',
+      diagnostic: { responseStatus: 'NO', serverResponseCode: 'UNAVAILABLE' },
+    });
+  });
+
+  it('keeps only token-like diagnostics from provider errors', async () => {
+    imapMocks.search.mockRejectedValueOnce(
+      Object.assign(new Error('Command failed'), {
+        responseStatus: 'NO',
+        serverResponseCode: 'LOGIN password=secret',
+        responseText: 'secret provider response',
+        executedCommand: 'A1 LOGIN user secret',
+      }),
+    );
+    const rejection = await transport
+      .searchUidsNewerThan(10)
+      .catch((error: unknown) => error);
+    expect(rejection).toMatchObject({ kind: 'unknown' });
+    expect(JSON.stringify(rejection)).not.toContain('secret');
+    expect((rejection as ImapTransportError).diagnostic).toEqual({
+      responseStatus: 'NO',
+    });
   });
 });

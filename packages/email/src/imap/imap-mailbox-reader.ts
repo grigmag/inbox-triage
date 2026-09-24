@@ -1,9 +1,9 @@
-import { EmailClientError } from '../email-client-error';
+import { MailboxReaderError } from '../mailbox-reader-error';
 import type {
-  EmailClient,
+  MailboxReader,
   EmailPage,
   ListInboxOptions,
-} from '../email-client.types';
+} from '../mailbox-reader.types';
 import type {
   EmailMessage,
   EmailSummary,
@@ -20,7 +20,7 @@ const DEFAULT_PAGE_SIZE = 20;
 const MAXIMUM_PAGE_SIZE = 20;
 const MAXIMUM_MESSAGE_BYTES = 10 * 1024 * 1024;
 
-export class ImapEmailClient implements EmailClient {
+export class ImapMailboxReader implements MailboxReader {
   private connected = false;
   private closed = false;
   private mailboxLock: ImapMailboxLock | null = null;
@@ -37,7 +37,7 @@ export class ImapEmailClient implements EmailClient {
     try {
       return await this.withInboxLock(async ({ uidValidity }) => {
         if (token && token.uidValidity !== uidValidity) {
-          throw new EmailClientError('INVALID_PAGE_TOKEN');
+          throw new MailboxReaderError('INVALID_PAGE_TOKEN');
         }
 
         const uids = await this.transport.searchUids(token?.beforeUid);
@@ -79,7 +79,7 @@ export class ImapEmailClient implements EmailClient {
     try {
       return await this.withInboxLock(async ({ uidValidity }) => {
         if (messageRef.uidValidity !== uidValidity) {
-          throw new EmailClientError('MESSAGE_NOT_FOUND');
+          throw new MailboxReaderError('MESSAGE_NOT_FOUND');
         }
 
         const uids = await this.transport.searchUidsNewerThan(messageRef.uid);
@@ -115,17 +115,17 @@ export class ImapEmailClient implements EmailClient {
     try {
       return await this.withInboxLock(async ({ uidValidity }) => {
         if (messageRef.uidValidity !== uidValidity) {
-          throw new EmailClientError('MESSAGE_NOT_FOUND');
+          throw new MailboxReaderError('MESSAGE_NOT_FOUND');
         }
 
         const metadata = await this.transport.fetchMessageMetadata(
           messageRef.uid,
         );
         if (!metadata) {
-          throw new EmailClientError('MESSAGE_NOT_FOUND');
+          throw new MailboxReaderError('MESSAGE_NOT_FOUND');
         }
         if (metadata.sizeBytes > MAXIMUM_MESSAGE_BYTES) {
-          throw new EmailClientError('MESSAGE_TOO_LARGE');
+          throw new MailboxReaderError('MESSAGE_TOO_LARGE');
         }
 
         const stream = await this.transport.downloadMessage(
@@ -133,7 +133,7 @@ export class ImapEmailClient implements EmailClient {
           MAXIMUM_MESSAGE_BYTES + 1,
         );
         if (!stream) {
-          throw new EmailClientError('MESSAGE_NOT_FOUND');
+          throw new MailboxReaderError('MESSAGE_NOT_FOUND');
         }
 
         const source = await readBoundedMessage(stream);
@@ -173,7 +173,7 @@ export class ImapEmailClient implements EmailClient {
 
   private assertOpen(): void {
     if (this.closed) {
-      throw new Error('Email client is closed.');
+      throw new Error('Mailbox reader is closed.');
     }
   }
 
@@ -228,7 +228,7 @@ async function readBoundedMessage(
   for await (const chunk of stream) {
     byteLength += chunk.byteLength;
     if (byteLength > MAXIMUM_MESSAGE_BYTES) {
-      throw new EmailClientError('MESSAGE_TOO_LARGE');
+      throw new MailboxReaderError('MESSAGE_TOO_LARGE');
     }
     chunks.push(chunk);
   }

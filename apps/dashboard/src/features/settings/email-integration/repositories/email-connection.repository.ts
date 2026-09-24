@@ -10,6 +10,7 @@ type SaveEmailConnectionInput = {
   provider: 'zoho';
   username: string;
   imapHost: string;
+  smtpHost: string;
   encryptedPassword: string;
 };
 
@@ -29,13 +30,33 @@ class EmailConnectionRepository {
   }
 
   async saveForUser(input: SaveEmailConnectionInput): Promise<EmailConnection> {
-    const { userId, provider, username, imapHost, encryptedPassword } = input;
+    const {
+      userId,
+      provider,
+      username,
+      imapHost,
+      smtpHost,
+      encryptedPassword,
+    } = input;
     const [saved] = await this.database
       .insert(emailConnections)
-      .values({ userId, provider, username, imapHost, encryptedPassword })
+      .values({
+        userId,
+        provider,
+        username,
+        imapHost,
+        smtpHost,
+        encryptedPassword,
+      })
       .onConflictDoUpdate({
         target: emailConnections.userId,
-        set: { provider, username, imapHost, encryptedPassword },
+        set: {
+          provider,
+          username,
+          imapHost,
+          smtpHost,
+          encryptedPassword,
+        },
       })
       .returning();
 

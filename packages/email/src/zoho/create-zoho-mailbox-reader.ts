@@ -1,11 +1,11 @@
-import type { EmailClientConfig } from '../email-client.types';
-import { ImapEmailClient } from '../imap/imap-email-client';
+import type { MailboxReaderConfig } from '../mailbox-reader.types';
+import { ImapMailboxReader } from '../imap/imap-mailbox-reader';
 import { ImapFlowTransport } from '../imap/imapflow-transport';
 
-export function createZohoEmailClient({
+export function createZohoMailboxReader({
   credentials,
   imapHost,
-}: EmailClientConfig): ImapEmailClient {
+}: MailboxReaderConfig): ImapMailboxReader {
   const transport = new ImapFlowTransport({
     host: imapHost,
     port: 993,
@@ -13,5 +13,5 @@ export function createZohoEmailClient({
     username: credentials.username,
     password: credentials.password,
   });
-  return new ImapEmailClient(transport);
+  return new ImapMailboxReader(transport);
 }

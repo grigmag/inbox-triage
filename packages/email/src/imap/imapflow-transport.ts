@@ -159,10 +159,7 @@ export async function* translateImapStreamErrors(
   try {
     yield* source;
   } catch (error) {
-    if (error instanceof ImapTransportError) {
-      throw error;
-    }
-    throw new ImapTransportError(classifyImapError(error));
+    throw toImapTransportError(error);
   }
 }
 
@@ -200,14 +197,26 @@ async function runImapRequest<T>(operation: () => Promise<T>): Promise<T> {
   try {
     return await operation();
   } catch (error) {
-    if (error instanceof ImapTransportError) {
-      throw error;
-    }
-    throw new ImapTransportError(classifyImapError(error));
+    throw toImapTransportError(error);
   }
 }
 
+function toImapTransportError(error: unknown): ImapTransportError {
+  if (error instanceof ImapTransportError) {
+    return error;
+  }
+  return new ImapTransportError(classifyImapError(error), {
+    providerErrorCode: getTokenProperty(error, 'code'),
+    responseStatus: getTokenProperty(error, 'responseStatus'),
+    serverResponseCode: getTokenProperty(error, 'serverResponseCode'),
+  });
+}
+
 function classifyImapError(error: unknown): ImapTransportErrorKind {
+  // RFC 5530 UNAVAILABLE marks a temporary server failure, even during login.
+  if (getStringProperty(error, 'serverResponseCode') === 'UNAVAILABLE') {
+    return 'connection';
+  }
   if (hasProperty(error, 'authenticationFailed', true)) {
     return 'authentication';
   }
@@ -219,15 +228,33 @@ function classifyImapError(error: unknown): ImapTransportErrorKind {
   return 'unknown';
 }
 
+// Node socket codes plus ImapFlow codes for dropped, stalled, or throttled sessions.
 const CONNECTION_ERROR_CODES = new Set([
   'CONNECT_TIMEOUT',
+  'ECONNABORTED',
   'ECONNREFUSED',
   'ECONNRESET',
+  'EConnectionClosed',
   'EHOSTUNREACH',
   'ENETUNREACH',
   'ENOTFOUND',
+  'EPIPE',
+  'ETHROTTLE',
   'ETIMEDOUT',
+  'ETIMEOUT',
+  'GREETING_TIMEOUT',
+  'NoConnection',
+  'UPGRADE_TIMEOUT',
 ]);
+
+// Only short identifier-like values may leave the transport as diagnostics.
+function getTokenProperty(
+  value: unknown,
+  property: string,
+): string | undefined {
+  const token = getStringProperty(value, property);
+  return token && /^[A-Za-z0-9_.-]{1,64}$/.test(token) ? token : undefined;
+}
 
 function hasProperty(
   value: unknown,

@@ -18,8 +18,8 @@ export async function loadNewerInboxAction(
   }
 
   try {
-    return await readMailbox(user.id, async (client) => {
-      return (await client.listInboxNewerThan(ref)).map(toEmailSummaryDto);
+    return await readMailbox(user.id, async (reader) => {
+      return (await reader.listInboxNewerThan(ref)).map(toEmailSummaryDto);
     });
   } catch {
     return { status: 'failure', message: LOAD_FAILURE_MESSAGE };

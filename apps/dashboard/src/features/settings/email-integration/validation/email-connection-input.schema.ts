@@ -8,7 +8,8 @@ export const EMAIL_CONNECTION_VALIDATION_MESSAGES = {
   email: 'Enter a valid email address.',
   emailTooLong: 'Email must be 254 characters or fewer.',
   imapHostRequired: 'Enter an IMAP host.',
-  passwordRequired: 'Enter your Zoho IMAP password.',
+  smtpHostRequired: 'Enter an SMTP host.',
+  passwordRequired: 'Enter your Zoho Mail password.',
 } as const;
 
 export const emailConnectionInputSchema = z.object({
@@ -25,6 +26,10 @@ export const emailConnectionInputSchema = z.object({
     .string({ error: EMAIL_CONNECTION_VALIDATION_MESSAGES.imapHostRequired })
     .trim()
     .min(1, EMAIL_CONNECTION_VALIDATION_MESSAGES.imapHostRequired),
+  smtpHost: z
+    .string({ error: EMAIL_CONNECTION_VALIDATION_MESSAGES.smtpHostRequired })
+    .trim()
+    .min(1, EMAIL_CONNECTION_VALIDATION_MESSAGES.smtpHostRequired),
   // Passwords are deliberately not trimmed or otherwise transformed.
   password: z.string(),
 });
