@@ -64,6 +64,7 @@ import {
   BILLING_GUARD,
   allowsBillableRequests,
 } from './openrouter-billing-guard';
+import { runLimited } from './run-limited';
 
 const CONCURRENCY = 3;
 const REPORT_DIR = path.join(process.cwd(), '.evals');
@@ -171,28 +172,6 @@ async function runCase(
       passed: checks.length > 0 && checks.every((check) => check.passed),
     };
   }
-}
-
-/** Runs tasks in order with at most `limit` in flight. */
-async function runLimited<T>(
-  tasks: (() => Promise<T>)[],
-  limit: number,
-): Promise<T[]> {
-  const results: T[] = new Array(tasks.length);
-  let next = 0;
-
-  async function worker() {
-    while (next < tasks.length) {
-      const index = next++;
-      results[index] = await tasks[index]();
-    }
-  }
-
-  await Promise.all(
-    Array.from({ length: Math.min(limit, tasks.length) }, worker),
-  );
-
-  return results;
 }
 
 function printSummary(

@@ -2,9 +2,13 @@
 
 ## Planned
 
+- [ ] [Redesign the email detail pane as a thread](docs/plans/email-detail-thread-layout-plan.md)
+
 ## In progress
 
 ## Completed
+
+- [x] [Add transient brief review replies](docs/plans/brief-review-reply-plan.md)
 
 - [x] [Add transient email brief review](docs/plans/brief-review-v1-plan.md)
 

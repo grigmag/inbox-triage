@@ -28,8 +28,10 @@ export interface SmtpTransport {
   close(): void;
 }
 
+// `envelope` means the server refused the sender, the recipients, or the DATA
+// command, so no message content was transmitted.
 export type SmtpTransportErrorKind =
-  'authentication' | 'connection' | 'unknown';
+  'authentication' | 'connection' | 'envelope' | 'unknown';
 
 export class SmtpTransportError extends Error {
   readonly kind: SmtpTransportErrorKind;

@@ -6,8 +6,7 @@ import {
   type MailboxReader,
   type MailboxReaderConfig,
 } from '@inbox-triage/email';
-import { emailConnectionRepository } from '@/features/settings/email-integration/repositories/email-connection.repository';
-import { cryptoService } from '@/lib/crypto/crypto.service';
+import { loadEmailConnection } from './load-email-connection';
 
 type MailboxRead<Data> =
   { status: 'success'; data: Data } | { status: 'noConnection' };
@@ -21,7 +20,7 @@ export async function readMailbox<Data>(
   operation: (reader: MailboxReader) => Promise<Data>,
 ): Promise<MailboxRead<Data>> {
   try {
-    const connection = await emailConnectionRepository.findForUser(userId);
+    const connection = await loadEmailConnection(userId);
 
     if (!connection) {
       return { status: 'noConnection' };
@@ -30,12 +29,7 @@ export async function readMailbox<Data>(
     const config: MailboxReaderConfig = {
       provider: connection.provider,
       imapHost: connection.imapHost,
-      credentials: {
-        username: connection.username,
-        password: cryptoService.decryptSignedString(
-          connection.encryptedPassword,
-        ),
-      },
+      credentials: connection.credentials,
     };
 
     const data = await runWithRetry(config, operation);

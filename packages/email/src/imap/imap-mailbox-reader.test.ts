@@ -71,7 +71,8 @@ describe('ImapMailboxReader', () => {
       .spyOn(transport, 'fetchSummaries')
       .mockImplementation(async (uids) => {
         transport.uids.push(251);
-        return (await new FakeTransport(uids).fetchSummaries(uids)).reverse();
+        const summaries = await new FakeTransport(uids).fetchSummaries(uids);
+        return summaries.reverse();
       });
     const metadata = vi.spyOn(transport, 'fetchMessageMetadata');
     const reader = new ImapMailboxReader(transport);

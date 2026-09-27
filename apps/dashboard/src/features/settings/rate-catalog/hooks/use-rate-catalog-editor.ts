@@ -41,11 +41,14 @@ export function useRateCatalogEditor(initialCatalogs: AdminCatalogLists) {
   const pendingRef = useRef(false);
 
   const runMutation: MutationRunner = async (operation) => {
-    if (pendingRef.current) return undefined;
+    if (pendingRef.current) return { outcome: 'skipped' };
     pendingRef.current = true;
     setPending(true);
     try {
-      return await operation();
+      const result = await operation();
+      return { outcome: 'completed', result };
+    } catch {
+      return { outcome: 'failed' };
     } finally {
       pendingRef.current = false;
       setPending(false);
@@ -92,21 +95,17 @@ export function useRateCatalogEditor(initialCatalogs: AdminCatalogLists) {
     isActive: boolean,
   ) {
     const failureMessage = `Could not update ${item.name}. Try again.`;
-    const result = await runMutation(() =>
+    const run = await runMutation(() =>
       setCatalogItemActiveAction({ catalog, id: item.id, isActive }),
-    ).catch(() => null);
+    );
 
-    if (result === null) {
-      reportFailure(failureMessage);
-      return;
-    }
-    if (!result) return;
-    if (result.status !== 'success') {
+    if (run.outcome === 'skipped') return;
+    if (run.outcome === 'failed' || run.result.status !== 'success') {
       reportFailure(failureMessage);
       return;
     }
 
-    const updatedItem = result.data;
+    const updatedItem = run.result.data;
     setCatalogs((current) => {
       if (catalog === 'crew' && isCrewRateItem(updatedItem)) {
         return {
@@ -147,32 +146,29 @@ export function useRateCatalogEditor(initialCatalogs: AdminCatalogLists) {
     ];
 
     const failureMessage = `Could not reorder ${CATALOG_NAMES[catalog]}. The saved order has been restored.`;
-    const result = await runMutation(() =>
+    const run = await runMutation(() =>
       reorderCatalogAction({ catalog, expectedIds, orderedIds }),
-    ).catch(() => null);
+    );
 
-    if (result === null) {
-      reportFailure(failureMessage);
-      return;
-    }
-    if (!result) return;
-    if (result.status !== 'success') {
+    if (run.outcome === 'skipped') return;
+    if (run.outcome === 'failed' || run.result.status !== 'success') {
       reportFailure(failureMessage);
       return;
     }
 
+    const orderedItems = run.result.data;
     setCatalogs((current) => {
-      if (catalog === 'crew' && result.data.every(isCrewRateItem)) {
-        return { ...current, crew: [...result.data] };
+      if (catalog === 'crew' && orderedItems.every(isCrewRateItem)) {
+        return { ...current, crew: [...orderedItems] };
       }
       if (
         catalog === 'deliverable' &&
-        result.data.every(isDeliverableRateItem)
+        orderedItems.every(isDeliverableRateItem)
       ) {
-        return { ...current, deliverables: [...result.data] };
+        return { ...current, deliverables: [...orderedItems] };
       }
-      if (catalog === 'addon' && result.data.every(isAddonRateItem)) {
-        return { ...current, addons: [...result.data] };
+      if (catalog === 'addon' && orderedItems.every(isAddonRateItem)) {
+        return { ...current, addons: [...orderedItems] };
       }
       return current;
     });

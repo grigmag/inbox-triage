@@ -195,7 +195,8 @@ function normalizeDate(value: Date | string | undefined): Date | null {
 
 async function runImapRequest<T>(operation: () => Promise<T>): Promise<T> {
   try {
-    return await operation();
+    const result = await operation();
+    return result;
   } catch (error) {
     throw toImapTransportError(error);
   }

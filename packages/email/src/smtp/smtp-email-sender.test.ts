@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { EmailSenderError } from '../email-sender-error';
 import type { EmailMessage } from '../email-message.types';
-import { SmtpEmailSender } from './smtp-email-sender';
+import { SmtpEmailSender, type QuoteReply } from './smtp-email-sender';
 import {
   SmtpTransportError,
   type SmtpMessage,
@@ -24,8 +24,16 @@ function createFixture(result: SmtpSendResult = VALID_RESULT) {
   const transport = new FakeSmtpTransport();
   transport.send.mockResolvedValue(result);
   const createTransport = vi.fn(() => transport);
-  const sender = new SmtpEmailSender('studio@example.com', createTransport);
-  return { sender, transport, createTransport };
+  const quoteReply = vi.fn<QuoteReply>((_parent, replyText) => ({
+    text: `${replyText}\n\nQuoted original`,
+    html: `<div>${replyText}</div><blockquote>Quoted original</blockquote>`,
+  }));
+  const sender = new SmtpEmailSender(
+    'studio@example.com',
+    createTransport,
+    quoteReply,
+  );
+  return { sender, transport, createTransport, quoteReply };
 }
 
 describe('SmtpEmailSender', () => {
@@ -133,7 +141,7 @@ describe('SmtpEmailSender', () => {
         bcc: [address('blind@example.com')],
         text: 'Reply body',
       }),
-    ).resolves.toEqual(VALID_RESULT);
+    ).resolves.toEqual({ ...VALID_RESULT, quotedParent: false });
     expect(transport.send).toHaveBeenCalledExactlyOnceWith({
       from: 'studio@example.com',
       envelope: {
@@ -314,7 +322,7 @@ describe('SmtpEmailSender', () => {
       text: 'Reply body',
     });
 
-    expect(result).toEqual(transportResult);
+    expect(result).toEqual({ ...transportResult, quotedParent: false });
     expect(result.acceptedRecipients).not.toBe(
       transportResult.acceptedRecipients,
     );
@@ -322,6 +330,79 @@ describe('SmtpEmailSender', () => {
       transportResult.rejectedRecipients,
     );
     expect(transport.send).toHaveBeenCalledOnce();
+  });
+
+  it('quotes the parent in both bodies when asked', async () => {
+    const { sender, transport, quoteReply } = createFixture();
+    const parent = message();
+
+    await expect(
+      sender.reply(parent, { text: 'Reply body', quoteParent: true }),
+    ).resolves.toEqual({ ...VALID_RESULT, quotedParent: true });
+    expect(quoteReply).toHaveBeenCalledExactlyOnceWith(parent, 'Reply body');
+    expect(transport.send).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        text: 'Reply body\n\nQuoted original',
+        html: '<div>Reply body</div><blockquote>Quoted original</blockquote>',
+        inReplyTo: '<parent@example.com>',
+      }),
+    );
+  });
+
+  it('sends only the reply text when the quoted bodies exceed 1 MiB', async () => {
+    const { sender, transport, quoteReply } = createFixture();
+    quoteReply.mockReturnValue({
+      text: 'Reply body',
+      html: 'a'.repeat(1024 * 1024 - 'Reply body'.length + 1),
+    });
+
+    await expect(
+      sender.reply(message(), {
+        text: 'Reply body',
+        quoteParent: true,
+      }),
+    ).resolves.toEqual({ ...VALID_RESULT, quotedParent: false });
+    expect(transport.send).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ text: 'Reply body', html: undefined }),
+    );
+  });
+
+  it('keeps a quote of exactly 1 MiB', async () => {
+    const { sender, quoteReply } = createFixture();
+    quoteReply.mockReturnValue({
+      text: 'Reply body',
+      html: 'a'.repeat(1024 * 1024 - 'Reply body'.length),
+    });
+
+    await expect(
+      sender.reply(message(), {
+        text: 'Reply body',
+        quoteParent: true,
+      }),
+    ).resolves.toMatchObject({ quotedParent: true });
+  });
+
+  it('rejects empty reply text before quoting', async () => {
+    const { sender, transport, createTransport, quoteReply } = createFixture();
+
+    await expect(
+      sender.reply(message(), { text: '', quoteParent: true }),
+    ).rejects.toEqual(new EmailSenderError('INVALID_MESSAGE'));
+    expect(quoteReply).not.toHaveBeenCalled();
+    expect(createTransport).not.toHaveBeenCalled();
+    expect(transport.send).not.toHaveBeenCalled();
+  });
+
+  it('does not quote a parent it cannot reply to', async () => {
+    const { sender, quoteReply } = createFixture();
+
+    await expect(
+      sender.reply(message({ messageId: null }), {
+        text: 'Reply body',
+        quoteParent: true,
+      }),
+    ).rejects.toEqual(new EmailSenderError('REPLY_MESSAGE_ID_MISSING'));
+    expect(quoteReply).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -432,6 +513,7 @@ describe('SmtpEmailSender', () => {
   it.each([
     [new SmtpTransportError('authentication'), 'AUTHENTICATION_FAILED'],
     [new SmtpTransportError('connection'), 'CONNECTION_FAILED'],
+    [new SmtpTransportError('envelope'), 'ENVELOPE_REJECTED'],
     [new SmtpTransportError('unknown'), 'SEND_FAILED'],
     [new Error('sensitive provider response'), 'SEND_FAILED'],
   ] as const)('translates transport failures safely', async (failure, code) => {

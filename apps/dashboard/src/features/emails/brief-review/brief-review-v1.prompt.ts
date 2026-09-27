@@ -1,3 +1,4 @@
+import { emailBodyBoundary } from '../lib/email-body-boundary';
 import {
   BRIEF_REVIEW_V1_FIELDS,
   BRIEF_REVIEW_V1_FIELD_KEYS,
@@ -85,7 +86,7 @@ export function buildBriefReviewV1Prompt(input: BriefReviewInput): {
   return {
     system: BRIEF_REVIEW_V1_SYSTEM_PROMPT,
     prompt: userPromptTemplate({
-      boundary: bodyBoundary(input.body),
+      boundary: emailBodyBoundary(input.body),
       subject: formatSubject(input.subject),
       receivedAt: input.receivedAt.toISOString(),
       body: input.body,
@@ -104,22 +105,6 @@ function formatFieldDescriptions(): string {
     (fieldKey) =>
       `- ${fieldKey}: ${BRIEF_REVIEW_V1_FIELDS[fieldKey].promptDescription}`,
   ).join('\n');
-}
-
-/**
- * Returns a boundary name that does not occur in the email body, so untrusted
- * content cannot fake the end marker and place injected text outside the
- * delimited block. Instructions written inside the body are handled by the
- * system prompt rules, not by this boundary.
- */
-function bodyBoundary(body: string): string {
-  let boundary = 'INBOX_TRIAGE_EMAIL_BODY';
-
-  while (body.includes(boundary)) {
-    boundary += '_';
-  }
-
-  return boundary;
 }
 
 function formatSubject(subject: BriefReviewInput['subject']): string {

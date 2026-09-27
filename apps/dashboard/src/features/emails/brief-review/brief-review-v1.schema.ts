@@ -10,7 +10,14 @@ const usableStringSchema = z
   .min(1)
   .refine((value) => value.trim().length > 0, 'Must contain visible text');
 
-const briefReviewFieldKeySchema = z.enum(BRIEF_REVIEW_V1_FIELD_KEYS);
+export const briefReviewFieldKeySchema = z.enum(BRIEF_REVIEW_V1_FIELD_KEYS);
+
+export const briefReviewLanguageSchema = z.enum([
+  'el',
+  'en',
+  'mixed',
+  'unknown',
+]);
 
 const projectTypeValueSchema = z
   .strictObject({
@@ -107,7 +114,7 @@ const missingInformationItemSchema = z.strictObject({
 export const briefEvaluationOutputV1Schema = z
   .strictObject({
     outcome: z.enum(['irrelevant', 'needs_information', 'complete']),
-    language: z.enum(['el', 'en', 'mixed', 'unknown']),
+    language: briefReviewLanguageSchema,
     summary: usableStringSchema,
     fields: briefEvaluationFieldsV1Schema,
     missingInformation: z.array(missingInformationItemSchema),

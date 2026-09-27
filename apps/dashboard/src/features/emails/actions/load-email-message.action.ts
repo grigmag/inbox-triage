@@ -18,9 +18,11 @@ export async function loadEmailMessageAction(
   }
 
   try {
-    return await readMailbox(user.id, async (reader) => {
-      return toEmailMessageDto(await reader.getMessage(ref));
+    const result = await readMailbox(user.id, async (reader) => {
+      const message = await reader.getMessage(ref);
+      return toEmailMessageDto(message);
     });
+    return result;
   } catch {
     return { status: 'failure', message: LOAD_FAILURE_MESSAGE };
   }

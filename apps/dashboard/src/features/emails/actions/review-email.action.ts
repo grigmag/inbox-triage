@@ -17,7 +17,8 @@ export async function reviewEmailAction(
   }
 
   try {
-    return await reviewEmailUseCase({ userId: user.id, messageRef });
+    const result = await reviewEmailUseCase({ userId: user.id, messageRef });
+    return result;
   } catch (error) {
     return {
       status: 'failure',

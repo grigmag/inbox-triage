@@ -2,17 +2,17 @@
 
 ## Status
 
-In progress. Slices 1 and 2 are complete: the validated evaluator and the
-authenticated, reference-based review action. Slice 3 adds the transient inbox
-review experience; its manual browser verification is pending. Slice 4 steps
-1 to 6 are implemented: evaluator run metadata, the shared billing guard, the
-expectation checker, 15 synthetic cases, the report-only evaluation script, and
-a funded evaluation run whose prompt fixes pass every case across three runs.
-The owner has not yet reviewed the Greek wording or the scenarios. Browser
-review and final checks remain.
+Completed and merged in #18. All four slices are implemented: the validated
+evaluator, the authenticated reference-based review action, the transient inbox
+review experience, and the prompt evaluation tooling. The tooling includes
+evaluator run metadata, the shared billing guard, the expectation checker, 15
+synthetic cases, and the report-only evaluation script. After prompt fixes, a
+funded evaluation run passed every case across three runs.
 
 This is the first production-quality slice of Brief Review. It stops
 before persistence, background execution, reply generation, and sending.
+Reply generation and sending continue in the
+[brief review reply plan](brief-review-reply-plan.md).
 
 ## Goal
 

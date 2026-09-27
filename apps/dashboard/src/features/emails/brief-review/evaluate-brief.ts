@@ -12,6 +12,7 @@ import {
 } from 'ai';
 import { z } from 'zod';
 import { aiModel } from '@/server/ai';
+import { isTimeoutError } from '../lib/is-timeout-error';
 import {
   BriefReviewInvalidOutputError,
   BriefReviewProviderError,
@@ -211,14 +212,5 @@ function isInvalidOutputError(error: unknown): boolean {
       JSONParseError.isInstance(candidate) ||
       NoOutputGeneratedError.isInstance(candidate) ||
       TypeValidationError.isInstance(candidate),
-  );
-}
-
-function isTimeoutError(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    (error.name === 'TimeoutError' ||
-      error.name === 'AbortError' ||
-      isTimeoutError(error.cause))
   );
 }

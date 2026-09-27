@@ -18,6 +18,25 @@ vi.mock('./smtp/nodemailer-smtp-transport', () => ({
 }));
 
 import { createEmailSender } from './create-email-sender';
+import type { EmailMessage } from './email-message.types';
+
+const parent: EmailMessage = {
+  ref: 'opaque-reference',
+  from: [{ name: null, address: 'author@example.com' }],
+  subject: 'Original subject',
+  receivedAt: new Date('2026-01-01T12:00:00Z'),
+  isRead: true,
+  sizeBytes: 100,
+  messageId: '<parent@example.com>',
+  inReplyTo: [],
+  references: [],
+  to: [{ name: null, address: 'studio@example.com' }],
+  cc: [],
+  replyTo: [],
+  sentAt: new Date('2026-01-01T11:59:00Z'),
+  text: 'Original body',
+  html: null,
+};
 
 describe('createEmailSender', () => {
   beforeEach(() => {
@@ -37,6 +56,7 @@ describe('createEmailSender', () => {
         username: 'studio@example.com',
         password: ' exact password ',
       },
+      timezone: 'Europe/Athens',
     });
     expect(mocks.transportConfig).not.toHaveBeenCalled();
 
@@ -62,6 +82,7 @@ describe('createEmailSender', () => {
         username: 'studio@example.com',
         password: 'password',
       },
+      timezone: 'Europe/Athens',
     });
 
     await expect(sender.send({ text: 'Hello' })).rejects.toMatchObject({
@@ -78,28 +99,10 @@ describe('createEmailSender', () => {
         username: 'studio@example.com',
         password: 'password',
       },
+      timezone: 'Europe/Athens',
     });
 
-    await sender.reply(
-      {
-        ref: 'opaque-reference',
-        from: [{ name: null, address: 'author@example.com' }],
-        subject: 'Original subject',
-        receivedAt: new Date('2026-01-01T12:00:00Z'),
-        isRead: true,
-        sizeBytes: 100,
-        messageId: '<parent@example.com>',
-        inReplyTo: [],
-        references: [],
-        to: [{ name: null, address: 'studio@example.com' }],
-        cc: [],
-        replyTo: [],
-        sentAt: new Date('2026-01-01T11:59:00Z'),
-        text: 'Original body',
-        html: null,
-      },
-      { text: 'Reply body' },
-    );
+    await sender.reply(parent, { text: 'Reply body' });
 
     expect(mocks.transportConfig).toHaveBeenCalledOnce();
     expect(mocks.send).toHaveBeenCalledExactlyOnceWith({
@@ -117,5 +120,29 @@ describe('createEmailSender', () => {
       inReplyTo: '<parent@example.com>',
       references: ['<parent@example.com>'],
     });
+  });
+
+  it('quotes replies in the Zoho format using the configured time zone', async () => {
+    const sender = createEmailSender({
+      provider: 'zoho',
+      smtpHost: 'smtp.zoho.com',
+      credentials: {
+        username: 'studio@example.com',
+        password: 'password',
+      },
+      timezone: 'Europe/Athens',
+    });
+
+    await expect(
+      sender.reply(parent, { text: 'Reply body', quoteParent: true }),
+    ).resolves.toMatchObject({ quotedParent: true });
+    expect(mocks.send).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        text: expect.stringContaining(
+          '\nDate: Thu, 01 Jan 2026 13:59:00 +0200\n',
+        ) as unknown,
+        html: expect.stringContaining('id="blockquote_zmail"') as unknown,
+      }),
+    );
   });
 });

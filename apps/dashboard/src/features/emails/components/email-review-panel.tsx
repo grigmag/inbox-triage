@@ -103,12 +103,18 @@ export function EmailReviewPanel({
   loading,
   unavailableReason,
   onReview,
+  draftReplyDisabled,
+  onDraftReply,
 }: {
   result: BriefEvaluationOutput | null;
   error: string | null;
   loading: boolean;
   unavailableReason: string | null;
   onReview: () => void;
+  draftReplyDisabled: boolean;
+  // Omitted when no reply is available or once a draft exists; the Reply card
+  // regenerates it. Without questions it opens a blank reply.
+  onDraftReply?: () => void;
 }) {
   const [detailsHidden, setDetailsHidden] = useState(false);
   const detailsId = useId();
@@ -173,7 +179,7 @@ export function EmailReviewPanel({
 
               {result.outcome !== 'irrelevant' && (
                 <>
-                  <div>
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       variant="outline"
                       aria-expanded={!detailsHidden}
@@ -182,6 +188,17 @@ export function EmailReviewPanel({
                     >
                       {detailsHidden ? 'Show details' : 'Hide details'}
                     </Button>
+
+                    {onDraftReply && (
+                      <Button
+                        onClick={onDraftReply}
+                        disabled={draftReplyDisabled}
+                      >
+                        {result.missingInformation.length > 0
+                          ? 'Draft reply'
+                          : 'Write reply'}
+                      </Button>
+                    )}
                   </div>
 
                   <div

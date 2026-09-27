@@ -26,7 +26,7 @@ export function validateSendEmail(
     recipients.length === 0 ||
     recipients.length > MAXIMUM_RECIPIENTS ||
     !hasBody(input) ||
-    bodySize(input) > MAXIMUM_BODY_BYTES ||
+    exceedsBodyLimit(input) ||
     hasHeaderBreak(input.subject) ||
     !isValidAddress({ name: null, address: sender }) ||
     ![...recipients, ...(input.replyTo ?? [])].every(isValidAddress) ||
@@ -55,10 +55,13 @@ function hasBody(input: SendEmailInput): boolean {
   return (input.text?.length ?? 0) > 0 || (input.html?.length ?? 0) > 0;
 }
 
-function bodySize(input: SendEmailInput): number {
+export function exceedsBodyLimit(
+  input: Pick<SendEmailInput, 'text' | 'html'>,
+): boolean {
   return (
     Buffer.byteLength(input.text ?? '', 'utf8') +
-    Buffer.byteLength(input.html ?? '', 'utf8')
+      Buffer.byteLength(input.html ?? '', 'utf8') >
+    MAXIMUM_BODY_BYTES
   );
 }
 

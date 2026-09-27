@@ -26,17 +26,23 @@ export async function reviewEmailUseCase(input: {
   userId: string;
   messageRef: string;
 }): Promise<ReviewEmailResult> {
-  const mailbox = await readMailbox(input.userId, (reader) =>
-    reader.getMessage(input.messageRef),
-  ).catch(() => {
-    throw new BriefReviewMailboxError();
-  });
+  let message: EmailMessage;
 
-  if (mailbox.status === 'noConnection') {
-    return mailbox;
+  try {
+    const mailbox = await readMailbox(input.userId, (reader) =>
+      reader.getMessage(input.messageRef),
+    );
+
+    if (mailbox.status === 'noConnection') {
+      return mailbox;
+    }
+
+    message = mailbox.data;
+  } catch {
+    throw new BriefReviewMailboxError();
   }
 
-  const { data } = await evaluateBrief(toBriefReviewInput(mailbox.data));
+  const { data } = await evaluateBrief(toBriefReviewInput(message));
 
   return { status: 'success', data };
 }

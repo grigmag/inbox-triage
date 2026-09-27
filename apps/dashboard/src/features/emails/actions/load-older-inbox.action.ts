@@ -18,13 +18,14 @@ export async function loadOlderInboxAction(
   }
 
   try {
-    return await readMailbox(user.id, async (reader) => {
+    const result = await readMailbox(user.id, async (reader) => {
       const page = await reader.listInbox({ limit: 20, pageToken });
       return {
         messages: page.messages.map(toEmailSummaryDto),
         nextPageToken: page.nextPageToken,
       };
     });
+    return result;
   } catch {
     return { status: 'failure', message: LOAD_FAILURE_MESSAGE };
   }

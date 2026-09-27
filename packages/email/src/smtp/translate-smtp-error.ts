@@ -12,6 +12,9 @@ export function translateSmtpError(error: unknown): EmailSenderError {
     if (error.kind === 'connection') {
       return new EmailSenderError('CONNECTION_FAILED');
     }
+    if (error.kind === 'envelope') {
+      return new EmailSenderError('ENVELOPE_REJECTED');
+    }
   }
 
   return new EmailSenderError('SEND_FAILED');

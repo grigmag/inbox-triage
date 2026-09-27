@@ -126,16 +126,17 @@ export function AddonRateItemDialog({
       focusFirstInvalidField();
       return;
     }
-    const result = await runMutation(() =>
+    const run = await runMutation(() =>
       item
         ? editAddonRateItemAction(item.id, input)
         : createAddonRateItemAction(input),
-    ).catch(() => null);
-    if (result === null) {
+    );
+    if (run.outcome === 'skipped') return;
+    if (run.outcome === 'failed') {
       setFailure('Could not save changes. Try again.');
       return;
     }
-    if (!result) return;
+    const result = run.result;
     if (result.status === 'success') onSaved(result.data, result.announcement);
     else if (result.status === 'validation_error') {
       setFieldErrors(result.fieldErrors);

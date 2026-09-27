@@ -125,7 +125,8 @@ describe('NodemailerSmtpTransport', () => {
     ['ESOCKET', 'connection'],
     ['ETIMEDOUT', 'connection'],
     ['EAI_AGAIN', 'connection'],
-    ['EENVELOPE', 'unknown'],
+    ['EENVELOPE', 'envelope'],
+    ['EMESSAGE', 'unknown'],
   ] as const)(
     'classifies %s without exposing its message',
     async (code, kind) => {

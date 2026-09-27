@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "eval:brief-reply": "tsx --conditions=react-server scripts/brief-reply-eval.ts",
     "eval:brief-review": "tsx --conditions=react-server scripts/brief-review-eval.ts",
     "smoke:openrouter": "tsx --conditions=react-server scripts/openrouter-smoke.ts",
     "start": "next start",
-    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit -p tsconfig.typecheck.json",
     "test": "vitest run"
   },
   "dependencies": {

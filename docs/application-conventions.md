@@ -28,12 +28,54 @@ decisions belong in the relevant implementation plan.
 
 ## Code style
 
+- Write comments that describe a declaration, such as a function, type,
+  property, or exported constant, as `/** ... */` doc comments so the IDE shows
+  them on hover. Keep `//` for comments about the implementation inside a
+  function body:
+
+  ```ts
+  type BriefReplyState = {
+    /** Set after a successful send. The draft stays locked from then on. */
+    sent: SentBriefReplyDto | null;
+  };
+  ```
+
 - Do not write `return await ...` or place `await` inside a returned
   expression. Assign the awaited value to a named constant, then return it:
 
   ```ts
   const data = await runOnce(config, operation);
   return data;
+  ```
+
+- When a function has several parameters of the same type, prefer one
+  destructured object parameter to positional arguments, so call sites cannot
+  silently swap values:
+
+  ```ts
+  sendBriefReplyAction({ messageRef, body });
+  ```
+
+- Handle errors from awaited calls with `try`/`catch` blocks, not promise
+  `.catch()` callbacks. When a later step needs the awaited value, declare it
+  before the block and assign it inside:
+
+  ```ts
+  let parent: EmailMessage;
+
+  try {
+    const mailbox = await readMailbox(userId, (reader) =>
+      reader.getMessage(messageRef),
+    );
+
+    if (mailbox.status === 'noConnection') {
+      return mailbox;
+    }
+
+    parent = mailbox.data;
+  } catch {
+    throw new BriefReplyMailboxError();
+  }
   ```
 
 ## Authentication boundaries

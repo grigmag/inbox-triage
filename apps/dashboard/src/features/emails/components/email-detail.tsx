@@ -15,17 +15,14 @@ import {
   Skeleton,
 } from '@inbox-triage/ui';
 import { BRIEF_REVIEW_MAX_BODY_LENGTH } from '../brief-review/brief-review-v1.config';
-import type { EmailAddressDto, EmailMessageDto } from '../dto/email.dto';
+import type { EmailMessageDto } from '../dto/email.dto';
+import { formatEmailAddresses } from '../lib/format-email-addresses';
 import { formatEmailDate } from '../lib/format-email-date';
+import { useBriefReply } from '../hooks/use-brief-reply';
 import { useBriefReview } from '../hooks/use-brief-review';
 import { EmailFailure } from './email-failure';
+import { EmailReplyComposer } from './email-reply-composer';
 import { EmailReviewPanel } from './email-review-panel';
-
-function addresses(values: EmailAddressDto[]): string {
-  return values
-    .map(({ name, address }) => (name ? `${name} <${address}>` : address))
-    .join(', ');
-}
 
 // Mirrors the server's checks so the action explains why it's unavailable.
 function getReviewUnavailableReason(text: string | null): string | null {
@@ -54,6 +51,7 @@ export function EmailDetail({
   const [contentHidden, setContentHidden] = useState(false);
   const contentId = useId();
   const briefReview = useBriefReview();
+  const briefReply = useBriefReply();
 
   if (loading)
     return (
@@ -81,6 +79,25 @@ export function EmailDetail({
       </Empty>
     );
 
+  const review = briefReview.result;
+  const replyAvailable = review !== null && review.outcome !== 'irrelevant';
+  // Generation always uses the latest review's questions. A brief with none
+  // gets a blank reply instead, because there is nothing for AI to ask.
+  const replyQuestions =
+    replyAvailable && review.missingInformation.length > 0
+      ? {
+          language: review.language,
+          questions: review.missingInformation,
+        }
+      : null;
+  const messageRef = message.ref;
+
+  function draftReply() {
+    if (replyQuestions) {
+      void briefReply.generate(messageRef, replyQuestions);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <Card>
@@ -90,7 +107,7 @@ export function EmailDetail({
           </CardTitle>
 
           <CardDescription className="wrap-anywhere">
-            {addresses(message.from)}
+            {formatEmailAddresses(message.from)}
           </CardDescription>
         </CardHeader>
 
@@ -106,13 +123,13 @@ export function EmailDetail({
 
             <dt className="text-muted-foreground">To</dt>
 
-            <dd>{addresses(message.to) || 'No recipients'}</dd>
+            <dd>{formatEmailAddresses(message.to) || 'No recipients'}</dd>
 
             {message.cc.length > 0 && (
               <>
                 <dt className="text-muted-foreground">CC</dt>
 
-                <dd>{addresses(message.cc)}</dd>
+                <dd>{formatEmailAddresses(message.cc)}</dd>
               </>
             )}
 
@@ -120,7 +137,7 @@ export function EmailDetail({
               <>
                 <dt className="text-muted-foreground">Reply-To</dt>
 
-                <dd>{addresses(message.replyTo)}</dd>
+                <dd>{formatEmailAddresses(message.replyTo)}</dd>
               </>
             )}
           </dl>
@@ -133,7 +150,24 @@ export function EmailDetail({
         loading={briefReview.loading}
         unavailableReason={getReviewUnavailableReason(message.text)}
         onReview={() => void briefReview.review(message.ref)}
+        draftReplyDisabled={briefReview.loading || briefReply.pending !== null}
+        onDraftReply={
+          replyAvailable && briefReply.draft === null
+            ? replyQuestions
+              ? draftReply
+              : briefReply.startBlank
+            : undefined
+        }
       />
+
+      {briefReply.started && (
+        <EmailReplyComposer
+          message={message}
+          reply={briefReply}
+          canRegenerate={!briefReview.loading}
+          onRegenerate={replyQuestions ? draftReply : undefined}
+        />
+      )}
 
       <Card>
         <CardHeader>

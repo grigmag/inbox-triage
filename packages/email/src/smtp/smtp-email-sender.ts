@@ -2,6 +2,7 @@ import { EmailSenderError } from '../email-sender-error';
 import type {
   EmailSender,
   ReplyEmailInput,
+  ReplyEmailResult,
   SendEmailInput,
   SendEmailResult,
 } from '../email-sender.types';
@@ -9,7 +10,13 @@ import type { EmailMessage } from '../email-message.types';
 import { parseSingleMessageIdentifier } from '../mime/parse-message-identifiers';
 import type { SmtpMessage, SmtpTransport } from './smtp-transport.types';
 import { translateSmtpError } from './translate-smtp-error';
-import { validateSendEmail } from './validate-send-email';
+import { exceedsBodyLimit, validateSendEmail } from './validate-send-email';
+
+/** Builds a provider's reply bodies that quote the parent below the reply text. */
+export type QuoteReply = (
+  parent: EmailMessage,
+  replyText: string,
+) => { text: string; html: string };
 
 export class SmtpEmailSender implements EmailSender {
   private transport: SmtpTransport | null = null;
@@ -18,6 +25,7 @@ export class SmtpEmailSender implements EmailSender {
   constructor(
     private readonly username: string,
     private readonly createTransport: () => SmtpTransport,
+    private readonly quoteReply: QuoteReply,
   ) {}
 
   async send(input: SendEmailInput): Promise<SendEmailResult> {
@@ -28,7 +36,7 @@ export class SmtpEmailSender implements EmailSender {
   async reply(
     parent: EmailMessage,
     input: ReplyEmailInput,
-  ): Promise<SendEmailResult> {
+  ): Promise<ReplyEmailResult> {
     this.assertOpen();
 
     const messageId = parent.messageId;
@@ -46,18 +54,44 @@ export class SmtpEmailSender implements EmailSender {
 
     const subject = replySubject(parent.subject);
     const references = replyReferences(parent, messageId);
+    const { quotedParent, ...body } = this.replyBody(parent, input);
 
-    return this.submit(
+    const result = await this.submit(
       {
         to: recipients,
         cc: input.cc,
         bcc: input.bcc,
         ...(subject === undefined ? {} : { subject }),
-        text: input.text,
-        html: input.html,
+        text: body.text,
+        html: body.html,
       },
       { inReplyTo: messageId, references },
     );
+
+    return { ...result, quotedParent };
+  }
+
+  // Leaves the quote out rather than truncating it, because cutting the
+  // original's HTML can break its markup.
+  private replyBody(
+    parent: EmailMessage,
+    input: ReplyEmailInput,
+  ): { text?: string; html?: string; quotedParent: boolean } {
+    if (!input.quoteParent) {
+      return { text: input.text, html: input.html, quotedParent: false };
+    }
+
+    // The quote alone would pass the validator's body check, so an empty reply
+    // has to be rejected before quoting.
+    if (input.text.length === 0) {
+      throw new EmailSenderError('INVALID_MESSAGE');
+    }
+
+    const quoted = this.quoteReply(parent, input.text);
+
+    return exceedsBodyLimit(quoted)
+      ? { text: input.text, quotedParent: false }
+      : { ...quoted, quotedParent: true };
   }
 
   private async submit(

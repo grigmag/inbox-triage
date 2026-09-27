@@ -1,6 +1,7 @@
 export type EmailSenderErrorCode =
   | 'AUTHENTICATION_FAILED'
   | 'CONNECTION_FAILED'
+  | 'ENVELOPE_REJECTED'
   | 'INVALID_MESSAGE'
   | 'REPLY_MESSAGE_ID_MISSING'
   | 'REPLY_RECIPIENT_MISSING'
@@ -9,6 +10,8 @@ export type EmailSenderErrorCode =
 const ERROR_MESSAGES: Record<EmailSenderErrorCode, string> = {
   AUTHENTICATION_FAILED: 'The email provider rejected the credentials.',
   CONNECTION_FAILED: 'Could not connect to the email provider.',
+  ENVELOPE_REJECTED:
+    'The email provider rejected the sender or recipients before the message was sent.',
   INVALID_MESSAGE: 'The email message is invalid.',
   REPLY_MESSAGE_ID_MISSING:
     'The message cannot be replied to without a message ID.',

@@ -96,6 +96,9 @@ function classifySmtpError(error: unknown): SmtpTransportErrorKind {
   if (code === 'EAUTH') {
     return 'authentication';
   }
+  if (code === 'EENVELOPE') {
+    return 'envelope';
+  }
   if (
     new Set([
       'ECONNECTION',

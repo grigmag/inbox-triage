@@ -35,7 +35,7 @@ export class ImapMailboxReader implements MailboxReader {
       : undefined;
 
     try {
-      return await this.withInboxLock(async ({ uidValidity }) => {
+      const result = await this.withInboxLock(async ({ uidValidity }) => {
         if (token && token.uidValidity !== uidValidity) {
           throw new MailboxReaderError('INVALID_PAGE_TOKEN');
         }
@@ -67,6 +67,7 @@ export class ImapMailboxReader implements MailboxReader {
               : null,
         };
       });
+      return result;
     } catch (error) {
       throw translateImapError(error);
     }
@@ -77,7 +78,7 @@ export class ImapMailboxReader implements MailboxReader {
     const messageRef = parseMessageRef(ref);
 
     try {
-      return await this.withInboxLock(async ({ uidValidity }) => {
+      const result = await this.withInboxLock(async ({ uidValidity }) => {
         if (messageRef.uidValidity !== uidValidity) {
           throw new MailboxReaderError('MESSAGE_NOT_FOUND');
         }
@@ -103,6 +104,7 @@ export class ImapMailboxReader implements MailboxReader {
         }
         return messages;
       });
+      return result;
     } catch (error) {
       throw translateImapError(error);
     }
@@ -113,7 +115,7 @@ export class ImapMailboxReader implements MailboxReader {
     const messageRef = parseMessageRef(ref);
 
     try {
-      return await this.withInboxLock(async ({ uidValidity }) => {
+      const result = await this.withInboxLock(async ({ uidValidity }) => {
         if (messageRef.uidValidity !== uidValidity) {
           throw new MailboxReaderError('MESSAGE_NOT_FOUND');
         }
@@ -138,8 +140,10 @@ export class ImapMailboxReader implements MailboxReader {
 
         const source = await readBoundedMessage(stream);
         const summary = normalizeEmailSummary(metadata, uidValidity);
-        return await parseEmailMessage(source, summary);
+        const message = await parseEmailMessage(source, summary);
+        return message;
       });
+      return result;
     } catch (error) {
       throw translateImapError(error);
     }
@@ -201,7 +205,8 @@ export class ImapMailboxReader implements MailboxReader {
     this.mailboxLock = lock;
 
     try {
-      return await operation(lock);
+      const result = await operation(lock);
+      return result;
     } finally {
       lock.release();
       if (this.mailboxLock === lock) {

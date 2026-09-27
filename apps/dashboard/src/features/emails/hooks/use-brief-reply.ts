@@ -1,0 +1,104 @@
+'use client';
+
+import { useReducer, useRef } from 'react';
+import type { GenerateBriefReplyActionResult } from '../actions/generate-brief-reply-action-result';
+import { generateBriefReplyAction } from '../actions/generate-brief-reply.action';
+import type { SendBriefReplyActionResult } from '../actions/send-brief-reply-action-result';
+import { sendBriefReplyAction } from '../actions/send-brief-reply.action';
+import type { BriefReplyActionInput } from '../brief-reply/brief-reply-input.schema';
+import {
+  briefReplyReducer,
+  initialBriefReplyState,
+  isBriefReplyEdited,
+  isBriefReplyStarted,
+} from '../state/brief-reply-state';
+
+const unexpectedGenerateFailure = {
+  status: 'failure',
+  message: 'Unable to draft a reply. Please try again.',
+} as const;
+
+// A thrown action call may have reached the server after submission started.
+const unexpectedSendFailure = {
+  status: 'unconfirmed',
+  message:
+    'Unable to confirm that the reply was sent. Check your Sent folder before sending again.',
+} as const;
+
+/**
+ * Holds the reply draft for one loaded message. The owning component remounts
+ * per message, so drafts and sent state never outlive the message they belong
+ * to.
+ */
+export function useBriefReply() {
+  const [state, dispatch] = useReducer(
+    briefReplyReducer,
+    initialBriefReplyState,
+  );
+  // Sync lock: state updates are too late to block a double click.
+  const pendingRef = useRef(false);
+  const sentRef = useRef(false);
+
+  async function generate(messageRef: string, input: BriefReplyActionInput) {
+    if (pendingRef.current || sentRef.current) {
+      return;
+    }
+
+    pendingRef.current = true;
+    dispatch({ type: 'startGenerate' });
+
+    let result: GenerateBriefReplyActionResult;
+
+    try {
+      result = await generateBriefReplyAction(messageRef, input);
+    } catch {
+      result = unexpectedGenerateFailure;
+    }
+
+    pendingRef.current = false;
+    dispatch({ type: 'setGenerateResult', result });
+  }
+
+  function startBlank() {
+    if (pendingRef.current || sentRef.current) {
+      return;
+    }
+
+    dispatch({ type: 'startBlank' });
+  }
+
+  async function send(messageRef: string) {
+    if (pendingRef.current || sentRef.current || state.draft === null) {
+      return;
+    }
+
+    pendingRef.current = true;
+    dispatch({ type: 'startSend' });
+
+    let result: SendBriefReplyActionResult;
+
+    try {
+      result = await sendBriefReplyAction({ messageRef, body: state.draft });
+    } catch {
+      result = unexpectedSendFailure;
+    }
+
+    pendingRef.current = false;
+    sentRef.current = result.status === 'success';
+    dispatch({ type: 'setSendResult', result });
+  }
+
+  function editDraft(draft: string) {
+    dispatch({ type: 'editDraft', draft });
+  }
+
+  return {
+    ...state,
+    edited: isBriefReplyEdited(state),
+    started: isBriefReplyStarted(state),
+    generate,
+    startBlank,
+    send,
+    editDraft,
+  };
+}

@@ -14,6 +14,7 @@ export type {
   EmailSender,
   EmailSenderConfig,
   ReplyEmailInput,
+  ReplyEmailResult,
   SendEmailInput,
   SendEmailResult,
 } from './email-sender.types';
