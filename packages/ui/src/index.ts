@@ -37,7 +37,21 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './components/alert-dialog';
+export {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from './components/avatar';
 export { Badge, badgeVariants } from './components/badge';
+export { Checkbox } from './components/checkbox';
+export {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './components/collapsible';
 export {
   Toast,
   ToastAction,

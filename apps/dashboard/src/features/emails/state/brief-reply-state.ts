@@ -8,6 +8,13 @@ export type BriefReplyStateError = {
   unconfirmed: boolean;
 };
 
+export type BriefReplySource = {
+  /** The `resultId` of the review the draft was generated or started from. */
+  reviewId: number;
+  /** The review questions the draft asks, as ascending indices. */
+  questionIndices: number[];
+};
+
 export type BriefReplyState = {
   /**
    * The text in the composer, which is what gets sent. Every edit updates it.
@@ -27,6 +34,10 @@ export type BriefReplyState = {
   /** Set after a successful send. The draft stays locked from then on. */
   sent: SentBriefReplyDto | null;
   error: BriefReplyStateError | null;
+  /** Source of the current draft. Null until a draft exists. */
+  source: BriefReplySource | null;
+  /** Source of the generation in flight, committed only on success. */
+  pendingSource: BriefReplySource | null;
 };
 
 export const initialBriefReplyState: BriefReplyState = {
@@ -35,11 +46,13 @@ export const initialBriefReplyState: BriefReplyState = {
   pending: null,
   sent: null,
   error: null,
+  source: null,
+  pendingSource: null,
 };
 
 export type BriefReplyAction =
-  | { type: 'startGenerate' }
-  | { type: 'startBlank' }
+  | { type: 'startGenerate'; source: BriefReplySource }
+  | { type: 'startBlank'; source: BriefReplySource }
   | { type: 'setGenerateResult'; result: GenerateBriefReplyActionResult }
   | { type: 'editDraft'; draft: string }
   | { type: 'startSend' }
@@ -74,7 +87,12 @@ export function briefReplyReducer(
         return state;
       }
 
-      return { ...state, pending: 'generating', error: null };
+      return {
+        ...state,
+        pending: 'generating',
+        pendingSource: action.source,
+        error: null,
+      };
 
     // For briefs with nothing to ask, the user writes the reply without AI.
     case 'startBlank':
@@ -82,7 +100,13 @@ export function briefReplyReducer(
         return state;
       }
 
-      return { ...state, draft: '', generated: '', error: null };
+      return {
+        ...state,
+        draft: '',
+        generated: '',
+        source: action.source,
+        error: null,
+      };
 
     case 'setGenerateResult': {
       if (state.pending !== 'generating') {
@@ -91,19 +115,23 @@ export function briefReplyReducer(
 
       const { result } = action;
 
-      // A failed regeneration keeps the current draft beside the error.
+      // A failed regeneration keeps the current draft and its source beside
+      // the error.
       if (result.status === 'success') {
         return {
           ...state,
           draft: result.data.body,
           generated: result.data.body,
           pending: null,
+          source: state.pendingSource,
+          pendingSource: null,
         };
       }
 
       return {
         ...state,
         pending: null,
+        pendingSource: null,
         error: {
           message:
             result.status === 'noConnection'

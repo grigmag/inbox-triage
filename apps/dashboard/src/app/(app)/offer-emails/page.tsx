@@ -13,7 +13,7 @@ export default async function EmailsPage() {
 
   return (
     <PageShell width="full">
-      <PageHeader title="Emails" breadcrumbs={[{ label: 'Emails' }]} />
+      <PageHeader title="Emails" />
 
       <EmailsInbox />
     </PageShell>

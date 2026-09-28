@@ -26,6 +26,7 @@
 
 - `PROGRESS.md` tracks features under Planned, In progress, and Completed. Consult it before implementation and update it as work advances. Keep one entry per feature: move it to In progress when implementation starts and include a brief note on what is implemented. Move it to Completed and check it off only when the whole feature is complete. Record individual slice completion in the feature plan, never as separate completed entries in `PROGRESS.md`.
 - `docs/plans` contains the detailed implementation plans for each feature (`*-plan.md` files). Follow the relevant plan when implementing a feature.
+- Do not read plans for features listed as Completed in `PROGRESS.md`, unless the user asks. They are historical records and may be outdated; use the code, `docs/application-conventions.md`, and the specs instead.
 - When creating a plan in `docs/plans/`, update `PROGRESS.md` in the same change. Record it as planned, not completed.
 - `docs/rewrite-specs` contains specifications that define and describe the intended product behavior, based on the legacy application. Use them as input when creating or refining plans, but do not treat them as immutable. During implementation, the relevant plan is the primary execution guide.
 - `docs/application-conventions.md` records durable, cross-cutting application behavior that future features should follow.

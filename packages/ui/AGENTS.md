@@ -7,3 +7,8 @@
   `@inbox-triage/ui/hooks/use-mobile`. Do not reintroduce a dashboard-owned hook
   alias in generated UI source. This is a required monorepo compatibility
   deviation from upstream shadcn output.
+- Import `cn` from `@inbox-triage/ui/lib/utils` in generated UI source. The
+  `@shadcn` registry imports it from the `cn` npm package and adds that
+  dependency; revert the dependency and lockfile change and rewrite the
+  import. This is a required monorepo compatibility deviation from upstream
+  shadcn output.

@@ -25,6 +25,10 @@ export type ConfirmActionDialogProps = {
   actionLabel: string;
   cancelLabel: string;
   onConfirm: () => void | Promise<void>;
+  /** Defaults to `destructive`. Use `default` for irreversible, non-destructive actions. */
+  actionVariant?: 'default' | 'destructive';
+  /** Details to check before confirming, shown below the description. */
+  children?: ReactNode;
   trigger?: ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -36,6 +40,8 @@ export function ConfirmActionDialog({
   actionLabel,
   cancelLabel,
   onConfirm,
+  actionVariant = 'destructive',
+  children,
   trigger,
   open,
   onOpenChange,
@@ -104,6 +110,8 @@ export function ConfirmActionDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
 
+        {children}
+
         <AlertDialogFooter>
           <AlertDialogCancel ref={cancelRef} disabled={pending}>
             {cancelLabel}
@@ -111,7 +119,7 @@ export function ConfirmActionDialog({
 
           <AlertDialogAction
             type="button"
-            variant="destructive"
+            variant={actionVariant}
             disabled={pending}
             onClick={() => {
               void handleConfirm();

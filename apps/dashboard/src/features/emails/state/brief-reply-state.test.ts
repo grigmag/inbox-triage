@@ -6,6 +6,7 @@ import {
   isBriefReplyLocked,
   isBriefReplyStarted,
   type BriefReplyAction,
+  type BriefReplySource,
   type BriefReplyState,
 } from './brief-reply-state';
 
@@ -16,9 +17,15 @@ function reduce(
   return actions.reduce(briefReplyReducer, state);
 }
 
-function generated(body: string): BriefReplyAction[] {
+const firstReview = { reviewId: 1, questionIndices: [0, 1] };
+const secondReview = { reviewId: 2, questionIndices: [0] };
+
+function generated(
+  body: string,
+  source: BriefReplySource = firstReview,
+): BriefReplyAction[] {
   return [
-    { type: 'startGenerate' },
+    { type: 'startGenerate', source },
     {
       type: 'setGenerateResult',
       result: { status: 'success', data: { body } },
@@ -50,6 +57,7 @@ describe('briefReplyReducer', () => {
       ...initialBriefReplyState,
       draft: 'Hello,',
       generated: 'Hello,',
+      source: firstReview,
     });
     expect(isBriefReplyEdited(drafted)).toBe(false);
   });
@@ -59,6 +67,7 @@ describe('briefReplyReducer', () => {
 
     const generating = reduce(initialBriefReplyState, {
       type: 'startGenerate',
+      source: firstReview,
     });
 
     expect(isBriefReplyStarted(generating)).toBe(true);
@@ -87,7 +96,7 @@ describe('briefReplyReducer', () => {
     const edited = reduce(drafted, { type: 'editDraft', draft: 'Hi,' });
     const failed = reduce(
       edited,
-      { type: 'startGenerate' },
+      { type: 'startGenerate', source: firstReview },
       {
         type: 'setGenerateResult',
         result: { status: 'failure', message: 'Drafting timed out.' },
@@ -103,13 +112,16 @@ describe('briefReplyReducer', () => {
   });
 
   it('ignores overlapping requests and edits while one is pending', () => {
-    const generating = reduce(drafted, { type: 'startGenerate' });
+    const generating = reduce(drafted, {
+      type: 'startGenerate',
+      source: firstReview,
+    });
 
     expect(isBriefReplyLocked(generating)).toBe(true);
     expect(
       reduce(
         generating,
-        { type: 'startGenerate' },
+        { type: 'startGenerate', source: firstReview },
         { type: 'startSend' },
         { type: 'editDraft', draft: 'Hi,' },
       ),
@@ -120,7 +132,7 @@ describe('briefReplyReducer', () => {
     expect(
       reduce(
         sending,
-        { type: 'startGenerate' },
+        { type: 'startGenerate', source: firstReview },
         { type: 'startSend' },
         { type: 'editDraft', draft: 'Hi,' },
       ),
@@ -142,8 +154,70 @@ describe('briefReplyReducer', () => {
     ).toBe(drafted);
   });
 
+  it('records the source of a draft only once its generation succeeds', () => {
+    const generating = reduce(drafted, {
+      type: 'startGenerate',
+      source: secondReview,
+    });
+
+    expect(generating.source).toEqual(firstReview);
+    expect(generating.pendingSource).toEqual(secondReview);
+
+    const regenerated = reduce(generating, {
+      type: 'setGenerateResult',
+      result: { status: 'success', data: { body: 'Dear client,' } },
+    });
+
+    expect(regenerated.source).toEqual(secondReview);
+    expect(regenerated.pendingSource).toBeNull();
+  });
+
+  it('keeps the source of the current draft after a failed regeneration', () => {
+    const failed = reduce(
+      drafted,
+      { type: 'startGenerate', source: secondReview },
+      {
+        type: 'setGenerateResult',
+        result: { status: 'failure', message: 'Drafting timed out.' },
+      },
+    );
+
+    expect(failed.source).toEqual(firstReview);
+    expect(failed.pendingSource).toBeNull();
+  });
+
+  it('has no source after a failed first generation', () => {
+    const failed = reduce(
+      initialBriefReplyState,
+      { type: 'startGenerate', source: firstReview },
+      {
+        type: 'setGenerateResult',
+        result: { status: 'failure', message: 'Drafting timed out.' },
+      },
+    );
+
+    expect(failed.source).toBeNull();
+    expect(failed.pendingSource).toBeNull();
+  });
+
+  it('records the source of a blank reply', () => {
+    const blank = reduce(initialBriefReplyState, {
+      type: 'startBlank',
+      source: secondReview,
+    });
+
+    expect(blank.source).toEqual(secondReview);
+  });
+
+  it('keeps the source through sending', () => {
+    expect(sent.source).toEqual(firstReview);
+  });
+
   it('starts a blank reply that is unedited until the user types', () => {
-    const blank = reduce(initialBriefReplyState, { type: 'startBlank' });
+    const blank = reduce(initialBriefReplyState, {
+      type: 'startBlank',
+      source: firstReview,
+    });
 
     expect(blank.draft).toBe('');
     expect(isBriefReplyStarted(blank)).toBe(true);
@@ -158,11 +232,18 @@ describe('briefReplyReducer', () => {
   it('does not start a blank reply over a draft or while locked', () => {
     const generating = reduce(initialBriefReplyState, {
       type: 'startGenerate',
+      source: firstReview,
     });
 
-    expect(reduce(drafted, { type: 'startBlank' })).toBe(drafted);
-    expect(reduce(generating, { type: 'startBlank' })).toBe(generating);
-    expect(reduce(sent, { type: 'startBlank' })).toBe(sent);
+    expect(reduce(drafted, { type: 'startBlank', source: firstReview })).toBe(
+      drafted,
+    );
+    expect(
+      reduce(generating, { type: 'startBlank', source: firstReview }),
+    ).toBe(generating);
+    expect(reduce(sent, { type: 'startBlank', source: firstReview })).toBe(
+      sent,
+    );
   });
 
   it('does not send or edit before a draft exists', () => {
@@ -186,7 +267,7 @@ describe('briefReplyReducer', () => {
       reduce(
         sent,
         { type: 'startSend' },
-        { type: 'startGenerate' },
+        { type: 'startGenerate', source: firstReview },
         { type: 'editDraft', draft: 'Hi,' },
       ),
     ).toBe(sent);

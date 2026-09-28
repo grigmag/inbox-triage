@@ -16,6 +16,9 @@ const unexpectedFailure = {
  */
 export function useBriefReview() {
   const [result, setResult] = useState<BriefEvaluationOutput | null>(null);
+  // Increases with each successful result, so a draft can tell whether it
+  // came from the latest review.
+  const [resultId, setResultId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -40,6 +43,7 @@ export function useBriefReview() {
     // A failed rerun keeps the previous result visible beside the error.
     if (response.status === 'success') {
       setResult(response.data);
+      setResultId((id) => (id ?? 0) + 1);
     } else {
       setError(
         response.status === 'noConnection'
@@ -49,5 +53,5 @@ export function useBriefReview() {
     }
   }
 
-  return { result, error, loading, review };
+  return { result, resultId, error, loading, review };
 }

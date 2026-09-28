@@ -132,3 +132,30 @@ Local Clerk authentication is complete. When production exists:
   UI components.
 - System preference is supported and can be overridden by the user.
 - The implementation passes typecheck, lint, and production build validation.
+
+## Migrate class merging to the `cn` package
+
+The `@shadcn` registry now imports `cn` from the `cn` npm package
+(`shadcn-ui/cn`, first published under that name on 2026-09-01) instead of the
+project's `utils` alias. `packages/ui` keeps its own `clsx` and
+`tailwind-merge` helper at `src/lib/utils.ts`, so every `shadcn add` needs the
+manual import rewrite documented in `packages/ui/AGENTS.md`. Adopt the package
+once it has settled, for example after a 1.0 release or a few weeks without
+releases, in its own change.
+
+- [ ] Review `cn` release notes and its parity claims against `tailwind-merge`.
+- [ ] From `packages/ui`, preview `pnpm dlx shadcn@latest migrate cn` with
+      `--dry-run`, then apply it.
+- [ ] Choose one import path for dashboard code: `from 'cn'` directly or a
+      re-export from `@inbox-triage/ui/lib/utils`.
+- [ ] Remove `clsx` and `tailwind-merge` if nothing else uses them, and confirm
+      only the root `pnpm-lock.yaml` changes.
+- [ ] Remove the `cn` deviation note from `packages/ui/AGENTS.md`.
+- [ ] Check components with `className` overrides in the browser, in light and
+      dark mode.
+
+### Acceptance criteria
+
+- Shared UI components and dashboard code use a single `cn` implementation.
+- `shadcn add` output needs no manual `cn` import or dependency rewrite.
+- Class conflict resolution is unchanged for existing components.

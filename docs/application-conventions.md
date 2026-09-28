@@ -12,6 +12,9 @@ decisions belong in the relevant implementation plan.
   `actions`, `components`, `dto`, `errors`, `repositories`, `use-cases`, and
   `validation`. Do not create empty directories for symmetry.
 - Keep tests colocated with the implementation they cover.
+- Name a file that exports one primary function after that function, in
+  kebab-case: `getBriefReplyStaleness` lives in `get-brief-reply-staleness.ts`.
+  Put pure helper functions in `lib`.
 - Keep code with the capability that owns it. Use a feature-level `shared`
   directory only when multiple sibling capabilities consume the code and none is
   its clear owner.
@@ -104,10 +107,29 @@ decisions belong in the relevant implementation plan.
   presentation of blocking validation and recoverable errors.
 - Destructive actions require an explicit confirmation surface before the
   mutation begins.
+- Irreversible outward-facing actions, such as sending an email, also require
+  a confirmation. It shows what the user should check, such as recipients and
+  any open warnings, and uses the default rather than destructive action style.
+
+## Theming
+
+- `packages/ui/src/styles/globals.css` keeps the stock shadcn tokens so the
+  `ui` package stays reusable. Do not add project tokens or brand values
+  there.
+- `apps/dashboard/src/app/globals.css` is the app's only stylesheet entry. It
+  imports the `ui` stylesheet first, then defines project tokens and the
+  InboxTriage theme, so its values override the shadcn defaults.
+- The app uses the dark "Darkroom" theme: warm charcoal surfaces with an amber
+  primary. The root layout sets the `dark` class, so theme values live in the
+  `.dark` block and shadcn `dark:` variants apply.
+- Components use theme tokens, such as `bg-card` and `text-muted-foreground`,
+  rather than fixed palette colors, such as `bg-zinc-100`. Clerk components
+  read the same tokens through `packages/auth/src/client/clerk-appearance.ts`.
 - Status colors use theme tokens. `destructive` marks errors and blocking
   states. `warning` marks states that need attention but do not block, such as
-  missing or ambiguous information. The `warning` token is a project addition
-  to the shadcn theme in `packages/ui/src/styles/globals.css`.
+  missing or ambiguous information. `success` marks completed or positive
+  states, such as a complete brief, clear details, or a sent reply. `warning`
+  and `success` are project additions to the shadcn theme.
 
 ## Validated server actions
 

@@ -2,7 +2,78 @@
 
 ## Status
 
-Planned. No slices are implemented.
+Completed. Slices 1-7 are implemented, and the browser checks were done in a
+manual pass. Slice 1 (UI foundations) is implemented. The light `success` token is
+`oklch(0.51 0.12 155)`, darker than the `0.55` starting point, so badge text
+on a 10% tint over the card reaches 4.72:1. The dark token is
+`oklch(0.75 0.14 155)` at 7.19:1.
+
+Slice 2 (put the email first) is implemented. `EmailDetailHeader` takes an
+optional `action` prop, which slice 5 fills. The body uses `text-base` with
+`leading-7`, and the column is capped at `max-w-[820px]`.
+
+Slice 3 (redesign the brief review card) is implemented. The panel is split
+into `email-review-panel.tsx`, `brief-review-status.tsx` (outcome and field
+badges, meter, reply copy), and `brief-review-details.tsx`. The collapse level
+lives in the panel for now, and slice 5 lifts it into `EmailDetail` so the
+header action can collapse the card too. The panel takes `replyStarted` and
+`replyPending`: the strip applies only once a reply has started, and after a
+failed first generation the strip shows **Draft reply** so the retry needs no
+extra click. The questions list aligns badges with the first line through the
+shared 20px line height of `text-sm` and `Badge`.
+
+Slice 4 (restyle the composer) is implemented. The composer is split into
+`email-reply-composer.tsx`, `email-reply-header.tsx` (recipient chips and
+subject), and `email-reply-quote-preview.tsx`. `EmailDetail` already passed
+the whole message, so it did not change. The action bar was sticky at first,
+but the pane's padding left a gap under it where scrolled text showed, so it
+now sits at the end of the composer and scrolls with it. The card shows the focus ring through `has-[textarea:focus-visible]`
+rather than `focus-within`, so focusing the disclosure or the action buttons
+does not ring the whole card on top of their own rings. It also shows a
+destructive ring while the editor is invalid. The sent alert uses the
+`success` tint. The field description and the quote disclosure are hidden
+after sending, since the sent alert reports whether the original was quoted.
+
+Slice 5 (add the header primary action) is implemented. The header renders
+`EmailDetailHeaderAction` from `getEmailDetailPrimaryAction()`. Its
+`draftReply` and `writeReply` branches are never disabled in practice, because
+a pending reply or review matches an earlier rule, but the field stays to keep
+the interface. **Go to reply** is an `outline` button, since the composer's
+**Send reply** is the main action by then, and **Reply sent** is a success
+`Badge`. The collapse level now lives in `EmailDetail`, and one `startReply`
+handler serves the header and the card: it sets `strip`, scrolls, and starts
+the reply. The composer is scrolled to straight away when it is already
+mounted (the retry after a failed first draft), and otherwise by its wrapper's
+ref callback on mount. `useBriefReply().generate()` resolves to whether a
+draft arrived, and commits the result with `flushSync`, because the editor
+would otherwise still be missing or disabled when the caller's `await`
+continues. A blank reply is committed with `flushSync` in the click handler
+for the same reason. The review card's **Draft reply** button unmounts when
+the card collapses, so focus stays on the page until the draft arrives. The
+header button keeps its DOM node as it changes to **Go to reply**, so
+keyboard focus stays there.
+
+Slice 6 (flag drafts from an earlier review) is implemented.
+`useBriefReview()` exposes `resultId`, which is null until the first result.
+`generate()` and `startBlank()` take the source, and `EmailDetail` does
+nothing when a reply starts without a `resultId`, which cannot happen while a
+result exists. The composer shows the notice as a muted line with an info
+icon above the alerts. **Regenerate** was already hidden when the latest
+review has no questions or is `irrelevant`, so that part needed no change.
+
+Slice 7 (let the user choose the questions) is implemented. `Checkbox` came
+from the `@shadcn` registry with the documented `cn` import rewrite, and the
+`cn` dependency it added was reverted. The selection lives in `EmailDetail` as
+`{ reviewId, questionIndices }`, and `getSelectedQuestionIndices()` checks
+every question when the stored `reviewId` is not the latest, so a new result
+resets it without an effect. `BriefReplySource` carries `questionIndices`, and
+a blank reply records none. `summarizeBriefReview()` takes the selection and
+counts selected and selected blocking questions. The prototype has no question
+picker, so the list keeps its question and badge layout and puts the checkbox
+in place of the number. Each row is one `label`, so the badge is read with the
+question, and unchecked rows turn muted. The prompt already asks only for what
+the supplied questions cover and does not mention blocking, so the prompt and
+eval did not change.
 
 ## Goal
 
@@ -19,7 +90,7 @@ After the change:
   **Review brief** to **Draft reply** or **Write reply**, then **Go to reply**,
   then a **Reply sent** indicator;
 - the composer looks like a mail composer rather than a form, with its actions
-  in a bar that stays visible while the user scrolls a long draft.
+  in a bar at the end of the draft.
 
 Two later slices change behaviour. The composer says when a draft was written
 from an earlier review, and the user picks which questions the reply asks.
@@ -112,8 +183,8 @@ is unavailable" message.
 | Unavailable              | The same card with the `getReviewUnavailableReason()` text as the description and a disabled **Review brief**.                                                                                                                                                                                                                                                 |
 | First review running     | Title with "Reviewing..." and a skeleton in a `role="status"` region labelled "Reviewing email".                                                                                                                                                                                                                                                               |
 | First review failed      | The not-reviewed card with a destructive `Alert` and **Try again**.                                                                                                                                                                                                                                                                                            |
-| Result, collapsed        | Default. Title row with the outcome badge and a ghost **Review again**. The summary clamped to two lines. A "5 of 9 details clear" meter. The unclear fields as badges after an "Unclear" label, or "Every detail needed for a quote is in the email." when there are none. Then **Draft reply** or **Write reply**, the reply sentence, and **Show details**. |
-| Result, expanded         | The same, with the full summary and a details section: outcome reason, "Needs attention", "Provided", "Questions the reply will ask", and **Show less**.                                                                                                                                                                                                       |
+| Result, collapsed        | Default. Title row with the outcome badge and a ghost **Review again**. The summary always shown in full. A "5 of 9 details clear" meter. The unclear fields as badges after an "Unclear" label, or "Every detail needed for a quote is in the email." when there are none. Then **Draft reply** or **Write reply**, the reply sentence, and **Show details**. |
+| Result, expanded         | The same, with a details section added: outcome reason, "Needs attention", "Provided", "Questions the reply will ask", and **Show less**.                                                                                                                                                                                                                      |
 | Reply exists             | A one-line strip: "Brief review", outcome badge, "5 of 9 clear · reply asks 4 questions", and **Show**. Opening it shows the collapsed result with a **Hide** control that returns to the strip. The draft button is gone because the composer owns regeneration.                                                                                              |
 | `irrelevant`             | One compact card: title, "Not a production brief" badge, **Review again**, and the outcome reason. No meter, fields, or reply action.                                                                                                                                                                                                                          |
 | Rerun failed with result | The result stays, with the destructive `Alert` above the summary, as today.                                                                                                                                                                                                                                                                                    |
@@ -176,7 +247,7 @@ from the component.
   below when sent", that opens a muted preview of the attribution and the
   start of the original text. The preview is illustrative. The package builds
   the real quote at send time.
-- A bar at the bottom, sticky to the scrolling pane, with **Regenerate** on the
+- A bar at the bottom of the composer, scrolling with it, with **Regenerate** on the
   left and **Send reply** on the right. It is hidden after sending. The
   generating skeleton, the confirmation before regenerating an edited draft,
   and the blank reply for briefs without questions keep today's behaviour.
@@ -261,10 +332,10 @@ apps/dashboard/src/features/emails/
   lib/
     get-sender-initials.ts
     summarize-brief-review.ts
+    get-brief-reply-staleness.ts # slice 6
+    get-email-detail-primary-action.ts
   state/
-    email-detail-primary-action.ts
     brief-reply-state.ts       # records the draft's source in slice 6
-    brief-reply-staleness.ts   # slice 6
 ```
 
 Each new helper has a colocated `*.test.ts`. Split the review panel into
@@ -463,7 +534,7 @@ remembers which questions of its review it asked.
 1. Replace the To and Subject `dl` with the recipient chips and subject row.
 2. Make the editor borderless with focus on the container, keeping the hidden
    label, description, validation error, and ARIA wiring.
-3. Add the quoted-original disclosure and the sticky action bar.
+3. Add the quoted-original disclosure and the action bar.
 4. Walk through every existing composer state in the browser: generating,
    failed first draft, failed regeneration, `unconfirmed`, sent with rejected
    recipients, sent without quoting, blank reply, and the regenerate
@@ -535,7 +606,7 @@ these states:
 - partial, full, and empty question selections, before and after a draft
   exists (slice 7).
 
-Also check a long email and a long draft (sticky bar, scroll to composer),
+Also check a long email and a long draft (scroll to composer),
 the narrow pane width, keyboard use of every toggle, focus after a draft
 arrives, dark mode, and icon centring in buttons.
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useReducer, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import type { GenerateBriefReplyActionResult } from '../actions/generate-brief-reply-action-result';
 import { generateBriefReplyAction } from '../actions/generate-brief-reply.action';
 import type { SendBriefReplyActionResult } from '../actions/send-brief-reply-action-result';
@@ -8,6 +9,7 @@ import { sendBriefReplyAction } from '../actions/send-brief-reply.action';
 import type { BriefReplyActionInput } from '../brief-reply/brief-reply-input.schema';
 import {
   briefReplyReducer,
+  type BriefReplySource,
   initialBriefReplyState,
   isBriefReplyEdited,
   isBriefReplyStarted,
@@ -39,13 +41,21 @@ export function useBriefReply() {
   const pendingRef = useRef(false);
   const sentRef = useRef(false);
 
-  async function generate(messageRef: string, input: BriefReplyActionInput) {
+  /**
+   * Resolves to whether a draft arrived. The result is committed before the
+   * promise resolves, so the caller can focus the editor straight after it.
+   */
+  async function generate(
+    messageRef: string,
+    input: BriefReplyActionInput,
+    source: BriefReplySource,
+  ): Promise<boolean> {
     if (pendingRef.current || sentRef.current) {
-      return;
+      return false;
     }
 
     pendingRef.current = true;
-    dispatch({ type: 'startGenerate' });
+    dispatch({ type: 'startGenerate', source });
 
     let result: GenerateBriefReplyActionResult;
 
@@ -56,15 +66,21 @@ export function useBriefReply() {
     }
 
     pendingRef.current = false;
-    dispatch({ type: 'setGenerateResult', result });
+    // Renders the new draft and enables the editor now, not after the caller's
+    // continuation runs.
+    flushSync(() => {
+      dispatch({ type: 'setGenerateResult', result });
+    });
+
+    return result.status === 'success';
   }
 
-  function startBlank() {
+  function startBlank(source: BriefReplySource) {
     if (pendingRef.current || sentRef.current) {
       return;
     }
 
-    dispatch({ type: 'startBlank' });
+    dispatch({ type: 'startBlank', source });
   }
 
   async function send(messageRef: string) {

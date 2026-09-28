@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { RefreshCwIcon } from 'lucide-react';
 import {
   Button,
   Empty,
@@ -23,23 +24,26 @@ export function EmailsInbox() {
     state.initial.loading || state.older.loading || state.refresh.loading;
   return (
     <div className="overflow-x-auto">
-      <div className="grid h-[calc(100dvh-10rem)] min-h-80 min-w-[800px] grid-cols-[minmax(320px,400px)_minmax(440px,1fr)] overflow-hidden rounded-xl border max-md:h-[calc(100dvh-13rem)]">
+      <div className="grid h-[calc(100dvh-10rem)] min-h-80 min-w-[740px] grid-cols-[300px_minmax(440px,1fr)] overflow-hidden rounded-xl border max-md:h-[calc(100dvh-13rem)]">
         <section
           aria-label="Inbox"
           className="flex min-h-0 min-w-0 flex-col border-r"
         >
-          <div className="flex shrink-0 items-center justify-between gap-3 border-b p-4">
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b px-4 py-3">
             <h2 className="font-medium">Inbox</h2>
 
             <Button
-              variant="outline"
+              variant="ghost"
+              size="icon"
+              aria-label="Refresh"
               onClick={() => void refresh()}
               disabled={busy}
             >
-              {(state.refresh.loading || state.initial.loading) && (
-                <Spinner data-icon="inline-start" />
+              {state.refresh.loading || state.initial.loading ? (
+                <Spinner />
+              ) : (
+                <RefreshCwIcon />
               )}
-              Refresh
             </Button>
           </div>
 
@@ -136,7 +140,7 @@ export function EmailsInbox() {
 
         <section
           aria-label="Email contents"
-          className="min-h-0 min-w-0 overflow-y-auto p-6 [overflow-anchor:none]"
+          className="relative min-h-0 min-w-0 overflow-y-auto p-6 [overflow-anchor:none]"
         >
           {/* Remounts per loaded message, which also discards its review state. */}
           <EmailDetail
