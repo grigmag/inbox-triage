@@ -25,7 +25,8 @@ import {
   type DeliverableRateItemField,
 } from '../validation/deliverable-rate-item-input.schema';
 import { formatCentsAsEuro } from '../validation/parse-euro-amount-to-cents';
-import { ActiveField, RateItemDialogFrame } from './rate-item-dialog-frame';
+import { ActiveField } from './active-field';
+import { RateItemDialogFrame } from './rate-item-dialog-frame';
 import type { RateItemDialogProps } from './rate-item-dialog.types';
 import { fieldErrorsFromZod } from '@/lib/validation/field-errors-from-zod';
 import { useFocusInvalidField } from '@/hooks/use-focus-invalid-field';

@@ -8,12 +8,10 @@ import {
 } from '@inbox-triage/ui';
 import type { DeliverableRateItemDto } from '../dto/deliverable-rate-item.dto';
 import { formatCentsAsEuro } from '../validation/parse-euro-amount-to-cents';
-import {
-  CatalogActiveControl,
-  CatalogEditButton,
-  CatalogOrderingControls,
-  type RateCatalogTableCallbacks,
-} from './rate-catalog-table-controls';
+import { CatalogActiveControl } from './catalog-active-control';
+import { CatalogEditButton } from './catalog-edit-button';
+import { CatalogOrderingControls } from './catalog-ordering-controls';
+import type { RateCatalogTableCallbacks } from './rate-catalog-table.types';
 
 type DeliverableRateTableProps = {
   items: DeliverableRateItemDto[];

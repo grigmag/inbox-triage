@@ -5,29 +5,108 @@ decisions belong in the relevant implementation plan.
 
 ## Feature organization
 
-- Organize product code by business capability under `apps/dashboard/src/features`.
-  An umbrella feature may contain independently evolving subfeatures, and each
-  subfeature follows the same conventions recursively.
-- Within a feature or subfeature, use only the applicable technical layers:
-  `actions`, `components`, `dto`, `errors`, `repositories`, `use-cases`, and
-  `validation`. Do not create empty directories for symmetry.
-- Keep tests colocated with the implementation they cover.
-- Name a file that exports one primary function after that function, in
-  kebab-case: `getBriefReplyStaleness` lives in `get-brief-reply-staleness.ts`.
-  Put pure helper functions in `lib`.
-- Keep code with the capability that owns it. Use a feature-level `shared`
-  directory only when multiple sibling capabilities consume the code and none is
-  its clear owner.
-- Operational imports are one-way: `components` may import `actions`; `actions`
-  may import `use-cases` or `repositories`; and `use-cases` may import
-  `repositories`. Supporting `dto`, `validation`, and `errors` modules may import
-  one another and be imported by any operational layer, but never import an
-  operational layer. Actions own framework concerns, use cases own multi-step
-  orchestration, and repositories own persistence.
+Product code lives in `apps/dashboard/src/features`, grouped by business
+capability. An umbrella feature may contain subfeatures that evolve
+independently. Each subfeature follows these rules recursively.
+
+```text
+apps/dashboard/src/
+├── features/emails/
+│   ├── actions/            server actions
+│   ├── use-cases/
+│   ├── repositories/
+│   ├── server/             server-only integrations with external services, e.g. read-mailbox.ts
+│   ├── dto/
+│   ├── validation/
+│   ├── errors/
+│   ├── brief-review/       capability module: prompt, schemas, config, errors, evals
+│   ├── shared/             only for code sibling capabilities share with no clear owner
+│   ├── components/
+│   │   ├── success-badge.tsx          feature building block
+│   │   └── email-detail/              component folder
+│   │       ├── email-detail.tsx       entry file, the only file imported from outside
+│   │       ├── use-brief-reply.ts     private code, flat, any client layer
+│   │       ├── reply-composer/        nested sub-unit, the deepest allowed level
+│   │       └── review-panel/
+│   ├── hooks/              client hooks
+│   ├── state/              reducers and their state types
+│   └── lib/                pure helpers, e.g. format-email-addresses.ts
+├── hooks/                  feature-independent helpers, e.g. use-scroll-into-view-on-mount.ts
+└── lib/
+```
+
+Create only the directories a feature needs, never empty ones for symmetry.
+Layers mix only inside capability modules and component folders.
+
+### Layers
+
+- Imports are one-way. `components` may import `actions`. `actions` may import
+  `use-cases` or `repositories`. `use-cases` may import `repositories`.
+- `dto`, `validation`, and `errors` may import one another, and any
+  operational layer may import them. They never import an operational layer.
+- Actions own framework concerns, use cases own multi-step orchestration, and
+  repositories own persistence.
 - Keep application errors framework-independent.
-- Mark server-only modules with `server-only` and server actions with `use server`.
-- Avoid barrel files such as re-export-only `index.ts` modules in feature code.
-  Import directly from the module that defines the value or type.
+- Mark server-only modules with `server-only` and server actions with
+  `use server`.
+
+### Files and exports
+
+- Colocate tests with the code they cover.
+- Name a file after its primary export, in kebab-case: `getSenderInitials`
+  lives in `get-sender-initials.ts`.
+- Export only what another module imports. A colocated test counts as an
+  importer. Lint limits component files to one exported component plus its
+  types.
+- Share repeated style, labels, or markup as a component, as `SuccessBadge`
+  does, not as an exported constant.
+- Don't use barrel files, except a compound component's entry file. Import
+  from the module that defines the value or type.
+
+### Where shared code goes
+
+- Keep code with the capability that owns it.
+- Put code several modules share in the closest folder containing all of them,
+  in a module named for what it holds, such as `rate-catalog-table.types.ts` or
+  `gap-status-labels.consts.ts`. When a consumer outside that folder appears,
+  move the module up to the new closest folder.
+- Feature building blocks stay at the feature level even when only one
+  component folder uses them. These are presentation components meant for
+  reuse across the feature, like `SuccessBadge` in `components`, and helpers
+  for the feature's own data, like `formatEmailAddresses` in `lib`.
+- Put helpers that don't depend on the feature in `apps/dashboard/src/hooks` or
+  `apps/dashboard/src/lib`, even when only one feature uses them.
+
+### Component folders
+
+- Give a UI unit its own folder when one component is the only entry point to
+  components, hooks, and helpers nothing else imports. Name the folder and entry
+  file after that component. Outside code imports only the entry file.
+- Nest a sub-unit folder only when it has its own private code and a single
+  entry. Keep other components flat in the parent. Nest at most two levels
+  below `components`.
+- Inside a top-level component folder, nested folders included, import its
+  files by relative path, such as `../use-brief-reply` from `reply-composer/`.
+  Import everything else through `@/`.
+- Component folders hold client UI code only. Server code and the `dto`,
+  `validation`, and `errors` modules stay in their layer directories.
+
+### Compound components and context
+
+- Follow the `vercel-composition-patterns` skill for composition, with the
+  constraints below.
+- A component folder's entry file exports either one component, the default,
+  or a compound component: a namespace object such as
+  `Composer = { Frame, Input, Submit }`. Make it compound only when two or
+  more callers arrange the parts differently. Outside code still imports only
+  the entry file.
+- Keep each part in its own file. The entry is a `.ts` file that imports the
+  parts and exports only the namespace object. This is the one allowed
+  aggregation module, and the shape the Fast Refresh lint rule accepts.
+- Keep shared state in a context file and a provider file, flat in the
+  folder, using the `state`/`actions`/`meta` shape, as `email-detail` does.
+- Context types stay concrete. Extract a generic interface only once a second
+  provider exists.
 
 ## Code style
 

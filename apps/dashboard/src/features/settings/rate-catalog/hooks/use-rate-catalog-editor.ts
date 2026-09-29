@@ -17,7 +17,7 @@ import {
   isDeliverableRateItem,
   replaceCatalogItem,
   upsertCatalogItem,
-} from '../utils/rate-catalog-list.utils';
+} from '../lib/rate-catalog-list.utils';
 import type { RateCatalog } from '../validation/catalog.schema';
 
 export type RateCatalogDialogState =

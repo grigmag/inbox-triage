@@ -1,0 +1,6 @@
+interface:
+  display_name: 'Code Simplifier'
+  short_description: 'Simplify recently changed code without changing behavior'
+
+policy:
+  allow_implicit_invocation: false

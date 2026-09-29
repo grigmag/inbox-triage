@@ -4,6 +4,7 @@ import type {
   EmailPageDto,
   EmailSummaryDto,
 } from '../dto/email.dto';
+import { getMailboxFailureMessage } from '../lib/get-mailbox-failure-message';
 
 type PageLoadOperation = 'initial' | 'older';
 
@@ -73,13 +74,7 @@ function deduplicateMessages(messages: EmailSummaryDto[]): EmailSummaryDto[] {
 function getFailureState(
   result: { status: 'noConnection' } | { status: 'failure'; message: string },
 ): OperationState {
-  return {
-    loading: false,
-    error:
-      result.status === 'noConnection'
-        ? 'Connect your mailbox in Email settings.'
-        : result.message,
-  };
+  return { loading: false, error: getMailboxFailureMessage(result) };
 }
 
 export function emailReducer(

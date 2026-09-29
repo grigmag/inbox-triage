@@ -11,11 +11,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Field,
   FieldGroup,
-  FieldLabel,
   Spinner,
-  Switch,
 } from '@inbox-triage/ui';
 import type { FormEventHandler, ReactNode, Ref } from 'react';
 
@@ -88,28 +85,5 @@ export function RateItemDialogFrame({
         </form>
       </DialogContent>
     </Dialog>
-  );
-}
-
-export function ActiveField({
-  checked,
-  disabled,
-  onCheckedChange,
-}: {
-  checked: boolean;
-  disabled: boolean;
-  onCheckedChange: (checked: boolean) => void;
-}) {
-  return (
-    <Field orientation="horizontal" data-disabled={disabled || undefined}>
-      <FieldLabel htmlFor="rate-dialog-isActive">Active</FieldLabel>
-
-      <Switch
-        id="rate-dialog-isActive"
-        checked={checked}
-        disabled={disabled}
-        onCheckedChange={onCheckedChange}
-      />
-    </Field>
   );
 }

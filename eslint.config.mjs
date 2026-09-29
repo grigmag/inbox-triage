@@ -6,10 +6,19 @@ import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import { reactRefresh } from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 const dashboardFiles = ['apps/dashboard/**/*.{js,jsx,ts,tsx}'];
 const reactFiles = ['apps/**/*.{jsx,tsx}', 'packages/**/*.{jsx,tsx}'];
+const dashboardComponentFiles = ['apps/dashboard/src/**/*.tsx'];
+const dashboardTestFiles = ['apps/dashboard/src/**/*.test.tsx'];
+
+/** An export of a PascalCase function or const, which is how components are named. */
+const exportedComponent =
+  'ExportNamedDeclaration:matches(' +
+  ':has(> FunctionDeclaration[id.name=/^[A-Z]/]), ' +
+  ':has(VariableDeclarator[id.name=/^[A-Z][a-z]/]))';
 
 export default defineConfig([
   globalIgnores(
@@ -81,6 +90,27 @@ export default defineConfig([
                 'Import authentication through @inbox-triage/auth or the dashboard auth module.',
             },
           ],
+        },
+      ],
+    },
+  },
+  {
+    name: 'dashboard/only-export-components',
+    files: dashboardComponentFiles,
+    ignores: dashboardTestFiles,
+    extends: [reactRefresh.configs.next()],
+  },
+  {
+    name: 'dashboard/one-component-per-file',
+    files: dashboardComponentFiles,
+    ignores: dashboardTestFiles,
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: `${exportedComponent} ~ ${exportedComponent}`,
+          message:
+            'Export one component per file. Keep sub-components that only this file uses unexported.',
         },
       ],
     },
