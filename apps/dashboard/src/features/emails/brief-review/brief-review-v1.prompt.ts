@@ -41,12 +41,9 @@ Project type categories are photography, video, photography_and_video, and other
 
 Completion rules:
 
-- At least one of projectType or objective must be provided.
-- Deliverables must be provided.
-- Timeline must be provided.
-- Location, budget, intendedUse, creativeDirection, and talent do not block completion.
-- A missing-information item for projectType or objective blocks completion only when neither field is provided.
-- A missing-information item for deliverables or timeline blocks completion when that field is not provided.
+- projectType, objective, deliverables, timeline, location, and intendedUse must be provided.
+- budget, creativeDirection, and talent do not block completion.
+- A missing-information item for a required field blocks completion when that field is not provided.
 - Optional fields never block completion.
 - needs_information requires at least one completion-blocking question.
 - irrelevant and complete have no completion-blocking questions. Irrelevant has no clarification questions at all.`;

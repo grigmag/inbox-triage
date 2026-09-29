@@ -166,7 +166,7 @@ export const briefEvaluationOutputV1Schema = z
             code: 'custom',
             path: ['outcome'],
             message:
-              'A complete brief requires project type or objective, deliverables, and timeline',
+              'A complete brief requires project type, objective, deliverables, timeline, location, and intended use',
           });
         }
 

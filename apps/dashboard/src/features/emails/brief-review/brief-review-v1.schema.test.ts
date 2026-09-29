@@ -32,9 +32,9 @@ function completeEvaluation(): Evaluation {
         reason: null,
       },
       location: {
-        status: 'missing',
-        value: null,
-        reason: 'No location is stated.',
+        status: 'provided',
+        value: 'Client studio in Athens',
+        reason: null,
       },
       budget: {
         status: 'missing',
@@ -59,8 +59,8 @@ function completeEvaluation(): Evaluation {
     },
     missingInformation: [
       {
-        fieldKey: 'location',
-        question: 'Where should the shoot take place?',
+        fieldKey: 'budget',
+        question: 'What budget should we plan around?',
         blocksCompletion: false,
       },
     ],
@@ -146,11 +146,6 @@ describe('briefEvaluationOutputV1Schema', () => {
       reason: 'The campaign goal is not stated.',
     };
     value.outcome = 'needs_information';
-    value.fields.projectType = {
-      status: 'missing',
-      value: null,
-      reason: 'No production category is stated.',
-    };
     value.missingInformation = [
       {
         fieldKey: 'objective',
@@ -186,47 +181,19 @@ describe('briefEvaluationOutputV1Schema', () => {
     expect(issuePaths(value)).toContain('fields.projectType.value.details');
   });
 
-  it.each(['projectType', 'objective'] as const)(
-    'allows complete when %s is the only provided project identity field',
-    (providedField) => {
-      const value = completeEvaluation();
-      const missingField =
-        providedField === 'projectType' ? 'objective' : 'projectType';
-      const field = value.fields[missingField];
-      field.status = 'missing';
-      field.value = null;
-      field.reason = 'Not stated.';
-
-      expect(briefEvaluationOutputV1Schema.safeParse(value).success).toBe(true);
-    },
-  );
-
-  it.each(['deliverables', 'timeline'] as const)(
-    'rejects complete when %s is not provided',
-    (fieldKey) => {
-      const value = completeEvaluation();
-      value.fields[fieldKey] = {
-        status: 'ambiguous',
-        value: null,
-        reason: 'The scope is unclear.',
-      };
-
-      expect(issuePaths(value)).toContain('outcome');
-    },
-  );
-
-  it('rejects complete when both project identity fields are not provided', () => {
+  it.each([
+    'projectType',
+    'objective',
+    'deliverables',
+    'timeline',
+    'location',
+    'intendedUse',
+  ] as const)('rejects complete when %s is not provided', (fieldKey) => {
     const value = completeEvaluation();
-    value.fields.projectType = {
-      status: 'missing',
-      value: null,
-      reason: 'No production category is stated.',
-    };
-    value.fields.objective = {
-      status: 'ambiguous',
-      value: null,
-      reason: 'The purpose is unclear.',
-    };
+    const field = value.fields[fieldKey];
+    field.status = 'ambiguous';
+    field.value = null;
+    field.reason = 'The field is unclear.';
 
     expect(issuePaths(value)).toContain('outcome');
   });
@@ -239,13 +206,13 @@ describe('briefEvaluationOutputV1Schema', () => {
   });
 
   it.each([
+    ['projectType', true],
+    ['objective', true],
     ['deliverables', true],
     ['timeline', true],
-    ['projectType', false],
-    ['objective', false],
-    ['location', false],
+    ['location', true],
+    ['intendedUse', true],
     ['budget', false],
-    ['intendedUse', false],
     ['creativeDirection', false],
     ['talent', false],
   ] as const)(
@@ -280,30 +247,6 @@ describe('briefEvaluationOutputV1Schema', () => {
       );
     },
   );
-
-  it('makes project identity questions blocking when neither identity field is provided', () => {
-    const value = completeEvaluation();
-    value.outcome = 'needs_information';
-    value.fields.projectType = {
-      status: 'missing',
-      value: null,
-      reason: 'No category is stated.',
-    };
-    value.fields.objective = {
-      status: 'missing',
-      value: null,
-      reason: 'No objective is stated.',
-    };
-    value.missingInformation = [
-      {
-        fieldKey: 'projectType',
-        question: 'Is this photography or video?',
-        blocksCompletion: true,
-      },
-    ];
-
-    expect(briefEvaluationOutputV1Schema.safeParse(value).success).toBe(true);
-  });
 
   it('rejects questions for fields marked provided', () => {
     const value = completeEvaluation();

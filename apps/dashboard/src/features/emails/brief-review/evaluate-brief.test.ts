@@ -53,7 +53,7 @@ function result(
 const input: BriefReviewInput = {
   subject: 'Product launch',
   receivedAt: new Date('2026-09-22T08:30:00.000Z'),
-  body: 'We need ten product photographs next Friday.',
+  body: 'We are launching a product and need ten studio photographs for our online shop next Friday.',
 };
 
 function validEvaluation(): BriefEvaluationOutput {
@@ -68,9 +68,9 @@ function validEvaluation(): BriefEvaluationOutput {
         reason: null,
       },
       objective: {
-        status: 'missing',
-        value: null,
-        reason: 'No objective is stated.',
+        status: 'provided',
+        value: 'Launch a product',
+        reason: null,
       },
       deliverables: {
         status: 'provided',
@@ -83,9 +83,9 @@ function validEvaluation(): BriefEvaluationOutput {
         reason: null,
       },
       location: {
-        status: 'missing',
-        value: null,
-        reason: 'No location is stated.',
+        status: 'provided',
+        value: 'Studio',
+        reason: null,
       },
       budget: {
         status: 'missing',
@@ -93,9 +93,9 @@ function validEvaluation(): BriefEvaluationOutput {
         reason: 'No budget is stated.',
       },
       intendedUse: {
-        status: 'missing',
-        value: null,
-        reason: 'No intended use is stated.',
+        status: 'provided',
+        value: ['Online shop'],
+        reason: null,
       },
       creativeDirection: {
         status: 'missing',

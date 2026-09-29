@@ -35,7 +35,7 @@ We are a ceramics brand based in Athens and we're preparing our autumn catalogue
 
 The shoot should happen by 2 October so we can send the catalogue to print on 15 October. The images will be used in the printed catalogue and on our online shop.
 
-We'd prefer to shoot in your studio. Our budget is around €3,000.
+The shoot will take place at your studio. Our budget is around €3,000.
 
 Best,
 Eleni Markou
@@ -49,25 +49,23 @@ Kerameikos Tableware`,
         objective: 'provided',
         deliverables: 'provided',
         timeline: 'provided',
-        // The sender only states a preference for the studio.
-        location: 'ambiguous',
+        location: 'provided',
         budget: 'provided',
         intendedUse: 'provided',
       },
       blockingQuestions: [],
-      nonBlockingQuestions: ['location'],
     },
   },
   {
-    id: 'en-complete-optional-fields-missing',
+    id: 'en-complete-budget-missing',
     description:
-      'A complete English video brief without location or budget. Optional gaps must not block completion.',
+      'A complete English video brief without a budget. The optional gap must not block completion.',
     input: {
       subject: 'Launch video',
       receivedAt,
       body: `Hello,
 
-We're launching a new electric bike in November and need a 60-second launch video plus three 15-second cut-downs for social media. We need the final edits by the end of next month.
+We're launching a new electric bike in November and need a 60-second launch video for our website plus three 15-second cut-downs for Instagram. We'd film at our showroom in Kifisia, and we need the final edits by the end of next month.
 
 Could you let me know if this is something you can take on?
 
@@ -80,13 +78,15 @@ Voltwheel`,
       language: 'en',
       fieldStatuses: {
         projectType: 'provided',
+        objective: 'provided',
         deliverables: 'provided',
         timeline: 'provided',
-        location: 'missing',
+        location: 'provided',
         budget: 'missing',
+        intendedUse: 'provided',
       },
       blockingQuestions: [],
-      nonBlockingQuestions: ['budget', 'location'],
+      nonBlockingQuestions: ['budget'],
     },
   },
   {
@@ -98,7 +98,7 @@ Voltwheel`,
       receivedAt,
       body: `Hi there,
 
-We run three seafood restaurants on the Athens Riviera and would like a 2-minute brand film for our website, along with 20 still photographs of our dishes and interiors.
+We run three seafood restaurants on the Athens Riviera and would like to promote them with a 2-minute brand film and 20 still photographs of our dishes and interiors, all for our website. We'd shoot at our Vouliagmeni restaurant.
 
 We'd like the film to feel warm and relaxed, with lots of natural light.
 
@@ -111,6 +111,8 @@ Maria Georgiou`,
       fieldStatuses: {
         deliverables: 'provided',
         timeline: 'missing',
+        location: 'provided',
+        intendedUse: 'provided',
         creativeDirection: 'provided',
       },
       blockingQuestions: ['timeline'],
@@ -127,7 +129,7 @@ Maria Georgiou`,
 
 We're a small fashion label preparing our spring collection lookbook. We're thinking some photos and maybe a short clip, but we're not sure yet what we need. Could you advise?
 
-Everything needs to be ready before the end of January.
+We'd shoot at our atelier in Psyrri, and the lookbook will be shared with stockists and on our website. Everything needs to be ready before the end of January.
 
 Kind regards,
 Sofia Lambrou
@@ -140,6 +142,8 @@ Lune Atelier`,
         objective: 'provided',
         deliverables: 'ambiguous',
         timeline: 'provided',
+        location: 'provided',
+        intendedUse: 'provided',
       },
       blockingQuestions: ['deliverables'],
     },
@@ -147,13 +151,13 @@ Lune Atelier`,
   {
     id: 'en-attachment-dependent',
     description:
-      'An English request whose deliverables and dates are only in an unavailable attachment.',
+      'An English request whose deliverables and dates are only in an unavailable attachment. Only those fields block completion.',
     input: {
       subject: 'RFQ: running shoe video campaign',
       receivedAt,
       body: `Dear team,
 
-We're preparing a video campaign for the launch of our new trail running shoe. Please find attached our full brief with the list of deliverables and the key dates.
+We're preparing a video campaign for the launch of our new trail running shoe. Filming will take place at our headquarters in Chalandri, and the videos will run on our website and social channels. Please find attached our full brief with the list of deliverables and the key dates.
 
 We'd appreciate a quote at your earliest convenience.
 
@@ -243,9 +247,9 @@ Alex`,
     acceptsContentFilter: true,
   },
   {
-    id: 'el-complete-eshop-photography',
+    id: 'el-ambiguous-location-eshop-photography',
     description:
-      'A complete Greek photography brief with relative timeline wording.',
+      'A Greek photography brief with relative timeline wording that only states a location preference. The ambiguous location blocks completion.',
     input: {
       subject: 'Φωτογράφιση προϊόντων για το e-shop',
       receivedAt,
@@ -261,16 +265,18 @@ Alex`,
 Κατερίνα Δημητρίου`,
     },
     expectations: {
-      outcome: 'complete',
+      outcome: 'needs_information',
       language: 'el',
       fieldStatuses: {
         projectType: 'provided',
+        objective: 'provided',
         deliverables: 'provided',
         timeline: 'provided',
         // Offering to send the products to the studio leaves other options open.
         location: 'ambiguous',
+        intendedUse: 'provided',
       },
-      blockingQuestions: [],
+      blockingQuestions: ['location'],
     },
   },
   {
@@ -282,7 +288,7 @@ Alex`,
       receivedAt,
       body: `Καλημέρα,
 
-Διαχειριζόμαστε ένα boutique ξενοδοχείο στη Νάξο και θέλουμε να κάνουμε ένα βίντεο για να προωθήσουμε το ξενοδοχείο για την επόμενη σεζόν. Τα γυρίσματα θα πρέπει να γίνουν μέσα στον Οκτώβριο, πριν κλείσουμε για τον χειμώνα.
+Διαχειριζόμαστε ένα boutique ξενοδοχείο στη Νάξο και θέλουμε να κάνουμε ένα βίντεο για να προωθήσουμε το ξενοδοχείο για την επόμενη σεζόν. Τα γυρίσματα θα πρέπει να γίνουν μέσα στον Οκτώβριο, πριν κλείσουμε για τον χειμώνα. Το βίντεο θα το χρησιμοποιήσουμε στο site και στα social media μας.
 
 Θα θέλαμε να μας πείτε πώς προχωράμε.
 
@@ -298,6 +304,7 @@ Alex`,
         deliverables: ['missing', 'ambiguous'],
         timeline: 'provided',
         location: 'provided',
+        intendedUse: 'provided',
       },
       blockingQuestions: ['deliverables'],
     },
@@ -345,6 +352,8 @@ Alex`,
       outcome: 'complete',
       language: 'el',
       fieldStatuses: {
+        projectType: 'provided',
+        objective: 'provided',
         deliverables: 'provided',
         timeline: 'provided',
         location: 'provided',
@@ -386,7 +395,7 @@ Alex`,
 
 Ετοιμάζουμε το launch του νέου μας cold brew και χρειαζόμαστε content για τα social μας. Specifically, we need 6 vertical videos of 15 seconds for Instagram Reels and TikTok, plus 12 photos for the feed.
 
-Το shooting θα θέλαμε να γίνει στις 5 Οκτωβρίου και τα final edits by 20 October. The mood should be summery and playful, με έντονα χρώματα.
+Το shooting θα θέλαμε να γίνει στο café μας στο Παγκράτι στις 5 Οκτωβρίου και τα final edits by 20 October. The mood should be summery and playful, με έντονα χρώματα.
 
 Thanks a lot,
 Chris Nikolaou
@@ -397,8 +406,10 @@ Brew Lab Athens`,
       language: 'mixed',
       fieldStatuses: {
         projectType: 'provided',
+        objective: 'provided',
         deliverables: 'provided',
         timeline: 'provided',
+        location: 'provided',
         intendedUse: 'provided',
         creativeDirection: 'provided',
       },
@@ -414,7 +425,7 @@ Brew Lab Athens`,
       receivedAt,
       body: `Hello,
 
-Οργανώνουμε ένα corporate event για τους πελάτες μας στο Μέγαρο Μουσικής. We would like you to cover it with photography and video. Ο προϋπολογισμός μας είναι μέχρι €4.000.
+Οργανώνουμε ένα corporate event για τους πελάτες μας στο Μέγαρο Μουσικής. We would like you to cover it with photography and video for our website and LinkedIn. Ο προϋπολογισμός μας είναι μέχρι €4.000.
 
 Could you tell us what you would suggest?
 
@@ -431,6 +442,7 @@ Northwind Consulting`,
         timeline: 'missing',
         location: 'provided',
         budget: 'provided',
+        intendedUse: 'provided',
       },
       blockingQuestions: ['deliverables', 'timeline'],
     },

@@ -19,7 +19,7 @@ type BriefReviewFieldDefinition = {
   label: string;
   promptDescription: string;
   renderKind: 'projectType' | 'text' | 'list';
-  completionRule: 'projectIdentity' | 'required' | 'optional';
+  completionRule: 'required' | 'optional';
 };
 
 export const BRIEF_REVIEW_V1_FIELDS = {
@@ -28,14 +28,14 @@ export const BRIEF_REVIEW_V1_FIELDS = {
     promptDescription:
       'The requested production category: photography, video, photography and video, or another specified category.',
     renderKind: 'projectType',
-    completionRule: 'projectIdentity',
+    completionRule: 'required',
   },
   objective: {
     label: 'Objective',
     promptDescription:
       'What the client wants the work to achieve, such as a product launch, campaign, catalogue, or event coverage.',
     renderKind: 'text',
-    completionRule: 'projectIdentity',
+    completionRule: 'required',
   },
   deliverables: {
     label: 'Deliverables',
@@ -56,7 +56,7 @@ export const BRIEF_REVIEW_V1_FIELDS = {
     promptDescription:
       'Where production will happen, including a studio, client premises, remote setting, city, or venue.',
     renderKind: 'text',
-    completionRule: 'optional',
+    completionRule: 'required',
   },
   budget: {
     label: 'Budget',
@@ -70,7 +70,7 @@ export const BRIEF_REVIEW_V1_FIELDS = {
     promptDescription:
       'The stated destinations or contexts for the finished material, returned as an open-ended list.',
     renderKind: 'list',
-    completionRule: 'optional',
+    completionRule: 'required',
   },
   creativeDirection: {
     label: 'Creative direction',
@@ -90,12 +90,8 @@ export const BRIEF_REVIEW_V1_FIELDS = {
 
 /**
  * Returns whether a field that isn't `provided` keeps the brief from being
- * `complete`, according to the field's `completionRule`:
- *
- * - `required`: blocks until the field itself is provided.
- * - `projectIdentity`: blocks only when neither `projectType` nor `objective`
- *   is provided. Either one is enough to identify the project.
- * - `optional`: never blocks.
+ * `complete`. A `required` field blocks until it is provided. An `optional`
+ * field never blocks.
  */
 export function fieldBlocksCompletion(
   fieldKey: BriefReviewFieldKey,
@@ -104,18 +100,8 @@ export function fieldBlocksCompletion(
     { status: 'provided' | 'missing' | 'ambiguous' }
   >,
 ): boolean {
-  const rule = BRIEF_REVIEW_V1_FIELDS[fieldKey].completionRule;
-
-  if (rule === 'required') {
-    return fields[fieldKey].status !== 'provided';
-  }
-
-  if (rule === 'projectIdentity') {
-    return (
-      fields.projectType.status !== 'provided' &&
-      fields.objective.status !== 'provided'
-    );
-  }
-
-  return false;
+  return (
+    BRIEF_REVIEW_V1_FIELDS[fieldKey].completionRule === 'required' &&
+    fields[fieldKey].status !== 'provided'
+  );
 }
