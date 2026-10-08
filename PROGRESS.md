@@ -6,6 +6,8 @@
 
 ## Completed
 
+- [x] [Add Gmail as an email provider using app passwords](docs/plans/gmail-app-password-provider-plan.md)
+
 - [x] [Redesign the email detail pane as a thread](docs/plans/email-detail-thread-layout-plan.md)
 
 - [x] [Add transient brief review replies](docs/plans/brief-review-reply-plan.md)

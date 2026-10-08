@@ -34,4 +34,21 @@ describe('createMailboxReader endpoint configuration', () => {
       password: ' exact password ',
     });
   });
+
+  it('connects Gmail to its fixed IMAP host with fixed TLS and port', () => {
+    createMailboxReader({
+      provider: 'gmail',
+      credentials: {
+        username: 'studio@example.com',
+        password: 'abcd efgh ijkl mnop',
+      },
+    });
+    expect(mocks.transport).toHaveBeenCalledExactlyOnceWith({
+      host: 'imap.gmail.com',
+      port: 993,
+      secure: true,
+      username: 'studio@example.com',
+      password: 'abcd efgh ijkl mnop',
+    });
+  });
 });

@@ -28,12 +28,20 @@ export async function sendEmailReply(
       return { status: 'noConnection' };
     }
 
-    const sender = createEmailSender({
-      provider: connection.provider,
-      smtpHost: connection.smtpHost,
-      credentials: connection.credentials,
-      timezone: STUDIO_TIMEZONE,
-    });
+    const sender = createEmailSender(
+      connection.provider === 'zoho'
+        ? {
+            provider: 'zoho',
+            smtpHost: connection.smtpHost,
+            credentials: connection.credentials,
+            timezone: STUDIO_TIMEZONE,
+          }
+        : {
+            provider: 'gmail',
+            credentials: connection.credentials,
+            timezone: STUDIO_TIMEZONE,
+          },
+    );
 
     try {
       const data = await sender.reply(parent, input);

@@ -36,6 +36,13 @@
       "when": 1790104428174,
       "tag": "0004_add-email-smtp-host",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790771535078,
+      "tag": "0005_allow-gmail-email-connections",
+      "breakpoints": true
     }
   ]
 }

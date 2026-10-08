@@ -3,10 +3,12 @@ import 'server-only';
 import {
   createMailboxReader,
   MailboxReaderError,
+  type EmailProvider,
   type MailboxReader,
   type MailboxReaderConfig,
 } from '@inbox-triage/email';
 import { loadEmailConnection } from './load-email-connection';
+import { MailboxCredentialsRejectedError } from './mailbox-credentials-rejected-error';
 
 type MailboxRead<Data> =
   { status: 'success'; data: Data } | { status: 'noConnection' };
@@ -19,6 +21,8 @@ export async function readMailbox<Data>(
   userId: string,
   operation: (reader: MailboxReader) => Promise<Data>,
 ): Promise<MailboxRead<Data>> {
+  let provider: EmailProvider | undefined;
+
   try {
     const connection = await loadEmailConnection(userId);
 
@@ -26,11 +30,15 @@ export async function readMailbox<Data>(
       return { status: 'noConnection' };
     }
 
-    const config: MailboxReaderConfig = {
-      provider: connection.provider,
-      imapHost: connection.imapHost,
-      credentials: connection.credentials,
-    };
+    provider = connection.provider;
+    const config: MailboxReaderConfig =
+      connection.provider === 'zoho'
+        ? {
+            provider: 'zoho',
+            imapHost: connection.imapHost,
+            credentials: connection.credentials,
+          }
+        : { provider: 'gmail', credentials: connection.credentials };
 
     const data = await runWithRetry(config, operation);
     return { status: 'success', data };
@@ -41,6 +49,15 @@ export async function readMailbox<Data>(
         ? { code: error.code, ...error.diagnostic }
         : error,
     );
+
+    if (
+      provider &&
+      error instanceof MailboxReaderError &&
+      error.code === 'AUTHENTICATION_FAILED'
+    ) {
+      throw new MailboxCredentialsRejectedError(provider, { cause: error });
+    }
+
     throw error;
   }
 }

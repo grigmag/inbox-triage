@@ -79,6 +79,26 @@ describe('sendEmailReply', () => {
     );
   });
 
+  it('sends through Gmail without a stored SMTP host', async () => {
+    mocks.findForUser.mockResolvedValue({
+      provider: 'gmail',
+      username: 'mailbox@gmail.com',
+      encryptedPassword: 'encrypted-password',
+    });
+
+    await expect(
+      sendEmailReply('local-user-id', parent, { text: 'Hello' }),
+    ).resolves.toEqual({ status: 'success', data: sendResult });
+    expect(mocks.createEmailSender).toHaveBeenCalledExactlyOnceWith({
+      provider: 'gmail',
+      credentials: {
+        username: 'mailbox@gmail.com',
+        password: 'plaintext password',
+      },
+      timezone: 'Europe/Athens',
+    });
+  });
+
   it('returns noConnection without creating a sender', async () => {
     mocks.findForUser.mockResolvedValue(null);
 

@@ -1,15 +1,14 @@
 import 'server-only';
 
-import type { EmailCredentials } from '@inbox-triage/email';
+import type {
+  EmailConnectionCheckConfig,
+  EmailCredentials,
+} from '@inbox-triage/email';
 import { emailConnectionRepository } from '@/features/settings/email-integration/repositories/email-connection.repository';
 import { cryptoService } from '@/lib/crypto/crypto.service';
 
-type EmailConnectionConfig = {
-  provider: 'zoho';
-  imapHost: string;
-  smtpHost: string;
-  credentials: EmailCredentials;
-};
+// The provider, hosts, and credentials, in the shape checkEmailConnection() takes.
+type EmailConnectionConfig = EmailConnectionCheckConfig;
 
 // Callers must authenticate and pass the local user ID from requireUser().
 // The result contains the decrypted password and must stay in server code.
@@ -22,13 +21,11 @@ export async function loadEmailConnection(
     return null;
   }
 
-  return {
-    provider: connection.provider,
-    imapHost: connection.imapHost,
-    smtpHost: connection.smtpHost,
-    credentials: {
-      username: connection.username,
-      password: cryptoService.decryptSignedString(connection.encryptedPassword),
-    },
+  const { username, encryptedPassword, ...providerConfig } = connection;
+  const credentials: EmailCredentials = {
+    username,
+    password: cryptoService.decryptSignedString(encryptedPassword),
   };
+
+  return { ...providerConfig, credentials };
 }

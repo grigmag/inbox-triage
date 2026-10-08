@@ -4,6 +4,7 @@ import { SmtpTransportError } from './smtp-transport.types';
 const mocks = vi.hoisted(() => ({
   createTransport: vi.fn(),
   sendMail: vi.fn(),
+  verify: vi.fn(),
   close: vi.fn(),
 }));
 
@@ -20,6 +21,7 @@ describe('NodemailerSmtpTransport', () => {
     vi.clearAllMocks();
     mocks.createTransport.mockReturnValue({
       sendMail: mocks.sendMail,
+      verify: mocks.verify,
       close: mocks.close,
     });
   });
@@ -143,6 +145,32 @@ describe('NodemailerSmtpTransport', () => {
           text: 'Hello',
         }),
       ).rejects.toEqual(new SmtpTransportError(kind));
+    },
+  );
+
+  it('verifies the SMTP login without sending a message', async () => {
+    mocks.verify.mockResolvedValue(true);
+
+    await expect(createTransport().verify()).resolves.toBeUndefined();
+
+    expect(mocks.verify).toHaveBeenCalledOnce();
+    expect(mocks.sendMail).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['EAUTH', 'authentication'],
+    ['ETIMEDOUT', 'connection'],
+    ['EPROTOCOL', 'unknown'],
+  ] as const)(
+    'classifies a %s verify failure without exposing its message',
+    async (code, kind) => {
+      mocks.verify.mockRejectedValue(
+        Object.assign(new Error('sensitive provider response'), { code }),
+      );
+
+      await expect(createTransport().verify()).rejects.toEqual(
+        new SmtpTransportError(kind),
+      );
     },
   );
 

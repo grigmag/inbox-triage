@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { PageHeader } from '@/components/page-header';
 import { PageShell } from '@/components/page-shell';
 import { SettingsNavigation } from '@/features/settings/components/settings-navigation';
-import { EmailConnectionForm } from '@/features/settings/email-integration/components/email-connection-form';
-import type { EmailConnectionSettingsDto } from '@/features/settings/email-integration/dto/email-connection-settings.dto';
+import { EmailConnectionForm } from '@/features/settings/email-integration/components/email-connection-form/email-connection-form';
+import { toEmailConnectionSettingsDto } from '@/features/settings/email-integration/dto/email-connection-settings.dto';
 import { emailConnectionRepository } from '@/features/settings/email-integration/repositories/email-connection.repository';
 import { requireUser } from '@/server/auth';
 
@@ -14,12 +14,8 @@ export const metadata: Metadata = {
 export default async function EmailSettingsPage() {
   const user = await requireUser();
   const connection = await emailConnectionRepository.findForUser(user.id);
-  const connectionDto: EmailConnectionSettingsDto | null = connection
-    ? {
-        username: connection.username,
-        imapHost: connection.imapHost,
-        smtpHost: connection.smtpHost,
-      }
+  const connectionDto = connection
+    ? toEmailConnectionSettingsDto(connection)
     : null;
 
   return (

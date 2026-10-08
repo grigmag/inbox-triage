@@ -27,8 +27,6 @@ export interface EmailPage {
   nextPageToken: string | null;
 }
 
-export interface MailboxReaderConfig {
-  provider: 'zoho';
-  imapHost: string;
-  credentials: EmailCredentials;
-}
+export type MailboxReaderConfig =
+  | { provider: 'zoho'; imapHost: string; credentials: EmailCredentials }
+  | { provider: 'gmail'; credentials: EmailCredentials };

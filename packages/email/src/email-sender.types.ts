@@ -1,13 +1,20 @@
 import type { EmailCredentials } from './email-credentials.types';
 import type { EmailAddress, EmailMessage } from './email-message.types';
 
-export interface EmailSenderConfig {
-  provider: 'zoho';
-  smtpHost: string;
-  credentials: EmailCredentials;
-  /** The mailbox's IANA time zone, such as `Europe/Athens`, for quoted dates. */
-  timezone: string;
-}
+export type EmailSenderConfig =
+  | {
+      provider: 'zoho';
+      smtpHost: string;
+      credentials: EmailCredentials;
+      /** The mailbox's IANA time zone, such as `Europe/Athens`, for quoted dates. */
+      timezone: string;
+    }
+  | {
+      provider: 'gmail';
+      credentials: EmailCredentials;
+      /** The mailbox's IANA time zone, such as `Europe/Athens`, for quoted dates. */
+      timezone: string;
+    };
 
 export interface SendEmailInput {
   to?: EmailAddress[];

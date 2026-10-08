@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   EMAIL_CONNECTION_FIELD_LIMITS,
   emailConnectionInputSchema,
+  zohoEmailConnectionInputSchema,
 } from './email-connection-input.schema';
 
 describe('emailConnectionInputSchema', () => {
@@ -10,12 +11,14 @@ describe('emailConnectionInputSchema', () => {
 
     expect(
       emailConnectionInputSchema.parse({
+        provider: 'zoho',
         email: '  USER@Example.COM  ',
         password,
         imapHost: 'imap.zoho.com',
         smtpHost: '  SMTP.Zoho.EU  ',
       }),
     ).toEqual({
+      provider: 'zoho',
       email: 'user@example.com',
       imapHost: 'imap.zoho.com',
       smtpHost: 'SMTP.Zoho.EU',
@@ -26,6 +29,7 @@ describe('emailConnectionInputSchema', () => {
   it('accepts a valid email and an empty password', () => {
     expect(
       emailConnectionInputSchema.safeParse({
+        provider: 'zoho',
         email: 'user@example.com',
         password: '',
         imapHost: 'imap.zoho.com',
@@ -39,6 +43,7 @@ describe('emailConnectionInputSchema', () => {
     (email) => {
       expect(
         emailConnectionInputSchema.safeParse({
+          provider: 'zoho',
           email,
           imapHost: 'imap.zoho.com',
           smtpHost: 'smtp.zoho.com',
@@ -55,6 +60,7 @@ describe('emailConnectionInputSchema', () => {
     expect(email).toHaveLength(EMAIL_CONNECTION_FIELD_LIMITS.email);
     expect(
       emailConnectionInputSchema.safeParse({
+        provider: 'zoho',
         email,
         imapHost: 'imap.zoho.com',
         smtpHost: 'smtp.zoho.com',
@@ -63,6 +69,7 @@ describe('emailConnectionInputSchema', () => {
     ).toBe(true);
     expect(
       emailConnectionInputSchema.safeParse({
+        provider: 'zoho',
         email: `a${email}`,
         password: 'secret',
         imapHost: 'imap.zoho.com',
@@ -81,7 +88,8 @@ describe('IMAP host validation', () => {
     'host with spaces',
   ])('accepts unrestricted nonempty text: %s', (imapHost) => {
     expect(
-      emailConnectionInputSchema.parse({
+      zohoEmailConnectionInputSchema.parse({
+        provider: 'zoho',
         email: 'user@example.com',
         password: '',
         imapHost: `  ${imapHost}  `,
@@ -93,6 +101,7 @@ describe('IMAP host validation', () => {
     'rejects an empty or non-string host: %s',
     (imapHost) => {
       const result = emailConnectionInputSchema.safeParse({
+        provider: 'zoho',
         email: 'user@example.com',
         password: '',
         imapHost,
@@ -119,7 +128,8 @@ describe('SMTP host validation', () => {
     'host with spaces',
   ])('accepts unrestricted nonempty text: %s', (smtpHost) => {
     expect(
-      emailConnectionInputSchema.parse({
+      zohoEmailConnectionInputSchema.parse({
+        provider: 'zoho',
         email: 'user@example.com',
         imapHost: 'imap.zoho.com',
         password: '',
@@ -132,6 +142,7 @@ describe('SMTP host validation', () => {
     'rejects an empty or non-string host: %s',
     (smtpHost) => {
       const result = emailConnectionInputSchema.safeParse({
+        provider: 'zoho',
         email: 'user@example.com',
         imapHost: 'imap.zoho.com',
         password: '',
@@ -147,4 +158,65 @@ describe('SMTP host validation', () => {
         ]);
     },
   );
+});
+
+describe('Gmail connection validation', () => {
+  it('removes all whitespace from the app password and keeps no hosts', () => {
+    expect(
+      emailConnectionInputSchema.parse({
+        provider: 'gmail',
+        email: ' User@Gmail.com ',
+        password: ' abcd efgh\tijkl\nmnop ',
+        imapHost: 'imap.zoho.com',
+        smtpHost: 'smtp.zoho.com',
+      }),
+    ).toEqual({
+      provider: 'gmail',
+      email: 'user@gmail.com',
+      password: 'abcdefghijklmnop',
+    });
+  });
+
+  it.each(['', ' \t\n'])(
+    'accepts an empty app password for an unchanged connection: %j',
+    (password) => {
+      expect(
+        emailConnectionInputSchema.parse({
+          provider: 'gmail',
+          email: 'user@gmail.com',
+          password,
+        }).password,
+      ).toBe('');
+    },
+  );
+
+  it.each(['abcdefghijklmno', 'abcdefghijklmnopq', 'my normal pass'])(
+    'rejects an app password that does not have 16 characters: %s',
+    (password) => {
+      const result = emailConnectionInputSchema.safeParse({
+        provider: 'gmail',
+        email: 'user@gmail.com',
+        password,
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success)
+        expect(result.error.issues).toEqual([
+          expect.objectContaining({
+            path: ['password'],
+            message: 'A Gmail app password has 16 characters.',
+          }),
+        ]);
+    },
+  );
+
+  it('rejects an unknown provider', () => {
+    expect(
+      emailConnectionInputSchema.safeParse({
+        provider: 'outlook',
+        email: 'user@example.com',
+        password: 'secret',
+      }).success,
+    ).toBe(false);
+  });
 });

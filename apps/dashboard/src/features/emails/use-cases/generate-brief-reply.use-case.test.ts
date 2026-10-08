@@ -68,6 +68,7 @@ beforeEach(() => {
     userId: 'local-user-id',
     provider: 'zoho',
     imapHost: 'imap.zoho.eu',
+    smtpHost: 'smtp.zoho.eu',
     username: 'mailbox@example.com',
     encryptedPassword: 'encrypted-password',
   });

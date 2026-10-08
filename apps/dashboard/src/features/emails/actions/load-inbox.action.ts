@@ -2,6 +2,7 @@
 
 import { requireUser } from '@/server/auth';
 import { toEmailSummaryDto, type EmailPageDto } from '../dto/email.dto';
+import { mailboxFailureMessage } from '../server/mailbox-failure-message';
 import { readMailbox } from '../server/read-mailbox';
 import type { MailboxResult } from './mailbox-action-result';
 
@@ -20,7 +21,10 @@ export async function loadInboxAction(): Promise<MailboxResult<EmailPageDto>> {
       };
     });
     return result;
-  } catch {
-    return { status: 'failure', message: LOAD_FAILURE_MESSAGE };
+  } catch (error) {
+    return {
+      status: 'failure',
+      message: mailboxFailureMessage(error, LOAD_FAILURE_MESSAGE),
+    };
   }
 }

@@ -17,6 +17,7 @@ const VALID_RESULT: SmtpSendResult = {
 
 class FakeSmtpTransport implements SmtpTransport {
   readonly send = vi.fn<(message: SmtpMessage) => Promise<SmtpSendResult>>();
+  readonly verify = vi.fn<() => Promise<void>>();
   readonly close = vi.fn();
 }
 

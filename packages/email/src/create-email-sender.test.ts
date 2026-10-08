@@ -145,4 +145,55 @@ describe('createEmailSender', () => {
       }),
     );
   });
+
+  it('creates the Gmail transport lazily with its fixed host, TLS, and port', async () => {
+    const sender = createEmailSender({
+      provider: 'gmail',
+      credentials: {
+        username: 'studio@example.com',
+        password: 'abcdefghijklmnop',
+      },
+      timezone: 'Europe/Athens',
+    });
+    expect(mocks.transportConfig).not.toHaveBeenCalled();
+
+    await sender.send({
+      to: [{ name: null, address: 'person@example.com' }],
+      text: 'Hello',
+    });
+
+    expect(mocks.transportConfig).toHaveBeenCalledExactlyOnceWith({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      username: 'studio@example.com',
+      password: 'abcdefghijklmnop',
+    });
+  });
+
+  it('quotes Gmail replies in the Gmail format using the configured time zone', async () => {
+    const sender = createEmailSender({
+      provider: 'gmail',
+      credentials: {
+        username: 'studio@example.com',
+        password: 'abcdefghijklmnop',
+      },
+      timezone: 'Europe/Athens',
+    });
+
+    await expect(
+      sender.reply(parent, { text: 'Reply body', quoteParent: true }),
+    ).resolves.toMatchObject({ quotedParent: true });
+    expect(mocks.send).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        from: 'studio@example.com',
+        text: expect.stringContaining(
+          '\nOn Thu, 1 Jan 2026 at 13:59, <author@example.com> wrote:\n\n> Original body\n',
+        ) as unknown,
+        html: expect.stringContaining(
+          '<blockquote class="gmail_quote"',
+        ) as unknown,
+      }),
+    );
+  });
 });

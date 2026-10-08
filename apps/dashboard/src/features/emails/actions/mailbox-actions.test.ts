@@ -1,3 +1,4 @@
+import { MailboxReaderError } from '@inbox-triage/email';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { loadInboxAction } from './load-inbox.action';
 import { loadOlderInboxAction } from './load-older-inbox.action';
@@ -95,9 +96,9 @@ beforeEach(() => {
   vi.spyOn(console, 'error').mockImplementation(() => {});
   mocks.requireUser.mockResolvedValue({ id: 'local-user-id' });
   mocks.findForUser.mockResolvedValue({
-    userId: 'local-user-id',
     provider: 'zoho',
     imapHost: 'imap.zoho.eu',
+    smtpHost: 'smtp.zoho.eu',
     username: 'mailbox@example.com',
     encryptedPassword: 'encrypted-password',
   });
@@ -185,6 +186,67 @@ describe.each(operations)('$name composition', ({ run, method, args }) => {
     await expect(run()).resolves.toEqual(failure);
     expect(mocks.close).toHaveBeenCalledTimes(1);
   });
+
+  it.each([
+    {
+      provider: 'zoho',
+      hosts: { imapHost: 'imap.zoho.eu', smtpHost: 'smtp.zoho.eu' },
+      message: 'Zoho rejected the saved password. Update it in Email settings.',
+    },
+    {
+      provider: 'gmail',
+      hosts: {},
+      message:
+        'Gmail rejected the saved app password. If you changed your Google password, create a new app password and update it in Email settings.',
+    },
+  ])(
+    'names $provider when it rejects the saved credentials',
+    async ({ provider, hosts, message }) => {
+      mocks.findForUser.mockResolvedValue({
+        provider,
+        ...hosts,
+        username: 'mailbox@example.com',
+        encryptedPassword: 'encrypted-password',
+      });
+      method.mockRejectedValue(new MailboxReaderError('AUTHENTICATION_FAILED'));
+
+      await expect(run()).resolves.toEqual({ status: 'failure', message });
+      expect(mocks.close).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it('uses the Gmail reader configuration without hosts', async () => {
+    mocks.findForUser.mockResolvedValue({
+      provider: 'gmail',
+      username: 'mailbox@gmail.com',
+      encryptedPassword: 'encrypted-password',
+    });
+
+    expect((await run()).status).toBe('success');
+    expect(mocks.createMailboxReader).toHaveBeenCalledExactlyOnceWith({
+      provider: 'gmail',
+      credentials: {
+        username: 'mailbox@gmail.com',
+        password: ' plaintext password ',
+      },
+    });
+  });
+
+  it.each(['CONNECTION_FAILED', 'MESSAGE_NOT_FOUND', 'UNKNOWN'] as const)(
+    'keeps the generic message for %s mailbox failures',
+    async (code) => {
+      vi.useFakeTimers();
+      try {
+        method.mockRejectedValue(new MailboxReaderError(code));
+        const result = run();
+        // Connection failures are retried once after a delay.
+        await vi.runAllTimersAsync();
+        await expect(result).resolves.toEqual(failure);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
 
   it('returns a safe failure if cleanup rejects', async () => {
     mocks.close.mockRejectedValue(new Error('secret transport details'));

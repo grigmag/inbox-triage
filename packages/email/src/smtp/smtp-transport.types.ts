@@ -25,6 +25,8 @@ export interface SmtpSendResult {
 
 export interface SmtpTransport {
   send(message: SmtpMessage): Promise<SmtpSendResult>;
+  /** Connects and logs in without sending a message. */
+  verify(): Promise<void>;
   close(): void;
 }
 

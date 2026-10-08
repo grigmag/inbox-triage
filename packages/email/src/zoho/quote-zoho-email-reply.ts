@@ -1,12 +1,12 @@
-import type { EmailMessage } from '../email-message.types';
-
-// Keeps indentation, repeated spaces, and whitespace-only lines of plain text.
-const PRESERVE_WHITESPACE = 'white-space: pre-wrap;';
-
-type QuotedParent = Pick<
-  EmailMessage,
-  'from' | 'to' | 'cc' | 'subject' | 'sentAt' | 'receivedAt' | 'text' | 'html'
->;
+import {
+  escapeHtml,
+  normalizeLineBreaks,
+  PRESERVE_WHITESPACE,
+  quotableHtml,
+  textToHtml,
+  textToHtmlLines,
+  type QuotedParent,
+} from '../reply/quote-helpers';
 
 /**
  * Builds reply bodies that quote the parent message the way Zoho Mail does
@@ -33,7 +33,7 @@ export function quoteZohoEmailReply(
   const original =
     parent.html === null
       ? `<div style="${PRESERVE_WHITESPACE}">${textToHtml(parent.text ?? '')}</div>`
-      : withoutInlineImages(withoutStyleSheets(htmlBodyContent(parent.html)));
+      : quotableHtml(parent.html);
 
   const html =
     '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head>' +
@@ -108,58 +108,4 @@ function formatHeaderDate(date: Date, timezone: string): string {
     parts.timeZoneName.replace('GMT', '').replace(':', '') || '+0000';
 
   return `${parts.weekday}, ${parts.day} ${parts.month} ${parts.year} ${parts.hour}:${parts.minute}:${parts.second} ${offset}`;
-}
-
-function htmlBodyContent(html: string): string {
-  const open = /<body\b[^>]*>/i.exec(html);
-
-  if (!open) {
-    return html;
-  }
-
-  const content = html.slice(open.index + open[0].length);
-  const close = content.search(/<\/body\s*>/i);
-  return close === -1 ? content : content.slice(0, close);
-}
-
-// Style sheets apply to the whole document, so an original's CSS could restyle
-// or hide the new reply. Inline style attributes only affect their own element
-// and stay. An unclosed style element runs to the end of the original.
-function withoutStyleSheets(html: string): string {
-  return html
-    .replace(/<style\b[^>]*>[\s\S]*?(?:<\/style\s*>|$)/gi, '')
-    .replace(/<link\b[^>]*>/gi, '');
-}
-
-// Inline images point at the original's MIME parts through `cid:` URLs, and
-// the reply does not carry those parts, so they would show as broken.
-function withoutInlineImages(html: string): string {
-  return html.replace(/<img\b[^>]*\ssrc\s*=\s*["']?\s*cid:[^>]*>/gi, '');
-}
-
-// Zoho writes each line of composed text as its own div.
-function textToHtmlLines(text: string): string {
-  return normalizeLineBreaks(text)
-    .split('\n')
-    .map((line) =>
-      line === '' ? '<div><br></div>' : `<div>${escapeHtml(line)}</div>`,
-    )
-    .join('');
-}
-
-function textToHtml(text: string): string {
-  return escapeHtml(normalizeLineBreaks(text)).replaceAll('\n', '<br>');
-}
-
-function normalizeLineBreaks(text: string): string {
-  return text.replace(/\r\n?/g, '\n');
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
 }

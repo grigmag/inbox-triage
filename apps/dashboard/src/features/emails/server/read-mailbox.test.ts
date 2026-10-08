@@ -1,5 +1,6 @@
 import { MailboxReaderError } from '@inbox-triage/email';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { MailboxCredentialsRejectedError } from './mailbox-credentials-rejected-error';
 import { readMailbox } from './read-mailbox';
 
 const mocks = vi.hoisted(() => ({
@@ -36,6 +37,7 @@ beforeEach(() => {
   mocks.findForUser.mockResolvedValue({
     provider: 'zoho',
     imapHost: 'imap.zoho.eu',
+    smtpHost: 'smtp.zoho.eu',
     username: 'mailbox@example.com',
     encryptedPassword: 'encrypted-password',
   });
@@ -91,7 +93,34 @@ describe('readMailbox', () => {
     });
   });
 
-  it.each(['AUTHENTICATION_FAILED', 'MESSAGE_NOT_FOUND', 'UNKNOWN'] as const)(
+  it.each([
+    { provider: 'zoho', imapHost: 'imap.zoho.eu', smtpHost: 'smtp.zoho.eu' },
+    { provider: 'gmail' },
+  ] as const)(
+    'rethrows rejected $provider credentials without retrying',
+    async (row) => {
+      mocks.findForUser.mockResolvedValue({
+        ...row,
+        username: 'mailbox@example.com',
+        encryptedPassword: 'encrypted-password',
+      });
+      const error = new MailboxReaderError('AUTHENTICATION_FAILED');
+      const operation = vi.fn().mockRejectedValue(error);
+
+      const rejection = await readMailbox('local-user-id', operation).catch(
+        (thrown: unknown) => thrown,
+      );
+
+      expect(rejection).toBeInstanceOf(MailboxCredentialsRejectedError);
+      expect(rejection).toMatchObject({ provider: row.provider, cause: error });
+      expect(operation).toHaveBeenCalledTimes(1);
+      expect(console.error).toHaveBeenCalledWith(expect.any(String), {
+        code: 'AUTHENTICATION_FAILED',
+      });
+    },
+  );
+
+  it.each(['MESSAGE_NOT_FOUND', 'UNKNOWN'] as const)(
     'does not retry %s failures',
     async (code) => {
       const error = new MailboxReaderError(code);

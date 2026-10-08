@@ -5,6 +5,8 @@ import { ConfirmActionDialog } from '@/components/confirm-action-dialog';
 import { disconnectEmailConnectionAction } from '../actions/disconnect-email-connection.action';
 
 type DisconnectEmailConnectionDialogProps = {
+  providerLabel: string;
+  username: string;
   disabled: boolean;
   onDisconnected: (announcement: string) => void;
   onFailure: (message: string) => void;
@@ -14,6 +16,8 @@ const FAILURE_MESSAGE =
   'Unable to disconnect the email connection. Please try again.';
 
 export function DisconnectEmailConnectionDialog({
+  providerLabel,
+  username,
   disabled,
   onDisconnected,
   onFailure,
@@ -39,14 +43,14 @@ export function DisconnectEmailConnectionDialog({
 
   return (
     <ConfirmActionDialog
-      title="Disconnect email?"
-      description="This removes the saved Zoho email credentials from InboxTriage."
+      title={`Disconnect ${providerLabel}?`}
+      description={`This removes the saved credentials for ${username} from InboxTriage.`}
       actionLabel="Disconnect"
       cancelLabel="Cancel"
       onConfirm={handleConfirm}
       trigger={
         <Button type="button" variant="destructive" disabled={disabled}>
-          Disconnect
+          Disconnect {providerLabel}
         </Button>
       }
     />

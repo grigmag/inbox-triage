@@ -62,7 +62,7 @@ function InboxListStatus({
           <EmptyTitle>Connect your mailbox</EmptyTitle>
 
           <EmptyDescription>
-            Add your Zoho credentials to read emails.
+            Add your email account in settings to read emails.
           </EmptyDescription>
         </EmptyHeader>
 

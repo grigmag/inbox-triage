@@ -60,6 +60,14 @@ export class NodemailerSmtpTransport implements SmtpTransport {
     }
   }
 
+  async verify(): Promise<void> {
+    try {
+      await this.transporter.verify();
+    } catch (error) {
+      throw new SmtpTransportError(classifySmtpError(error));
+    }
+  }
+
   close(): void {
     this.transporter.close();
   }

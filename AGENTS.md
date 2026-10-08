@@ -30,6 +30,7 @@
 - When creating a plan in `docs/plans/`, update `PROGRESS.md` in the same change. Record it as planned, not completed.
 - `docs/rewrite-specs` contains specifications that define and describe the intended product behavior, based on the legacy application. Use them as input when creating or refining plans, but do not treat them as immutable. During implementation, the relevant plan is the primary execution guide.
 - `docs/application-conventions.md` records durable, cross-cutting application behavior that future features should follow. Where a skill conflicts with it, follow the conventions.
+- `docs/user-guides` contains end-user setup guides written for non-technical readers. When a change alters a flow a guide describes, update the guide in the same change so it matches shipped behavior.
 
 ## Database workflow
 
