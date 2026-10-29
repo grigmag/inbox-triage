@@ -46,27 +46,23 @@ feature mutations.
   accessibility test tooling, or Playwright in this PR. Add only focused tests
   that fit the existing Node-based Vitest setup; record full UI testing as future
   work.
-- Treat `pr-01-authenticated-app-shell-spec.md` as the available PR sequence
-  source. Its reference to a missing `docs/REWRITE_PR_PLAN.md` belongs to another
-  repository and requires no local documentation repair.
 
-## Deliberate specification adaptations
+## Deliberate adaptations
 
 The production application takes priority over reproducing every suggested
-implementation detail from the specification:
+implementation detail:
 
 - The sidebar user area delegates avatar fallback, account actions, and sign-out
   behavior to Clerk's existing `UserButton`. InboxTriage will not reconstruct
   Clerk's menu merely to render profile text alongside it.
-- The configured Base UI toast primitive replaces the specification's Sonner
-  wording while preserving the requested product behavior and avoiding a second
-  theme/provider dependency.
+- The configured Base UI toast primitive replaces Sonner while preserving the
+  requested product behavior and avoiding a second theme/provider dependency.
 - Component, responsive, keyboard, automated accessibility, and end-to-end tests
   are deferred with the user's approval. This PR will use pure unit tests and
   manual verification for the interactive UI. The deferred test stack will be a
   general repository capability rather than shell-specific test scaffolding.
-- Next.js 16.3 calls the route error recovery callback `retry()`. Use the
-  installed framework contract even though the specification calls it `reset`.
+- Next.js 16.3 calls the route error recovery callback `retry()`, not `reset`.
+  Use the installed framework contract.
 
 These choices defer some template-level testing completeness and exact visual
 profile composition, but keep the authenticated product shell within the
@@ -278,7 +274,7 @@ metadata using its specified page title. Give sign-in and account management
 truthful titles without placing sign-in inside the shell.
 
 Each priority page composes `PageShell`, `PageHeader`, and `RoutePlaceholder`
-with the approved copy from the specification:
+with the approved copy:
 
 | Route            | Page title        | Empty-state title               |
 | ---------------- | ----------------- | ------------------------------- |
