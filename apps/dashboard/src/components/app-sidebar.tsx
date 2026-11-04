@@ -31,7 +31,7 @@ export function AppSidebar() {
             setOpenMobile(false);
           }}
         >
-          InboxTriage
+          Inbox Triage
         </Link>
       </SidebarHeader>
 

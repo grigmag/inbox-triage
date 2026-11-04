@@ -1,4 +1,4 @@
-# InboxTriage
+# Inbox Triage
 
 ## Local development
 
@@ -116,3 +116,8 @@ Open Drizzle Studio with:
 ```bash
 pnpm db:studio
 ```
+
+## Third-party notices
+
+Some agent skills in `.agents/skills` come from other projects and keep their
+original licenses. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

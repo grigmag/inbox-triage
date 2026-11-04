@@ -1,6 +1,6 @@
 ## Project notes
 
-- The project started as a rewrite of an older application. Its purpose is to help a small creative studio manage client emails and project briefs.
+- The project's purpose is to help a small creative studio manage client emails and project briefs.
 - A secondary purpose is to serve as a good example and reusable template for a production-ready Next.js monorepo.
 - When product requirements and template reusability conflict, prioritize the production application. Tell the user when making that tradeoff and identify the reusability that is being deferred or omitted.
 
@@ -26,9 +26,8 @@
 
 - `PROGRESS.md` tracks features under Planned, In progress, and Completed. Consult it before implementation and update it as work advances. Keep one entry per feature: move it to In progress when implementation starts and include a brief note on what is implemented. Move it to Completed and check it off only when the whole feature is complete. Record individual slice completion in the feature plan, never as separate completed entries in `PROGRESS.md`.
 - `docs/plans` contains the detailed implementation plans for each feature (`*-plan.md` files). Follow the relevant plan when implementing a feature.
-- Do not read plans for features listed as Completed in `PROGRESS.md`, unless the user asks. They are historical records and may be outdated; use the code, `docs/application-conventions.md`, and the specs instead.
+- Do not read plans for features listed as Completed in `PROGRESS.md`, unless the user asks. They are historical records and may be outdated; use the code and `docs/application-conventions.md` instead.
 - When creating a plan in `docs/plans/`, update `PROGRESS.md` in the same change. Record it as planned, not completed.
-- `docs/rewrite-specs` contains specifications that define and describe the intended product behavior, based on the legacy application. Use them as input when creating or refining plans, but do not treat them as immutable. During implementation, the relevant plan is the primary execution guide.
 - `docs/application-conventions.md` records durable, cross-cutting application behavior that future features should follow. Where a skill conflicts with it, follow the conventions.
 - `docs/user-guides` contains end-user setup guides written for non-technical readers. When a change alters a flow a guide describes, update the guide in the same change so it matches shipped behavior.
 

@@ -20,9 +20,9 @@ describe('buildBriefReplyPrompt', () => {
     expect(prompt).toContain(
       `---INBOX_TRIAGE_EMAIL_BODY___START---\n${body}\n---INBOX_TRIAGE_EMAIL_BODY___END---`,
     );
-    expect(prompt.trimEnd().endsWith('---INBOX_TRIAGE_EMAIL_BODY___END---')).toBe(
-      true,
-    );
+    expect(
+      prompt.trimEnd().endsWith('---INBOX_TRIAGE_EMAIL_BODY___END---'),
+    ).toBe(true);
   });
 
   it('includes no sender metadata', () => {

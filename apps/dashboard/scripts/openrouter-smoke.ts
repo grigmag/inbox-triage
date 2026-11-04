@@ -17,7 +17,8 @@ async function runSmokeTest() {
 
   const result = await generateText({
     model: aiModel,
-    prompt: 'Write one short sentence welcoming a photographer to InboxTriage.',
+    prompt:
+      'Write one short sentence welcoming a photographer to Inbox Triage.',
     maxRetries: 0,
     timeout: TIMEOUT_MS,
     telemetry: { isEnabled: false },

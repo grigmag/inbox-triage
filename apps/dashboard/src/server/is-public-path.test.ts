@@ -14,10 +14,9 @@ describe('isPublicPath', () => {
 
   it.each([
     '/',
-    '/clients',
-    '/inquiries/new',
-    '/timeline',
-    '/agreements',
+    '/emails',
+    '/emails/abc',
+    '/settings/email',
     '/account',
     '/sign-in-elsewhere',
   ])('treats %s as private', (pathname) => {

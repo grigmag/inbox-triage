@@ -34,9 +34,7 @@ The dashboard already owns a configured OpenRouter model in
 feature in the dashboard until another application or worker establishes a
 shared AI contract worth extracting.
 
-The [Brief Review V1 rewrite specification](../rewrite-specs/brief-review-v1-spec.md)
-defines the evaluation fields, outcomes, and base prompt. This plan narrows its
-workflow for the first slice:
+This plan narrows the Brief Review workflow for the first slice:
 
 - The product action is named **Review**, not **Evaluate**.
 - The application does not save email snapshots or evaluations.
@@ -53,7 +51,7 @@ workflow for the first slice:
 ### Data & Contracts
 
 This slice adds no database schema. Its central contract is the complete V1
-`BriefEvaluationOutput` from the rewrite specification:
+`BriefEvaluationOutput`:
 
 - outcomes are `irrelevant`, `needs_information`, or `complete`;
 - language is `el`, `en`, `mixed`, or `unknown`;
@@ -277,9 +275,8 @@ when the first output cannot be structurally parsed or fails semantic Zod
 validation. Timeouts, network failures, provider errors, authentication errors,
 and unsupported models fail immediately.
 
-Keep the prompt in versioned feature code. Start from the rewrite specification
-and add the agreed relevance, language, relative-date, quoted-history, and
-irrelevant-output rules. Delimit the email body as untrusted input. Instructions
+Keep the prompt in versioned feature code. Include the agreed relevance,
+language, relative-date, quoted-history, and irrelevant-output rules. Delimit the email body as untrusted input. Instructions
 inside the email cannot override the system prompt.
 
 Use feature-owned errors to return safe messages for mailbox failure, missing or

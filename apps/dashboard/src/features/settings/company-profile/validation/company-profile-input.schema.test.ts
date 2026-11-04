@@ -27,12 +27,12 @@ describe('companyProfileInputSchema', () => {
     expect(
       companyProfileInputSchema.parse({
         ...emptyCompanyProfile,
-        legalName: '  InboxTriage  ',
+        legalName: '  Northlight Studio  ',
         phone: '   ',
         email: '  STUDIO@Example.COM ',
       }),
     ).toEqual({
-      legalName: 'InboxTriage',
+      legalName: 'Northlight Studio',
       taxId: null,
       taxOffice: null,
       address: null,

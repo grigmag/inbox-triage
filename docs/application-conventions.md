@@ -197,7 +197,7 @@ Layers mix only inside capability modules and component folders.
   there.
 - `apps/dashboard/src/app/globals.css` is the app's only stylesheet entry. It
   imports the `ui` stylesheet first, then defines project tokens and the
-  InboxTriage theme, so its values override the shadcn defaults.
+  Inbox Triage theme, so its values override the shadcn defaults.
 - The app uses the dark "Darkroom" theme: warm charcoal surfaces with an amber
   primary. The root layout sets the `dark` class, so theme values live in the
   `.dark` block and shadcn `dark:` variants apply.

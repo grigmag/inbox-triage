@@ -18,7 +18,7 @@ Clerk credentials and session -> requireUser() -> local users row -> application
 ```
 
 Clerk will own credential storage, sign-in, account recovery, session management,
-and account UI. InboxTriage will own a minimal `users` table and a server-only
+and account UI. Inbox Triage will own a minimal `users` table and a server-only
 `requireUser()` API that maps an authenticated Clerk identity to the application's
 stable user ID.
 
@@ -35,7 +35,7 @@ per-user data ownership.
   only through Clerk dashboard invitations or manual creation.
 - Use Clerk's prebuilt sign-in, user button, and account-management UI.
 - Let Clerk deliver invitation, verification, and password-recovery messages;
-  InboxTriage will not add an email provider or email-sending code.
+  Inbox Triage will not add an email provider or email-sending code.
 - Create a local `users` table. Use the neutral application terms `user`, `users`,
   and `requireUser()` rather than studio-member terminology.
 - Give every authenticated, admitted user the same application access. Do not add
@@ -161,8 +161,8 @@ packages/auth/
 The exact internal file split may be adjusted during implementation to keep one
 primary utility per file. The public surface should remain limited to:
 
-| Import                   | Contents                                                        |
-| ------------------------ | --------------------------------------------------------------- |
+| Import                      | Contents                                                        |
+| --------------------------- | --------------------------------------------------------------- |
 | `@inbox-triage/auth/client` | Reviewed Clerk UI/provider wrappers                             |
 | `@inbox-triage/auth/server` | Auth factory returning a bound `requireUser`, and related types |
 
@@ -484,7 +484,7 @@ or Next.js versions.
 3. Verify the sign-in page and required Clerk internal requests remain reachable.
 4. Verify a valid user can sign in, refresh, navigate, manage their password, and
    sign out.
-5. Verify password recovery is delivered by Clerk without InboxTriage email code.
+5. Verify password recovery is delivered by Clerk without Inbox Triage email code.
 6. Verify an uninvited email cannot register or gain an application session.
 7. Verify first access creates one local row and repeated/concurrent access does
    not create duplicates.

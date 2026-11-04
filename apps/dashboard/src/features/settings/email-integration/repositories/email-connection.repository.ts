@@ -1,7 +1,10 @@
 import 'server-only';
 
 import type { Db } from '@inbox-triage/db/client';
-import { emailConnections, type EmailConnection } from '@inbox-triage/db/schema';
+import {
+  emailConnections,
+  type EmailConnection,
+} from '@inbox-triage/db/schema';
 import type { EmailProviderConfig } from '@inbox-triage/email';
 import { eq } from 'drizzle-orm';
 import { db } from '@/server/db';

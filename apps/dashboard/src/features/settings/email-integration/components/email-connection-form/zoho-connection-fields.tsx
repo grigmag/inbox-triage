@@ -22,8 +22,8 @@ export function ZohoConnectionFields({
       >
         <span>
           In Zoho Mail, open Settings, Mail Accounts, your mailbox, then Server
-          Configuration Details. Copy the incoming IMAP server. InboxTriage uses
-          port 993 with TLS.{' '}
+          Configuration Details. Copy the incoming IMAP server. Inbox Triage
+          uses port 993 with TLS.{' '}
         </span>
 
         <a
@@ -47,7 +47,7 @@ export function ZohoConnectionFields({
       >
         <span>
           Copy the outgoing SMTP server from the same Zoho Server Configuration
-          Details page. InboxTriage uses port 465 with TLS.{' '}
+          Details page. Inbox Triage uses port 465 with TLS.{' '}
         </span>
 
         <a

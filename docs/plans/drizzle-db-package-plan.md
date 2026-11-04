@@ -143,8 +143,8 @@ and whether the driver should change to `neon-http` or `neon-serverless`.
 
 The package export map will expose only:
 
-| Import                 | Contents                                      |
-| ---------------------- | --------------------------------------------- |
+| Import                    | Contents                                      |
+| ------------------------- | --------------------------------------------- |
 | `@inbox-triage/db/client` | `createDb` and the inferred `Db` type         |
 | `@inbox-triage/db/schema` | Public schema objects and their related types |
 

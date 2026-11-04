@@ -44,7 +44,7 @@ export function DisconnectEmailConnectionDialog({
   return (
     <ConfirmActionDialog
       title={`Disconnect ${providerLabel}?`}
-      description={`This removes the saved credentials for ${username} from InboxTriage.`}
+      description={`This removes the saved credentials for ${username} from Inbox Triage.`}
       actionLabel="Disconnect"
       cancelLabel="Cancel"
       onConfirm={handleConfirm}

@@ -2,7 +2,7 @@ import { buttonVariants } from '@inbox-triage/ui';
 import Link from 'next/link';
 import { routes } from '@/config/routes';
 
-export type SettingsDestination = 'company' | 'rates' | 'email';
+export type SettingsDestination = 'company' | 'email';
 
 export type SettingsNavigationProps = {
   activeDestination: SettingsDestination;
@@ -13,11 +13,6 @@ const settingsDestinations = [
     id: 'company',
     label: 'Company',
     href: routes.settingsCompany,
-  },
-  {
-    id: 'rates',
-    label: 'Rates',
-    href: routes.settingsRates,
   },
   {
     id: 'email',
