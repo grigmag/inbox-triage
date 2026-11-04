@@ -203,6 +203,7 @@ describe('briefReplyReducer', () => {
   it('records the source of a blank reply', () => {
     const blank = reduce(initialBriefReplyState, {
       type: 'startBlank',
+      draft: '',
       source: secondReview,
     });
 
@@ -216,6 +217,7 @@ describe('briefReplyReducer', () => {
   it('starts a blank reply that is unedited until the user types', () => {
     const blank = reduce(initialBriefReplyState, {
       type: 'startBlank',
+      draft: '',
       source: firstReview,
     });
 
@@ -229,21 +231,41 @@ describe('briefReplyReducer', () => {
     expect(isBriefReplyEdited(typed)).toBe(true);
   });
 
+  it('starts a blank reply with the footer that is unedited until the user types', () => {
+    const footer = '\n\nNorthlight Studio\nhello@northlight.example';
+    const blank = reduce(initialBriefReplyState, {
+      type: 'startBlank',
+      draft: footer,
+      source: firstReview,
+    });
+
+    expect(blank.draft).toBe(footer);
+    expect(isBriefReplyEdited(blank)).toBe(false);
+
+    const typed = reduce(blank, { type: 'editDraft', draft: `Hi,${footer}` });
+
+    expect(isBriefReplyEdited(typed)).toBe(true);
+  });
+
   it('does not start a blank reply over a draft or while locked', () => {
     const generating = reduce(initialBriefReplyState, {
       type: 'startGenerate',
       source: firstReview,
     });
 
-    expect(reduce(drafted, { type: 'startBlank', source: firstReview })).toBe(
-      drafted,
-    );
     expect(
-      reduce(generating, { type: 'startBlank', source: firstReview }),
+      reduce(drafted, { type: 'startBlank', draft: '', source: firstReview }),
+    ).toBe(drafted);
+    expect(
+      reduce(generating, {
+        type: 'startBlank',
+        draft: '',
+        source: firstReview,
+      }),
     ).toBe(generating);
-    expect(reduce(sent, { type: 'startBlank', source: firstReview })).toBe(
-      sent,
-    );
+    expect(
+      reduce(sent, { type: 'startBlank', draft: '', source: firstReview }),
+    ).toBe(sent);
   });
 
   it('does not send or edit before a draft exists', () => {

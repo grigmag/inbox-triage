@@ -28,6 +28,8 @@ export async function saveCompanyProfileAction(
   try {
     const data = await companyProfileRepository.save(parsed.data);
     revalidatePath(routes.settingsCompany);
+    // Blank replies start with the footer built from the profile.
+    revalidatePath(routes.emails);
     return { status: 'success', data, announcement: 'Company profile saved.' };
   } catch {
     return {

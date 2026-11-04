@@ -9,9 +9,15 @@ import { EmailDetailProvider } from './email-detail-provider';
 import { EmailReplyComposer } from './reply-composer/email-reply-composer';
 import { EmailReviewPanel } from './review-panel/email-review-panel';
 
-export function EmailDetailContent({ message }: { message: EmailMessageDto }) {
+export function EmailDetailContent({
+  message,
+  replyFooter,
+}: {
+  message: EmailMessageDto;
+  replyFooter: string | null;
+}) {
   return (
-    <EmailDetailProvider message={message}>
+    <EmailDetailProvider message={message} replyFooter={replyFooter}>
       <div className="mx-auto flex w-full max-w-[820px] flex-col gap-10">
         <article className="flex flex-col gap-6">
           <EmailDetailHeader

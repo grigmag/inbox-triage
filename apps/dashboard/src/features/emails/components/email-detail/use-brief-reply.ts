@@ -75,12 +75,12 @@ export function useBriefReply() {
     return result.status === 'success';
   }
 
-  function startBlank(source: BriefReplySource) {
+  function startBlank(draft: string, source: BriefReplySource) {
     if (pendingRef.current || sentRef.current) {
       return;
     }
 
-    dispatch({ type: 'startBlank', source });
+    dispatch({ type: 'startBlank', draft, source });
   }
 
   async function send(messageRef: string) {
