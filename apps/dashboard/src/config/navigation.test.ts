@@ -148,13 +148,6 @@ describe('isNavigationItemActive', () => {
       name: 'Settings',
       href: '/settings',
       match: 'prefix',
-      pathname: '/settings/rates',
-      expected: true,
-    },
-    {
-      name: 'Settings',
-      href: '/settings',
-      match: 'prefix',
       pathname: '/settings-profile',
       expected: false,
     },

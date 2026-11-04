@@ -9,6 +9,8 @@ import { DeliverableRateTable } from './deliverable-rate-table';
 import { RateCatalogDialog } from './rate-catalog-dialog';
 import { RateCatalogPanel } from './rate-catalog-panel';
 
+// The rate catalog isn't routed yet. It is groundwork for quote drafts, which
+// will price the deliverables found by brief review (see the README roadmap).
 export function RateCatalogSettings({
   initialCatalogs,
 }: {

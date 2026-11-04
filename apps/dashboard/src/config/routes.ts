@@ -5,6 +5,5 @@ export const routes = {
   emails: '/emails',
   settings: '/settings',
   settingsCompany: '/settings/company',
-  settingsRates: '/settings/rates',
   settingsEmail: '/settings/email',
 } as const;
