@@ -1,6 +1,7 @@
 {
   "name": "inbox-triage",
   "private": true,
+  "license": "MIT",
   "engines": {
     "node": ">=24 <25"
   },
