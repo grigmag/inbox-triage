@@ -5,8 +5,10 @@ disable-model-invocation: true
 ---
 
 <!--
-Based on Anthropic's code-simplifier agent:
+Modified from Anthropic's code-simplifier agent:
 https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md
+Licensed under the Apache License 2.0. See THIRD_PARTY_NOTICES.md at the
+repository root.
 -->
 
 # Code Simplifier
