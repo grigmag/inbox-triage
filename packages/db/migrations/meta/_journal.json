@@ -43,6 +43,13 @@
       "when": 1790771535078,
       "tag": "0005_allow-gmail-email-connections",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793824404525,
+      "tag": "0006_trim-company-profile",
+      "breakpoints": true
     }
   ]
 }

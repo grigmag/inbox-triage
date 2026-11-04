@@ -6,16 +6,12 @@ import {
 import { COMPANY_PROFILE_VALIDATION_MESSAGES } from './validation-messages';
 
 const emptyCompanyProfile = {
-  legalName: '',
-  taxId: '',
-  taxOffice: '',
+  name: '',
   address: '',
   postalCode: '',
   city: '',
   phone: '',
   email: '',
-  iban: '',
-  bankName: '',
 };
 
 const maximumLengthEmail = `${'a'.repeat(64)}@${'b'.repeat(63)}.${'c'.repeat(
@@ -27,21 +23,17 @@ describe('companyProfileInputSchema', () => {
     expect(
       companyProfileInputSchema.parse({
         ...emptyCompanyProfile,
-        legalName: '  Northlight Studio  ',
+        name: '  Northlight Studio  ',
         phone: '   ',
         email: '  STUDIO@Example.COM ',
       }),
     ).toEqual({
-      legalName: 'Northlight Studio',
-      taxId: null,
-      taxOffice: null,
+      name: 'Northlight Studio',
       address: null,
       postalCode: null,
       city: null,
       phone: null,
       email: 'studio@example.com',
-      iban: null,
-      bankName: null,
     });
   });
 

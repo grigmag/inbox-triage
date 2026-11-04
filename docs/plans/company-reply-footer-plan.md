@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned. No slices are implemented.
+In progress. Slice 1 is complete. The schema, application contracts, repository and form now use only the footer fields, and the company settings copy is in English. The generated migration is named `0006_trim-company-profile.sql`; its SQL and snapshot contain only the planned column rename and four drops. `pnpm db:check`, `pnpm typecheck`, `pnpm lint` and `pnpm test` pass. Tests required running outside the agent sandbox so local email test servers could listen. The user confirmed applying the migration. Slices 2 and 3 have not started.
 
 ## Goal
 

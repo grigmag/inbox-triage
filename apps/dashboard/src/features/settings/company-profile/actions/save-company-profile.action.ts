@@ -28,11 +28,11 @@ export async function saveCompanyProfileAction(
   try {
     const data = await companyProfileRepository.save(parsed.data);
     revalidatePath(routes.settingsCompany);
-    return { status: 'success', data, announcement: 'Αποθηκεύτηκε.' };
+    return { status: 'success', data, announcement: 'Company profile saved.' };
   } catch {
     return {
       status: 'failure',
-      message: 'Δεν ήταν δυνατή η αποθήκευση. Δοκιμάστε ξανά.',
+      message: 'Unable to save the company profile. Please try again.',
     };
   }
 }

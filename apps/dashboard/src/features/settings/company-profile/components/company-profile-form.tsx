@@ -45,34 +45,27 @@ type CompanyFieldProps = {
 };
 
 const COMPANY_PROFILE_FIELDS = [
-  'legalName',
-  'taxId',
-  'taxOffice',
+  'name',
   'address',
   'postalCode',
   'city',
   'phone',
   'email',
-  'iban',
-  'bankName',
 ] as const satisfies readonly CompanyProfileField[];
 
-const SAVE_FAILURE_MESSAGE = 'Δεν ήταν δυνατή η αποθήκευση. Δοκιμάστε ξανά.';
+const SAVE_FAILURE_MESSAGE =
+  'Unable to save the company profile. Please try again.';
 
 function profileToFormValues(
   profile: CompanyProfileDto,
 ): CompanyProfileFormValues {
   return {
-    legalName: profile.legalName ?? '',
-    taxId: profile.taxId ?? '',
-    taxOffice: profile.taxOffice ?? '',
+    name: profile.name ?? '',
     address: profile.address ?? '',
     postalCode: profile.postalCode ?? '',
     city: profile.city ?? '',
     phone: profile.phone ?? '',
     email: profile.email ?? '',
-    iban: profile.iban ?? '',
-    bankName: profile.bankName ?? '',
   };
 }
 
@@ -180,32 +173,14 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
         ) : null}
 
         <FieldSet>
-          <FieldLegend>Στοιχεία επιχείρησης</FieldLegend>
+          <FieldLegend>Company details</FieldLegend>
 
-          <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <FieldGroup className="grid grid-cols-1 gap-5">
             <CompanyField
-              field="legalName"
-              label="Επωνυμία"
-              value={values.legalName}
-              error={fieldErrors.legalName}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="taxId"
-              label="ΑΦΜ"
-              value={values.taxId}
-              error={fieldErrors.taxId}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="taxOffice"
-              label="ΔΟΥ"
-              value={values.taxOffice}
-              error={fieldErrors.taxOffice}
+              field="name"
+              label="Company name"
+              value={values.name}
+              error={fieldErrors.name}
               disabled={isPending}
               onChange={handleChange}
             />
@@ -215,12 +190,12 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
         <Separator />
 
         <FieldSet>
-          <FieldLegend>Διεύθυνση και επικοινωνία</FieldLegend>
+          <FieldLegend>Address and contact details</FieldLegend>
 
           <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             <CompanyField
               field="address"
-              label="Διεύθυνση"
+              label="Address"
               value={values.address}
               error={fieldErrors.address}
               disabled={isPending}
@@ -229,7 +204,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
 
             <CompanyField
               field="postalCode"
-              label="ΤΚ"
+              label="Postal code"
               value={values.postalCode}
               error={fieldErrors.postalCode}
               disabled={isPending}
@@ -238,7 +213,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
 
             <CompanyField
               field="city"
-              label="Πόλη"
+              label="City"
               value={values.city}
               error={fieldErrors.city}
               disabled={isPending}
@@ -247,7 +222,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
 
             <CompanyField
               field="phone"
-              label="Τηλέφωνο"
+              label="Phone"
               value={values.phone}
               error={fieldErrors.phone}
               type="tel"
@@ -267,32 +242,6 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
           </FieldGroup>
         </FieldSet>
 
-        <Separator />
-
-        <FieldSet>
-          <FieldLegend>Τραπεζικά στοιχεία</FieldLegend>
-
-          <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <CompanyField
-              field="iban"
-              label="IBAN"
-              value={values.iban}
-              error={fieldErrors.iban}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="bankName"
-              label="Τράπεζα"
-              value={values.bankName}
-              error={fieldErrors.bankName}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-          </FieldGroup>
-        </FieldSet>
-
         <div className="flex justify-stretch sm:justify-end">
           <Button
             className="w-full sm:w-auto"
@@ -300,7 +249,7 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
             disabled={isPending}
           >
             {isPending ? <Spinner data-icon="inline-start" /> : null}
-            Αποθήκευση
+            Save
           </Button>
         </div>
       </FieldGroup>

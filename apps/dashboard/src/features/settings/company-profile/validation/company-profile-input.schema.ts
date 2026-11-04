@@ -2,16 +2,12 @@ import { z } from 'zod';
 import { COMPANY_PROFILE_VALIDATION_MESSAGES } from './validation-messages';
 
 export const COMPANY_PROFILE_FIELD_LIMITS = {
-  legalName: 200,
-  taxId: 64,
-  taxOffice: 120,
+  name: 200,
   address: 300,
   postalCode: 32,
   city: 120,
   phone: 64,
   email: 254,
-  iban: 64,
-  bankName: 120,
 } as const;
 
 function optionalCompanyField(maximumLength: number) {
@@ -42,16 +38,12 @@ const optionalCompanyEmail = z
   .transform((value) => (value === '' ? null : value));
 
 export const companyProfileInputSchema = z.object({
-  legalName: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.legalName),
-  taxId: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.taxId),
-  taxOffice: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.taxOffice),
+  name: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.name),
   address: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.address),
   postalCode: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.postalCode),
   city: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.city),
   phone: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.phone),
   email: optionalCompanyEmail,
-  iban: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.iban),
-  bankName: optionalCompanyField(COMPANY_PROFILE_FIELD_LIMITS.bankName),
 });
 
 export type CompanyProfileInput = z.output<typeof companyProfileInputSchema>;
