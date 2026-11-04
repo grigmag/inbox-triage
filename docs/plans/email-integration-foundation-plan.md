@@ -27,7 +27,7 @@ Its migration is generated but unapplied.
 
 ## Outcome
 
-Each authenticated InboxTriage user can save credentials for one Zoho mailbox in
+Each authenticated Inbox Triage user can save credentials for one Zoho mailbox in
 Settings. Server-side dashboard code can use those credentials through a new
 `@inbox-triage/email` package to read inbox messages on demand.
 
@@ -44,7 +44,7 @@ conflict.
 
 ## Agreed decisions
 
-- Mailbox connections belong to individual InboxTriage users, not to the studio as
+- Mailbox connections belong to individual Inbox Triage users, not to the studio as
   a whole.
 - Each user can have at most one mailbox connection in the first version.
 - Zoho Mail is the only supported provider in the first version.
@@ -61,7 +61,7 @@ conflict.
 - The first version does not support encryption-key rotation.
 - A saved connection is treated as active. There is no status, provider account
   ID, or verification timestamp.
-- InboxTriage reads emails from the provider on demand. It does not store email
+- Inbox Triage reads emails from the provider on demand. It does not store email
   messages, maintain a synchronization cursor, poll in the background, or run
   an email ingestion job.
 - The first inbox view reads the inbox folder only. It loads 20 messages at a
@@ -71,7 +71,7 @@ conflict.
   `Offer emails`, but page copy and implementation names use `Emails` and
   ordinary email terminology.
 - Mailbox summaries and the selected message live in browser memory for the
-  current page visit. InboxTriage does not persist them between navigations.
+  current page visit. Inbox Triage does not persist them between navigations.
 - Refresh asks Zoho for every summary newer than the newest summary already in
   memory, then prepends the result without replacing older loaded messages or
   changing the current selection.
@@ -209,11 +209,11 @@ server-only: ^0.0.1
 Use ImapFlow's promise-based API for connection lifecycle, mailbox locking,
 UID-based fetches, inbox iteration, and bounded message downloads. Disable its
 logger so credentials, server responses, and message data do not reach the
-default logger. Disable automatic IDLE because InboxTriage opens short-lived
+default logger. Disable automatic IDLE because Inbox Triage opens short-lived
 connections for on-demand reads and does not listen for mailbox changes.
 
 Stay on ImapFlow 1.x for this slice. Version 2.0 was released while this slice
-was being planned and has not been evaluated against InboxTriage. Review its
+was being planned and has not been evaluated against Inbox Triage. Review its
 migration notes and behavior in a separate dependency update before accepting
 that major version.
 
@@ -228,7 +228,7 @@ the IMAP adapter through an internal fake transport and parse checked-in email
 fixtures. Slice 2 does not add a live IMAP test server or another test library.
 
 Do not add MailParser. Its streaming parser remains a fallback if a later
-requirement says InboxTriage must extract a small body from a message whose total
+requirement says Inbox Triage must extract a small body from a message whose total
 size exceeds the chosen limit.
 
 ### Slice 2 public contract
@@ -334,7 +334,7 @@ tokens.
 
 `getMessage()` checks the reported message size, downloads no more than the 10
 MiB limit, parses the complete source with PostalMime, and returns normalized
-package types. It uses a non-mutating IMAP fetch so reading through InboxTriage
+package types. It uses a non-mutating IMAP fetch so reading through Inbox Triage
 does not mark the message as read. `html` is untrusted email HTML; callers must
 sanitize it before rendering. Slice 4 does not render it or convert it to plain
 text. Slice 2 does not return or process attachments for application use.
@@ -432,7 +432,7 @@ supported provider.
 inbox locking, listing, message retrieval, size enforcement, normalization,
 error translation, and cleanup. `imapflow-transport.ts` is the only file that
 imports ImapFlow. Its internal contract in `imap-transport.types.ts` includes
-only the operations InboxTriage needs and must not reproduce the full ImapFlow
+only the operations Inbox Triage needs and must not reproduce the full ImapFlow
 API. Tests inject a fake implementation of this contract. Keep the fake inside
 the consuming test file unless more than one test needs it.
 
@@ -848,7 +848,7 @@ Discard all state when the user navigates away.
   positions.
 - Show a `No new emails` toast when refresh returns an empty array. Do not show a
   last-refreshed time.
-- Reading through InboxTriage remains non-mutating and does not mark the message as
+- Reading through Inbox Triage remains non-mutating and does not mark the message as
   read in Zoho. Do not add unread or all filters.
 
 ### Message detail
@@ -991,7 +991,7 @@ input, output, persistence, and review workflow in its own later plan.
   the user's mailbox, then Server Configuration Details. Link to the
   [Zoho IMAP guide](https://www.zoho.com/mail/help/imap-access.html), which explains
   that server details depend on account type and data center. State that
-  InboxTriage uses port 993 with TLS.
+  Inbox Triage uses port 993 with TLS.
 - Saving performs no network verification. Subsequent reads use the entered
   address and existing safe provider-error handling. Client cleanup and
   authenticated user scoping remain required for all mailbox operations.

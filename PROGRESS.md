@@ -22,7 +22,7 @@
 
 - [x] Add the company profile and rates foundation
 
-- [x] [Add the authenticated InboxTriage application shell](docs/plans/authenticated-app-shell-plan.md)
+- [x] [Add the authenticated Inbox Triage application shell](docs/plans/authenticated-app-shell-plan.md)
 
 - [x] [Add Clerk authentication with a local user boundary](docs/plans/clerk-auth-plan.md)
 

@@ -9,7 +9,7 @@ Full UI testing infrastructure remains in `FUTURE_WORK.md`.
 
 ## Objective
 
-Replace the dashboard scaffold with a stable authenticated InboxTriage application
+Replace the dashboard scaffold with a stable authenticated Inbox Triage application
 shell and five truthful placeholder routes:
 
 ```text
@@ -26,7 +26,7 @@ feature mutations.
 
 ## Agreed decisions
 
-- Use **InboxTriage** as the visible application name and in document titles.
+- Use **Inbox Triage** as the visible application name and in document titles.
 - Keep `/sign-in` outside the authenticated shell.
 - Move the existing `/account` route into the authenticated route group without
   changing its URL so account management shares the application frame.
@@ -53,7 +53,7 @@ The production application takes priority over reproducing every suggested
 implementation detail:
 
 - The sidebar user area delegates avatar fallback, account actions, and sign-out
-  behavior to Clerk's existing `UserButton`. InboxTriage will not reconstruct
+  behavior to Clerk's existing `UserButton`. Inbox Triage will not reconstruct
   Clerk's menu merely to render profile text alongside it.
 - The configured Base UI toast primitive replaces Sonner while preserving the
   requested product behavior and avoiding a second theme/provider dependency.
@@ -85,7 +85,7 @@ project's established Clerk and shadcn boundaries.
   compositions.
 - Add route-group loading and unexpected-error boundaries.
 - Mount one toast provider at the authenticated application root.
-- Replace scaffold metadata with InboxTriage title conventions.
+- Replace scaffold metadata with Inbox Triage title conventions.
 - Add the required shadcn registry components to the reusable UI package and
   export their public APIs.
 - Add focused Node-based unit tests for route classification, navigation URLs,
@@ -99,7 +99,7 @@ project's established Clerk and shadcn boundaries.
 - Business workflows, queries, mutations, schemas, migrations, or fake records.
 - Additional navigation destinations or a mobile bottom navigation.
 - Custom Clerk profile/account/sign-out UI or duplicated Clerk profile fields.
-- A new logo asset; the sidebar uses the InboxTriage text name as its brand and
+- A new logo asset; the sidebar uses the Inbox Triage text name as its brand and
   fallback.
 - Roles, permissions, teams, invitations, or settings.
 - Theme switching, a new preset, new typography, or bespoke shell colors.
@@ -175,7 +175,7 @@ dashboard alias. The same dry run proposes overwriting the existing Button;
 inspect its per-file diff and preserve local changes instead of accepting an
 unreviewed overwrite.
 
-Put InboxTriage compositions and behavior in `apps/dashboard/src/components`:
+Put Inbox Triage compositions and behavior in `apps/dashboard/src/components`:
 
 ```text
 components/
@@ -231,7 +231,7 @@ Implement matching in a pure helper with segment-safe exact/prefix checks so
 decorative. On navigation selection, close the mobile off-canvas state through
 the Sidebar context without collapsing the persistent desktop sidebar.
 
-The sidebar header shows a text link labeled `InboxTriage`. The footer embeds the
+The sidebar header shows a text link labeled `Inbox Triage`. The footer embeds the
 existing Clerk `UserButton`, preserving its navigation to `/account`, account
 management, and sign-out behavior without a parallel dashboard-owned menu.
 
@@ -269,7 +269,7 @@ Use one current-page breadcrumb for non-root placeholders and omit breadcrumbs
 from Dashboard.
 
 Replace the scaffold metadata with a root title template equivalent to
-`%s | InboxTriage` and a `InboxTriage` default. Each protected page exports static
+`%s | Inbox Triage` and an `Inbox Triage` default. Each protected page exports static
 metadata using its specified page title. Give sign-in and account management
 truthful titles without placing sign-in inside the shell.
 
@@ -386,7 +386,7 @@ never the only destructive confirmation or blocking validation message.
 
 #### Work
 
-1. Replace create-next-app metadata with InboxTriage defaults and a page-title
+1. Replace create-next-app metadata with Inbox Triage defaults and a page-title
    template.
 2. Create `(app)/layout.tsx`, enforce `requireUser()`, and compose the Sidebar
    provider, sidebar, inset, skip link, main target, trigger, and toaster.
@@ -397,7 +397,7 @@ never the only destructive confirmation or blocking validation message.
    direct `requireUser()` protection.
 5. Add typed navigation data and the segment-safe active-match helper.
 6. Implement the pathname-aware sidebar with exact item order, active semantics,
-   mobile close-on-selection behavior, InboxTriage text brand, and Clerk
+   mobile close-on-selection behavior, Inbox Triage text brand, and Clerk
    `UserButton` footer.
 7. Keep client boundaries limited to active/mobile interaction and existing auth
    UI.
@@ -409,7 +409,7 @@ never the only destructive confirmation or blocking validation message.
   authenticated user and remain blocked for an unauthenticated request.
 - Desktop and mobile sidebar behavior comes from the configured primitive.
 - The footer preserves Clerk's existing account and sign-out behavior.
-- All document titles use InboxTriage rather than create-next-app branding.
+- All document titles use Inbox Triage rather than create-next-app branding.
 
 ### Phase 3: Add common page and feedback compositions
 
@@ -576,7 +576,7 @@ application components to the UI registry directory.
 ## Completion checklist
 
 - [x] Required shadcn primitives are reviewed, installed, and exported.
-- [x] InboxTriage metadata replaces scaffold branding.
+- [x] Inbox Triage metadata replaces scaffold branding.
 - [x] The private route group owns the shared application shell.
 - [x] Sign-in remains outside the shell and account management remains protected.
 - [x] Centralized navigation has correct order, destinations, and active rules.

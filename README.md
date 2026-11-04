@@ -1,4 +1,4 @@
-# InboxTriage
+# Inbox Triage
 
 ## Local development
 

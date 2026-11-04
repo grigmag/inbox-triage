@@ -16,10 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'InboxTriage',
-    template: '%s | InboxTriage',
+    default: 'Inbox Triage',
+    template: '%s | Inbox Triage',
   },
-  description: 'InboxTriage production studio workspace',
+  description: 'Triage client emails and project briefs for creative studios.',
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {

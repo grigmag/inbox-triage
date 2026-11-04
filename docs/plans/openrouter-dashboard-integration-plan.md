@@ -7,12 +7,12 @@ one explicit, billable smoke command that demonstrates a minimal text-generation
 call. Keep the integration inside `apps/dashboard` until product features reveal
 shared behavior worth extracting.
 
-This plan does not create `@inbox-triage/ai`, a InboxTriage-owned generation API, or
+This plan does not create `@inbox-triage/ai`, an application-owned generation API, or
 any product feature.
 
 ## Context
 
-InboxTriage currently has one application that will use AI. The earlier plan
+Inbox Triage currently has one application that will use AI. The earlier plan
 proposed a workspace package with package-owned request, result, metadata, and
 error contracts before the first consuming workflow existed. That package would
 have copied concepts already owned by AI SDK and the OpenRouter provider.
@@ -21,7 +21,7 @@ Use the libraries directly for the initial integration. A server-only dashboard
 module will bind the OpenRouter API key and model slug. Future feature code can
 import AI SDK operations from `ai` and the configured model from that module.
 Reconsider a workspace package after multiple consumers repeat stable
-InboxTriage-owned behavior.
+application-owned behavior.
 
 The branch for this plan does not contain the earlier `packages/ai` implementation
 commit. Keep `packages/ai` absent and install the dependencies in the dashboard.
@@ -42,7 +42,7 @@ This plan excludes:
 - email evaluation, request rating, reply drafting, or other feature behavior;
 - UI, server actions, use cases, schemas, persistence, and background jobs;
 - a shared AI workspace package or provider-neutral wrapper;
-- InboxTriage-owned request, result, metadata, or error types;
+- application-owned request, result, metadata, or error types;
 - structured output, streaming, messages, tools, agents, MCP, embeddings, and
   media generation;
 - reasoning configuration, model selection UI, model discovery, and model
@@ -65,7 +65,7 @@ operations from `ai` directly. It imports OpenRouter types from
 `@openrouter/ai-sdk-provider` when provider-specific configuration requires them.
 
 This deliberately defers reusable-package structure. The production application
-has one known consumer, and there is no stable InboxTriage-owned AI contract to
+has one known consumer, and there is no stable application-owned AI contract to
 share yet.
 
 ### Environment configuration
@@ -110,7 +110,7 @@ export const aiModel = openrouter(env.OPENROUTER_MODEL);
 
 The exact exported name may change during implementation if a more specific name
 reads better at call sites. Export the configured AI SDK model, not the API key,
-raw configuration, or a InboxTriage-owned generation wrapper.
+raw configuration, or an application-owned generation wrapper.
 
 Creating the provider and model must not make a network request. Importing the
 module during a build must therefore remain non-billable.
@@ -124,7 +124,7 @@ import { aiModel } from '@/server/ai';
 
 const result = await generateText({
   model: aiModel,
-  prompt: 'Write one short sentence welcoming a photographer to InboxTriage.',
+  prompt: 'Write one short sentence welcoming a photographer to Inbox Triage.',
 });
 ```
 
@@ -242,7 +242,7 @@ Also verify:
 - the smoke command does not print the API key or raw provider response.
 
 Do not mock AI SDK to test its own argument handling or result types. Add an
-automated test only if implementation introduces InboxTriage-owned branching worth
+automated test only if implementation introduces application-owned branching worth
 protecting, such as the billing guard. Never place a live OpenRouter call in the
 automated test suite.
 

@@ -1,6 +1,6 @@
 # Connect your Gmail account
 
-InboxTriage can send and receive your email through Gmail. You connect it with a Google app password, which is a separate 16-character code that only InboxTriage uses. Your normal Google password will not work.
+Inbox Triage can send and receive your email through Gmail. You connect it with a Google app password, which is a separate 16-character code that only Inbox Triage uses. Your normal Google password will not work.
 
 ## Before you start
 
@@ -24,7 +24,7 @@ Sign in to admin.google.com and check these settings:
 
 1. Go to **Security** > **Authentication** > **2-Step Verification**. Check **Allow users to turn on 2-Step Verification**. If you enforce 2-Step Verification, the allowed methods must not be set to **Only security key**.
 2. Go to **Apps** > **Google Workspace** > **Gmail** > **End User Access** > **POP and IMAP access**. Turn on IMAP access for your users. Mail clients must not be limited to **OAuth mail clients only**.
-3. Make sure the person connecting to InboxTriage is not enrolled in Advanced Protection.
+3. Make sure the person connecting to Inbox Triage is not enrolled in Advanced Protection.
 
 Changes can take up to 24 hours to reach users. Google renames Admin console menus from time to time, so the names you see may differ slightly.
 
@@ -32,18 +32,18 @@ Changes can take up to 24 hours to reach users. Google renames Admin console men
 
 1. Go to myaccount.google.com and open **Security** > **2-Step Verification**. Turn it on using your phone or an authenticator app. Skip this step if it is already on.
 2. Open myaccount.google.com/apppasswords. Google often leaves this page out of its menus, so type the address directly, or search for "App passwords" in the search box at the top of your Google Account. Google may ask you to sign in again.
-3. Enter a name you will recognize later, such as "InboxTriage", and click **Create**.
-4. Copy the 16-character code. Google shows it in four groups, like `abcd efgh ijkl mnop`. You will only see it once, so paste it into InboxTriage before you close the window.
+3. Enter a name you will recognize later, such as "Inbox Triage", and click **Create**.
+4. Copy the 16-character code. Google shows it in four groups, like `abcd efgh ijkl mnop`. You will only see it once, so paste it into Inbox Triage before you close the window.
 
-## Connect in InboxTriage
+## Connect in Inbox Triage
 
-1. In InboxTriage, open **Settings** > **Email**.
+1. In Inbox Triage, open **Settings** > **Email**.
 2. Choose **Gmail** as the provider.
 3. In **Email**, enter your email address. Custom-domain addresses work too.
-4. In **App password**, paste the code from Google. You can leave the spaces in. InboxTriage removes them.
-5. Click **Save**. InboxTriage signs in to Gmail to check the app password before saving, which can take a few seconds.
+4. In **App password**, paste the code from Google. You can leave the spaces in. Inbox Triage removes them.
+5. Click **Save**. Inbox Triage signs in to Gmail to check the app password before saving, which can take a few seconds.
 
-If you already have a Zoho connection, InboxTriage asks you to confirm the switch. Gmail then replaces Zoho. You can only have one email connection at a time.
+If you already have a Zoho connection, Inbox Triage asks you to confirm the switch. Gmail then replaces Zoho. You can only have one email connection at a time.
 
 ## Troubleshooting
 
@@ -54,10 +54,10 @@ If you already have a Zoho connection, InboxTriage asks you to confirm the switc
 - Your account is enrolled in Advanced Protection.
 - On Google Workspace, your admin does not allow 2-Step Verification, or allows security keys only.
 
-**InboxTriage says "Gmail rejected the app password" when you save.** Nothing was saved. Check that you pasted the app password and not your normal Google password, and that the email address is the one you created the app password for. If you're unsure, create a new app password and enter that one. On Google Workspace, also ask your admin to check the IMAP setting above: IMAP must be on, and mail clients must not be limited to OAuth mail clients only.
+**Inbox Triage says "Gmail rejected the app password" when you save.** Nothing was saved. Check that you pasted the app password and not your normal Google password, and that the email address is the one you created the app password for. If you're unsure, create a new app password and enter that one. On Google Workspace, also ask your admin to check the IMAP setting above: IMAP must be on, and mail clients must not be limited to OAuth mail clients only.
 
-**InboxTriage says "Couldn't reach the mail server" when you save.** Nothing was saved. InboxTriage couldn't connect to Gmail, usually because of a brief network problem. Wait a minute and click **Save** again.
+**Inbox Triage says "Couldn't reach the mail server" when you save.** Nothing was saved. Inbox Triage couldn't connect to Gmail, usually because of a brief network problem. Wait a minute and click **Save** again.
 
-**You changed your Google password.** Google cancels all your app passwords when you do this, and your inbox in InboxTriage says Gmail rejected the saved app password. Create a new app password, then enter it in InboxTriage under **Settings** > **Email**.
+**You changed your Google password.** Google cancels all your app passwords when you do this, and Inbox Triage then reports that Gmail rejected the saved app password. Create a new app password, then enter it in Inbox Triage under **Settings** > **Email**.
 
-**You want to remove InboxTriage's access.** Go to myaccount.google.com/apppasswords and delete the "InboxTriage" entry. After that, InboxTriage can no longer send or receive your email. To remove the connection from InboxTriage as well, open **Settings** > **Email** and click **Disconnect Gmail**.
+**You want to remove Inbox Triage's access.** Go to myaccount.google.com/apppasswords and delete the "Inbox Triage" entry. After that, Inbox Triage can no longer send or receive your email. To remove the connection from Inbox Triage as well, open **Settings** > **Email** and click **Disconnect Gmail**.

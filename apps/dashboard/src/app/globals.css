@@ -1,5 +1,5 @@
 /* Dashboard styles: the shared shadcn base from @inbox-triage/ui, then the
-   InboxTriage tokens. Project-specific tokens and theme overrides live here so
+   Inbox Triage tokens. Project-specific tokens and theme overrides live here so
    the ui package keeps the stock shadcn theme. */
 
 @import '@inbox-triage/ui/globals.css';
@@ -16,7 +16,7 @@
   --success: oklch(0.51 0.12 155);
 }
 
-/* InboxTriage "Darkroom" theme: warm charcoal with an amber safelight accent.
+/* Inbox Triage "Darkroom" theme: warm charcoal with an amber safelight accent.
    Popover, sidebar and chart tokens are not in the prototype and are derived
    from the same palette. */
 .dark {
