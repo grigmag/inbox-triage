@@ -2,6 +2,8 @@
 
 ## Planned
 
+- [ ] [Add a company footer to drafted replies](docs/plans/company-reply-footer-plan.md)
+
 ## In progress
 
 ## Completed
