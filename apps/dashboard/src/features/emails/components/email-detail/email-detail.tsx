@@ -1,6 +1,11 @@
 'use client';
 
-import { Empty, EmptyHeader, EmptyDescription, Skeleton } from '@inbox-triage/ui';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyDescription,
+  Skeleton,
+} from '@inbox-triage/ui';
 import type { EmailMessageDto } from '@/features/emails/dto/email.dto';
 import { EmailDetailContent } from './email-detail-content';
 import { EmailFailure } from '@/features/emails/components/email-failure';
