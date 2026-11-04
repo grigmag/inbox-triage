@@ -4,14 +4,17 @@ import {
   Alert,
   AlertDescription,
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSet,
   Input,
-  Separator,
   Spinner,
   toast,
 } from '@inbox-triage/ui';
@@ -35,6 +38,7 @@ type CompanyProfileFormProps = {
 };
 
 type CompanyFieldProps = {
+  className?: string;
   disabled: boolean;
   error?: string;
   field: CompanyProfileField;
@@ -45,38 +49,32 @@ type CompanyFieldProps = {
 };
 
 const COMPANY_PROFILE_FIELDS = [
-  'legalName',
-  'taxId',
-  'taxOffice',
+  'name',
   'address',
   'postalCode',
   'city',
   'phone',
   'email',
-  'iban',
-  'bankName',
 ] as const satisfies readonly CompanyProfileField[];
 
-const SAVE_FAILURE_MESSAGE = 'Δεν ήταν δυνατή η αποθήκευση. Δοκιμάστε ξανά.';
+const SAVE_FAILURE_MESSAGE =
+  'Unable to save the company profile. Please try again.';
 
 function profileToFormValues(
   profile: CompanyProfileDto,
 ): CompanyProfileFormValues {
   return {
-    legalName: profile.legalName ?? '',
-    taxId: profile.taxId ?? '',
-    taxOffice: profile.taxOffice ?? '',
+    name: profile.name ?? '',
     address: profile.address ?? '',
     postalCode: profile.postalCode ?? '',
     city: profile.city ?? '',
     phone: profile.phone ?? '',
     email: profile.email ?? '',
-    iban: profile.iban ?? '',
-    bankName: profile.bankName ?? '',
   };
 }
 
 function CompanyField({
+  className,
   disabled,
   error,
   field,
@@ -89,6 +87,7 @@ function CompanyField({
 
   return (
     <Field
+      className={className}
       data-disabled={disabled || undefined}
       data-invalid={!!error || undefined}
     >
@@ -171,86 +170,36 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
   }
 
   return (
-    <form ref={formRef} noValidate autoComplete="off" onSubmit={handleSubmit}>
-      <FieldGroup>
-        {saveError ? (
-          <Alert variant="destructive">
-            <AlertDescription>{saveError}</AlertDescription>
-          </Alert>
-        ) : null}
+    <form
+      className="w-full max-w-2xl"
+      ref={formRef}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>Company profile</CardTitle>
 
-        <FieldSet>
-          <FieldLegend>Στοιχεία επιχείρησης</FieldLegend>
+          <CardDescription>
+            Drafted email replies end with these details.
+          </CardDescription>
+        </CardHeader>
 
-          <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            <CompanyField
-              field="legalName"
-              label="Επωνυμία"
-              value={values.legalName}
-              error={fieldErrors.legalName}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="taxId"
-              label="ΑΦΜ"
-              value={values.taxId}
-              error={fieldErrors.taxId}
-              disabled={isPending}
-              onChange={handleChange}
-            />
+        <CardContent className="pb-2">
+          <FieldGroup className="grid grid-cols-1 sm:grid-cols-2">
+            {saveError ? (
+              <Alert variant="destructive" className="sm:col-span-2">
+                <AlertDescription>{saveError}</AlertDescription>
+              </Alert>
+            ) : null}
 
             <CompanyField
-              field="taxOffice"
-              label="ΔΟΥ"
-              value={values.taxOffice}
-              error={fieldErrors.taxOffice}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-          </FieldGroup>
-        </FieldSet>
-
-        <Separator />
-
-        <FieldSet>
-          <FieldLegend>Διεύθυνση και επικοινωνία</FieldLegend>
-
-          <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-            <CompanyField
-              field="address"
-              label="Διεύθυνση"
-              value={values.address}
-              error={fieldErrors.address}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="postalCode"
-              label="ΤΚ"
-              value={values.postalCode}
-              error={fieldErrors.postalCode}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="city"
-              label="Πόλη"
-              value={values.city}
-              error={fieldErrors.city}
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="phone"
-              label="Τηλέφωνο"
-              value={values.phone}
-              error={fieldErrors.phone}
-              type="tel"
+              className="sm:col-span-2"
+              field="name"
+              label="Company name"
+              value={values.name}
+              error={fieldErrors.name}
               disabled={isPending}
               onChange={handleChange}
             />
@@ -264,46 +213,54 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
-          </FieldGroup>
-        </FieldSet>
 
-        <Separator />
-
-        <FieldSet>
-          <FieldLegend>Τραπεζικά στοιχεία</FieldLegend>
-
-          <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <CompanyField
-              field="iban"
-              label="IBAN"
-              value={values.iban}
-              error={fieldErrors.iban}
+              field="phone"
+              label="Phone"
+              value={values.phone}
+              error={fieldErrors.phone}
+              type="tel"
               disabled={isPending}
               onChange={handleChange}
             />
 
             <CompanyField
-              field="bankName"
-              label="Τράπεζα"
-              value={values.bankName}
-              error={fieldErrors.bankName}
+              className="sm:col-span-2"
+              field="address"
+              label="Address"
+              value={values.address}
+              error={fieldErrors.address}
+              disabled={isPending}
+              onChange={handleChange}
+            />
+
+            <CompanyField
+              field="postalCode"
+              label="Postal code"
+              value={values.postalCode}
+              error={fieldErrors.postalCode}
+              disabled={isPending}
+              onChange={handleChange}
+            />
+
+            <CompanyField
+              field="city"
+              label="City"
+              value={values.city}
+              error={fieldErrors.city}
               disabled={isPending}
               onChange={handleChange}
             />
           </FieldGroup>
-        </FieldSet>
+        </CardContent>
 
-        <div className="flex justify-stretch sm:justify-end">
-          <Button
-            className="w-full sm:w-auto"
-            type="submit"
-            disabled={isPending}
-          >
+        <CardFooter className="justify-end">
+          <Button type="submit" disabled={isPending}>
             {isPending ? <Spinner data-icon="inline-start" /> : null}
-            Αποθήκευση
+            Save
           </Button>
-        </div>
-      </FieldGroup>
+        </CardFooter>
+      </Card>
     </form>
   );
 }

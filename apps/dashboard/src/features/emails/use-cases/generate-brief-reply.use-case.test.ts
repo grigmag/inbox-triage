@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { BRIEF_REPLY_MAX_BODY_LENGTH } from '../brief-reply/brief-reply.config';
 import {
   BriefReplyBodyTooLongError,
+  BriefReplyInvalidOutputError,
   BriefReplyMailboxError,
   BriefReplyMissingTextError,
   BriefReplyProviderError,
@@ -16,6 +18,7 @@ const mocks = vi.hoisted(() => ({
   getMessage: vi.fn(),
   close: vi.fn(),
   generateBriefReply: vi.fn(),
+  getCompanyProfile: vi.fn(),
 }));
 
 vi.mock('server-only', () => ({}));
@@ -34,6 +37,12 @@ vi.mock('@inbox-triage/email', () => ({
 vi.mock('../brief-reply/generate-brief-reply', () => ({
   generateBriefReply: mocks.generateBriefReply,
 }));
+vi.mock(
+  '@/features/settings/company-profile/repositories/company-profile.repository',
+  () => ({
+    companyProfileRepository: { get: mocks.getCompanyProfile },
+  }),
+);
 
 const questions: BriefReplyQuestion[] = [
   { fieldKey: 'timeline', question: 'When should the shoot take place?' },
@@ -61,6 +70,21 @@ const message = {
   text: '  We need ten product photographs.\n\n> quoted history\n',
   html: '<p>private HTML</p>',
 };
+const emptyProfile = {
+  name: null,
+  address: null,
+  postalCode: null,
+  city: null,
+  phone: null,
+  email: null,
+  updatedAt: null,
+};
+const metadata = {
+  configuredModelId: 'configured-model',
+  responseModelId: 'response-model',
+  usage: null,
+  finishReason: 'stop',
+};
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -81,13 +105,9 @@ beforeEach(() => {
   mocks.close.mockResolvedValue(undefined);
   mocks.generateBriefReply.mockResolvedValue({
     body: 'Hello,\n\nThanks.',
-    metadata: {
-      configuredModelId: 'configured-model',
-      responseModelId: 'response-model',
-      usage: null,
-      finishReason: 'stop',
-    },
+    metadata,
   });
+  mocks.getCompanyProfile.mockResolvedValue(emptyProfile);
 });
 
 describe('generateBriefReplyUseCase', () => {
@@ -176,6 +196,55 @@ describe('generateBriefReplyUseCase', () => {
     expect(mocks.generateBriefReply).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ body: text }),
     );
+  });
+
+  it('appends the company footer below the generated body', async () => {
+    mocks.getCompanyProfile.mockResolvedValue({
+      ...emptyProfile,
+      name: 'Northlight Studio',
+      email: 'hello@northlight.example',
+    });
+
+    await expect(generateBriefReplyUseCase(input)).resolves.toStrictEqual({
+      status: 'success',
+      data: {
+        body: 'Hello,\n\nThanks.\n\nNorthlight Studio\nhello@northlight.example',
+      },
+    });
+  });
+
+  it('accepts a body and footer at the length limit', async () => {
+    const footer = 'Northlight Studio';
+    const body = 'a'.repeat(BRIEF_REPLY_MAX_BODY_LENGTH - footer.length - 2);
+    mocks.generateBriefReply.mockResolvedValue({ body, metadata });
+    mocks.getCompanyProfile.mockResolvedValue({
+      ...emptyProfile,
+      name: footer,
+    });
+
+    await expect(generateBriefReplyUseCase(input)).resolves.toStrictEqual({
+      status: 'success',
+      data: { body: `${body}\n\n${footer}` },
+    });
+  });
+
+  it('rejects a body and footer over the length limit with the run metadata', async () => {
+    const footer = 'Northlight Studio';
+    mocks.generateBriefReply.mockResolvedValue({
+      body: 'a'.repeat(BRIEF_REPLY_MAX_BODY_LENGTH - footer.length - 1),
+      metadata,
+    });
+    mocks.getCompanyProfile.mockResolvedValue({
+      ...emptyProfile,
+      name: footer,
+    });
+
+    const error = await generateBriefReplyUseCase(input).catch(
+      (caught: unknown) => caught,
+    );
+
+    expect(error).toBeInstanceOf(BriefReplyInvalidOutputError);
+    expect((error as BriefReplyInvalidOutputError).metadata).toBe(metadata);
   });
 
   it('propagates generator errors', async () => {

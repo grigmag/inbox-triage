@@ -97,7 +97,7 @@ function InboxListStatus({
   return null;
 }
 
-export function EmailsInbox() {
+export function EmailsInbox({ replyFooter }: { replyFooter: string | null }) {
   const { state, loadInitial, loadMore, refresh, select } = useEmails();
   const busy =
     state.initial.loading || state.older.loading || state.refresh.loading;
@@ -176,6 +176,7 @@ export function EmailsInbox() {
           <EmailDetail
             key={state.messageRequestId}
             message={state.message}
+            replyFooter={replyFooter}
             loading={state.detail.loading}
             error={state.detail.error}
             retry={() => {

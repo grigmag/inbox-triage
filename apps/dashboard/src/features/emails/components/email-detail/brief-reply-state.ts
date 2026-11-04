@@ -28,7 +28,7 @@ export type BriefReplyState = {
    * comparing it with `draft` tells whether the user has changed the draft and
    * must confirm before regenerating replaces it. Reverting the text by hand
    * counts as unedited, because nothing would be lost. A blank reply starts
-   * from an empty string.
+   * from its initial draft, which is empty or holds only the company footer.
    */
   generated: string | null;
   pending: 'generating' | 'sending' | null;
@@ -53,7 +53,7 @@ export const initialBriefReplyState: BriefReplyState = {
 
 export type BriefReplyAction =
   | { type: 'startGenerate'; source: BriefReplySource }
-  | { type: 'startBlank'; source: BriefReplySource }
+  | { type: 'startBlank'; draft: string; source: BriefReplySource }
   | { type: 'setGenerateResult'; result: GenerateBriefReplyActionResult }
   | { type: 'editDraft'; draft: string }
   | { type: 'startSend' }
@@ -94,6 +94,7 @@ export function briefReplyReducer(
       };
 
     // For briefs with nothing to ask, the user writes the reply without AI.
+    // The initial draft is empty or holds the company footer.
     case 'startBlank':
       if (isBriefReplyLocked(state) || state.draft !== null) {
         return state;
@@ -101,8 +102,8 @@ export function briefReplyReducer(
 
       return {
         ...state,
-        draft: '',
-        generated: '',
+        draft: action.draft,
+        generated: action.draft,
         source: action.source,
         error: null,
       };

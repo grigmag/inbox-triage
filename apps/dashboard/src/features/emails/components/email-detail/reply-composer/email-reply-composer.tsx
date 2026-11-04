@@ -11,7 +11,6 @@ import {
   CardFooter,
   CardHeader,
   Field,
-  FieldDescription,
   FieldError,
   FieldLabel,
   Skeleton,
@@ -77,7 +76,6 @@ function ReplyCard() {
   const [regenerateConfirmOpen, setRegenerateConfirmOpen] = useState(false);
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false);
   const bodyId = useId();
-  const bodyDescriptionId = useId();
   const bodyErrorId = useId();
   const pending = reply.pending !== null;
   const sent = reply.sent !== null;
@@ -85,10 +83,6 @@ function ReplyCard() {
   const bodyError = reply.draft === null ? null : getBodyError(reply.draft);
   // A blank reply starts invalid, so its error waits for the first edit.
   const shownBodyError = reply.edited ? bodyError : null;
-  const describedBy =
-    [!sent && bodyDescriptionId, shownBodyError && bodyErrorId]
-      .filter(Boolean)
-      .join(' ') || undefined;
 
   function handleRegenerate() {
     if (reply.edited) {
@@ -165,15 +159,9 @@ function ReplyCard() {
                 readOnly={sent}
                 disabled={pending}
                 aria-invalid={!!shownBodyError || undefined}
-                aria-describedby={describedBy}
+                aria-describedby={shownBodyError ? bodyErrorId : undefined}
                 className="min-h-48 resize-none rounded-none border-0 bg-transparent px-0 py-0 leading-6 focus-visible:ring-0 aria-invalid:ring-0 disabled:bg-transparent dark:bg-transparent dark:disabled:bg-transparent"
               />
-
-              {!sent && (
-                <FieldDescription id={bodyDescriptionId}>
-                  Add your name before sending.
-                </FieldDescription>
-              )}
 
               {shownBodyError && (
                 <FieldError id={bodyErrorId}>{shownBodyError}</FieldError>

@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
+import { appendReplyFooter } from '@/features/emails/brief-reply/reply-footer.utils';
 import { BRIEF_REVIEW_MAX_BODY_LENGTH } from '@/features/emails/brief-review/brief-review-v1.config';
 import type { EmailMessageDto } from '@/features/emails/dto/email.dto';
 import { useScrollIntoViewOnMount } from '@/hooks/use-scroll-into-view-on-mount';
@@ -38,9 +39,12 @@ function getReviewUnavailableReason(text: string | null): string | null {
  */
 export function EmailDetailProvider({
   message,
+  replyFooter,
   children,
 }: {
   message: EmailMessageDto;
+  /** The company footer that blank replies start with. */
+  replyFooter: string | null;
   children: ReactNode;
 }) {
   const briefReview = useBriefReview();
@@ -107,10 +111,15 @@ export function EmailDetailProvider({
     // Commit the blank draft now, so the editor exists to scroll to and focus.
     flushSync(() => {
       setReviewLevel('strip');
-      startBlank({ reviewId, questionIndices: [] });
+      startBlank(appendReplyFooter({ body: '', footer: replyFooter }), {
+        reviewId,
+        questionIndices: [],
+      });
     });
     scrollToComposer();
     focusEditor();
+    // The user types above the footer.
+    editorRef.current?.setSelectionRange(0, 0);
   }
 
   let regenerate: EmailDetailContextValue['state']['reply']['regenerate'] =

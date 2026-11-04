@@ -15,30 +15,22 @@ export type CompanyProfileRepositoryOptions = {
 const COMPANY_PROFILE_ID = '00000000-0000-4000-8000-000000000001';
 
 const EMPTY_COMPANY_PROFILE_DTO = {
-  legalName: null,
-  taxId: null,
-  taxOffice: null,
+  name: null,
   address: null,
   postalCode: null,
   city: null,
   phone: null,
   email: null,
-  iban: null,
-  bankName: null,
   updatedAt: null,
 } as const satisfies CompanyProfileDto;
 
 const companyProfileSelection = {
-  legalName: companyProfile.legalName,
-  taxId: companyProfile.taxId,
-  taxOffice: companyProfile.taxOffice,
+  name: companyProfile.name,
   address: companyProfile.address,
   postalCode: companyProfile.postalCode,
   city: companyProfile.city,
   phone: companyProfile.phone,
   email: companyProfile.email,
-  iban: companyProfile.iban,
-  bankName: companyProfile.bankName,
   updatedAt: companyProfile.updatedAt,
 };
 

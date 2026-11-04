@@ -12,11 +12,14 @@ import { EmailFailure } from '@/features/emails/components/email-failure';
 
 export function EmailDetail({
   message,
+  replyFooter,
   loading,
   error,
   retry,
 }: {
   message: EmailMessageDto | null;
+  /** The company footer that blank replies start with. */
+  replyFooter: string | null;
   loading: boolean;
   error: string | null;
   retry: () => void;
@@ -53,5 +56,5 @@ export function EmailDetail({
     );
   }
 
-  return <EmailDetailContent message={message} />;
+  return <EmailDetailContent message={message} replyFooter={replyFooter} />;
 }
