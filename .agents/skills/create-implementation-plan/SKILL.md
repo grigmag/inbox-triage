@@ -68,9 +68,16 @@ Use a compact directory or file tree when helpful. Show only structurally meanin
 
 ### Behaviors & Flows
 
-Describe important routes, actions, state transitions, data flows, or control flows introduced or changed by the implementation.
+Describe important routes, actions, state transitions, data flows, or control flows introduced or changed by the implementation, as a user or caller observes them.
 
-Focus on externally visible behavior and interactions between important components.
+Use whichever forms fit:
+
+* a short numbered sequence of observable steps for each main flow;
+* a table of situations and results when behavior varies by case;
+* one or two concrete examples when the output has a visible shape, such as generated text, a message, or a payload;
+* one-sentence bullets for the remaining rules.
+
+Leave mechanisms, such as framework APIs, which module does the work, and why, to Technical Choices or the slices.
 
 ### Technical Choices
 
