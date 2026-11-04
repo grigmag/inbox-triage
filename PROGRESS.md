@@ -4,7 +4,7 @@
 
 ## In progress
 
-- [ ] [Add a company footer to drafted replies](docs/plans/company-reply-footer-plan.md). Slice 1 is complete: profile fields, English settings copy and reviewed migration; all checks pass. Footer integration remains in slices 2 and 3.
+- [ ] [Add a company footer to drafted replies](docs/plans/company-reply-footer-plan.md). Slices 1 and 2 are complete: profile fields, English settings copy, reviewed migration, and the footer on generated replies; all checks pass. Blank replies starting with the footer remain in slice 3.
 
 ## Completed
 

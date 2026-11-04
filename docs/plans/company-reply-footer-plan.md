@@ -2,7 +2,7 @@
 
 ## Status
 
-In progress. Slice 1 is complete. The schema, application contracts, repository and form now use only the footer fields, and the company settings copy is in English. The generated migration is named `0006_trim-company-profile.sql`; its SQL and snapshot contain only the planned column rename and four drops. `pnpm db:check`, `pnpm typecheck`, `pnpm lint` and `pnpm test` pass. Tests required running outside the agent sandbox so local email test servers could listen. The user confirmed applying the migration. Slices 2 and 3 have not started.
+In progress. Slice 1 is complete. The schema, application contracts, repository and form now use only the footer fields, and the company settings copy is in English. The generated migration is named `0006_trim-company-profile.sql`; its SQL and snapshot contain only the planned column rename and four drops. `pnpm db:check`, `pnpm typecheck`, `pnpm lint` and `pnpm test` pass. Tests required running outside the agent sandbox so local email test servers could listen. The user confirmed applying the migration. Slice 2 is complete. `reply-footer.utils.ts` formats and appends the footer, and `generateBriefReplyUseCase` appends it after generation and rejects a combined body over the limit with `BriefReplyInvalidOutputError`. `pnpm typecheck`, `pnpm lint` and `pnpm test` pass. Slice 3 has not started.
 
 ## Goal
 
@@ -45,7 +45,7 @@ The singleton index and table name stay. The migration should contain one `RENAM
 
 ### Interfaces
 
-One module in the brief-reply capability, `features/emails/brief-reply/reply-footer.ts`, with two pure functions:
+One module in the brief-reply capability, `features/emails/brief-reply/reply-footer.utils.ts`, with two pure functions:
 
 ```ts
 export type ReplyFooterProfile = Pick<
@@ -143,7 +143,7 @@ The company profile stores and edits only the footer fields, and `legal_name` be
 
 Generated drafts end with the company footer.
 
-1. Add `reply-footer.ts` with `formatReplyFooter` and `appendReplyFooter`, plus a colocated test.
+1. Add `reply-footer.utils.ts` with `formatReplyFooter` and `appendReplyFooter`, plus a colocated test.
 2. In `generateBriefReplyUseCase`, load the profile after generation, append the footer, and enforce the combined length limit.
 3. Extend the use-case test: footer appended, empty profile leaves the body unchanged, combined text over the limit throws `BriefReplyInvalidOutputError`.
 
