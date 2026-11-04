@@ -4,14 +4,17 @@ import {
   Alert,
   AlertDescription,
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSet,
   Input,
-  Separator,
   Spinner,
   toast,
 } from '@inbox-triage/ui';
@@ -35,6 +38,7 @@ type CompanyProfileFormProps = {
 };
 
 type CompanyFieldProps = {
+  className?: string;
   disabled: boolean;
   error?: string;
   field: CompanyProfileField;
@@ -70,6 +74,7 @@ function profileToFormValues(
 }
 
 function CompanyField({
+  className,
   disabled,
   error,
   field,
@@ -82,6 +87,7 @@ function CompanyField({
 
   return (
     <Field
+      className={className}
       data-disabled={disabled || undefined}
       data-invalid={!!error || undefined}
     >
@@ -164,19 +170,32 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
   }
 
   return (
-    <form ref={formRef} noValidate autoComplete="off" onSubmit={handleSubmit}>
-      <FieldGroup>
-        {saveError ? (
-          <Alert variant="destructive">
-            <AlertDescription>{saveError}</AlertDescription>
-          </Alert>
-        ) : null}
+    <form
+      className="w-full max-w-2xl"
+      ref={formRef}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>Company profile</CardTitle>
 
-        <FieldSet>
-          <FieldLegend>Company details</FieldLegend>
+          <CardDescription>
+            Drafted email replies end with these details.
+          </CardDescription>
+        </CardHeader>
 
-          <FieldGroup className="grid grid-cols-1 gap-5">
+        <CardContent className="pb-2">
+          <FieldGroup className="grid grid-cols-1 sm:grid-cols-2">
+            {saveError ? (
+              <Alert variant="destructive" className="sm:col-span-2">
+                <AlertDescription>{saveError}</AlertDescription>
+              </Alert>
+            ) : null}
+
             <CompanyField
+              className="sm:col-span-2"
               field="name"
               label="Company name"
               value={values.name}
@@ -184,16 +203,29 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
-          </FieldGroup>
-        </FieldSet>
 
-        <Separator />
-
-        <FieldSet>
-          <FieldLegend>Address and contact details</FieldLegend>
-
-          <FieldGroup className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             <CompanyField
+              field="email"
+              label="Email"
+              value={values.email}
+              error={fieldErrors.email}
+              type="email"
+              disabled={isPending}
+              onChange={handleChange}
+            />
+
+            <CompanyField
+              field="phone"
+              label="Phone"
+              value={values.phone}
+              error={fieldErrors.phone}
+              type="tel"
+              disabled={isPending}
+              onChange={handleChange}
+            />
+
+            <CompanyField
+              className="sm:col-span-2"
               field="address"
               label="Address"
               value={values.address}
@@ -219,40 +251,16 @@ export function CompanyProfileForm({ profile }: CompanyProfileFormProps) {
               disabled={isPending}
               onChange={handleChange}
             />
-
-            <CompanyField
-              field="phone"
-              label="Phone"
-              value={values.phone}
-              error={fieldErrors.phone}
-              type="tel"
-              disabled={isPending}
-              onChange={handleChange}
-            />
-
-            <CompanyField
-              field="email"
-              label="Email"
-              value={values.email}
-              error={fieldErrors.email}
-              type="email"
-              disabled={isPending}
-              onChange={handleChange}
-            />
           </FieldGroup>
-        </FieldSet>
+        </CardContent>
 
-        <div className="flex justify-stretch sm:justify-end">
-          <Button
-            className="w-full sm:w-auto"
-            type="submit"
-            disabled={isPending}
-          >
+        <CardFooter className="justify-end">
+          <Button type="submit" disabled={isPending}>
             {isPending ? <Spinner data-icon="inline-start" /> : null}
             Save
           </Button>
-        </div>
-      </FieldGroup>
+        </CardFooter>
+      </Card>
     </form>
   );
 }
