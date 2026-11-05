@@ -1,0 +1,273 @@
+{
+  "id": "f90d592f-fb63-4f9b-8a2a-fa92992bfe27",
+  "prevId": "95b7ebe2-8df0-4088-b1d5-7e39cfaa6bc2",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.company_profile": {
+      "name": "company_profile",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "postal_code": {
+          "name": "postal_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "company_profile_singleton": {
+          "name": "company_profile_singleton",
+          "columns": [
+            {
+              "expression": "(true)",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.email_connections": {
+      "name": "email_connections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imap_host": {
+          "name": "imap_host",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "smtp_host": {
+          "name": "smtp_host",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "encrypted_password": {
+          "name": "encrypted_password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "email_connections_user_id_users_id_fk": {
+          "name": "email_connections_user_id_users_id_fk",
+          "tableFrom": "email_connections",
+          "tableTo": "users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "email_connections_user_id_unique": {
+          "name": "email_connections_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["user_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "email_connections_provider": {
+          "name": "email_connections_provider",
+          "value": "\"email_connections\".\"provider\" IN ('zoho', 'gmail')"
+        },
+        "email_connections_provider_hosts": {
+          "name": "email_connections_provider_hosts",
+          "value": "(\"email_connections\".\"provider\" = 'zoho' AND \"email_connections\".\"imap_host\" IS NOT NULL AND \"email_connections\".\"smtp_host\" IS NOT NULL) OR (\"email_connections\".\"provider\" = 'gmail' AND \"email_connections\".\"imap_host\" IS NULL AND \"email_connections\".\"smtp_host\" IS NULL)"
+        },
+        "email_connections_username_trimmed": {
+          "name": "email_connections_username_trimmed",
+          "value": "btrim(\"email_connections\".\"username\") = \"email_connections\".\"username\""
+        },
+        "email_connections_username_not_empty": {
+          "name": "email_connections_username_not_empty",
+          "value": "\"email_connections\".\"username\" <> ''"
+        },
+        "email_connections_imap_host_trimmed": {
+          "name": "email_connections_imap_host_trimmed",
+          "value": "btrim(\"email_connections\".\"imap_host\") = \"email_connections\".\"imap_host\""
+        },
+        "email_connections_imap_host_not_empty": {
+          "name": "email_connections_imap_host_not_empty",
+          "value": "\"email_connections\".\"imap_host\" <> ''"
+        },
+        "email_connections_smtp_host_trimmed": {
+          "name": "email_connections_smtp_host_trimmed",
+          "value": "btrim(\"email_connections\".\"smtp_host\") = \"email_connections\".\"smtp_host\""
+        },
+        "email_connections_smtp_host_not_empty": {
+          "name": "email_connections_smtp_host_not_empty",
+          "value": "\"email_connections\".\"smtp_host\" <> ''"
+        },
+        "email_connections_encrypted_password_not_empty": {
+          "name": "email_connections_encrypted_password_not_empty",
+          "value": "\"email_connections\".\"encrypted_password\" <> ''"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "clerk_user_id": {
+          "name": "clerk_user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_clerk_user_id_unique": {
+          "name": "users_clerk_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["clerk_user_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -50,6 +50,13 @@
       "when": 1793824404525,
       "tag": "0006_trim-company-profile",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793877667683,
+      "tag": "0007_drop-rate-catalog",
+      "breakpoints": true
     }
   ]
 }

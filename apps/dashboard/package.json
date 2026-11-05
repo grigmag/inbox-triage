@@ -18,7 +18,6 @@
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "@inbox-triage/auth": "workspace:*",
     "@inbox-triage/db": "workspace:*",
-    "@inbox-triage/domain": "workspace:*",
     "@inbox-triage/email": "workspace:*",
     "@inbox-triage/ui": "workspace:*",
     "ai": "^7.0.102",

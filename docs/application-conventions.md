@@ -67,7 +67,7 @@ Layers mix only inside capability modules and component folders.
 
 - Keep code with the capability that owns it.
 - Put code several modules share in the closest folder containing all of them,
-  in a module named for what it holds, such as `rate-catalog-table.types.ts` or
+  in a module named for what it holds, such as `email-connection-form.types.ts` or
   `gap-status-labels.consts.ts`. When a consumer outside that folder appears,
   move the module up to the new closest folder.
 - Feature building blocks stay at the feature level even when only one

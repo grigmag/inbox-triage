@@ -29,17 +29,6 @@ pnpm db:check
 pnpm db:migrate
 ```
 
-## Settings defaults
-
-After applying migrations, provision any missing company rate defaults with:
-
-```bash
-pnpm db:seed:settings
-```
-
-Run this operator command manually, one instance at a time. It preserves
-existing settings and appends only missing defaults.
-
 ## Manually reverting a local migration
 
 Drizzle does not provide automatic down migrations. Use this procedure only for
