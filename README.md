@@ -45,8 +45,7 @@ apps/
   dashboard/     Next.js app: routes, feature modules, server actions
 packages/
   auth/          Clerk integration and the local user boundary
-  db/            Drizzle schema, migrations, seeds, and database CLI
-  domain/        Shared business rules, such as rate definitions
+  db/            Drizzle schema, migrations, and database CLI
   email/         IMAP reading and SMTP sending for Zoho and Gmail
   ui/            Reusable shadcn/ui components, kept free of product styling
 docs/
@@ -150,13 +149,11 @@ Fill in `apps/dashboard/.env`:
 
 The default `DATABASE_URL` matches the Docker Compose database.
 
-Start Postgres, apply the committed migrations, seed the default rates, and run
-the dashboard:
+Start Postgres, apply the committed migrations, and run the dashboard:
 
 ```bash
 docker compose -p inbox-triage up -d
 pnpm db:migrate
-pnpm db:seed:settings
 pnpm dev
 ```
 
@@ -186,7 +183,7 @@ OPENROUTER_ALLOW_BILLABLE_REQUESTS=true pnpm --filter @inbox-triage/dashboard ev
 The schema and migrations live in `packages/db`. After a schema change, run
 `pnpm db:generate` and `pnpm db:check`, review the generated SQL, then apply it
 with `pnpm db:migrate`. [docs/database.md](docs/database.md) covers the full
-workflow, settings seeds, and how to revert a local migration by hand.
+workflow and how to revert a local migration by hand.
 
 ## License
 
